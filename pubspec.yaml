@@ -15,6 +15,9 @@ dependencies:
   glog:
     path: ../glog/
   flutter_neumorphic: ^3.2.0
+  desktop_window: ^0.4.0
+  window_manager: ^0.3.1
+  menu_bar: ^0.4.0
 
 dev_dependencies:
   flutter_test:

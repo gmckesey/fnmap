@@ -1,9 +1,36 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:nmap_gui/models/nmap_command.dart';
 import 'package:provider/provider.dart';
 import 'package:glog/glog.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart'
+    hide MenuBar
+    hide MenuStyle;
+import 'package:window_manager/window_manager.dart';
+import 'package:nmap_gui/models/nmap_command.dart';
+import 'package:nmap_gui/widgets/exec_page.dart';
+
+Future setWindowParams() async {
+  WidgetsFlutterBinding.ensureInitialized();
+/*
+  await DesktopWindow.setWindowSize(const Size(800,600));
+  await DesktopWindow.setMinWindowSize(const Size(480,420));
+  // await DesktopWindow.setMaxWindowSize(Size.infinite);*/
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    title: 'nmap',
+    size: Size(600, 600),
+    minimumSize: Size(480, 420),
+    center: true,
+    backgroundColor: Colors.teal,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.normal,
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+}
 
 void main() {
   if (kDebugMode) {
@@ -15,9 +42,14 @@ void main() {
   } else {
     GLog.setLevel(LogLevel.info);
   }
-  runApp(ChangeNotifierProvider(
-      create: (_) => NMapCommand(arguments: ['172.24.0.1-32']),
-      child: const MyApp()));
+
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowParams().then((_) {
+      runApp(ChangeNotifierProvider(
+          create: (_) => NMapCommand(arguments: ['172.24.0.1-32']),
+          child: const MyApp()));
+    });
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -51,131 +83,6 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.lightBlue,
       ),
       home: const ExecPage(),
-    );
-  }
-}
-
-class ExecPage extends StatefulWidget {
-  const ExecPage({Key? key}) : super(key: key);
-
-  @override
-  State<ExecPage> createState() => _ExecPageState();
-}
-
-class _ExecPageState extends State<ExecPage> {
-  GLog log = GLog('ExecPage', properties: gLogPropALL);
-  TextEditingController ipAddressCtrl = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    String? result = Provider.of<NMapCommand>(context, listen: true).stdOut;
-    bool inProgress =
-        Provider.of<NMapCommand>(context, listen: true).inProgress;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text('nmap'),
-        ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Target Address(es):'),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    child: SizedBox(
-                        width: 120,
-                        child: TextField(
-                          controller: ipAddressCtrl,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText:
-                                'Enter an IP address, IP range or network',
-                          ),
-                        )),
-                  ),
-                  const Spacer(flex: 1),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: MouseRegion(
-              cursor: inProgress
-                  ? SystemMouseCursors.wait
-                  : SystemMouseCursors.basic,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Neumorphic(
-                        style: const NeumorphicStyle(
-                          border:
-                              NeumorphicBorder(width: 3, color: Colors.black12),
-                          shape: NeumorphicShape.convex,
-                          depth: -10,
-                          lightSource: LightSource.topRight,
-                          color: Colors.white38,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SingleChildScrollView(
-                              child: Text(
-                            result ?? '',
-                            overflow: TextOverflow.visible,
-                          )),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                            onPressed: () {
-                              Provider.of<NMapCommand>(context, listen: false)
-                                  .clear();
-                            },
-                            child: const Text('CLEAR')),
-                        ElevatedButton(
-                            onPressed: () {
-                              String ipAddress = ipAddressCtrl.value.text;
-                              if (ipAddress.isNotEmpty) {
-                                log.debug('onPressed: setting ip address to '
-                                    '$ipAddress');
-                                Provider.of<NMapCommand>(context, listen: false)
-                                    .arguments = [ipAddress];
-                              }
-                              Provider.of<NMapCommand>(context, listen: false)
-                                  .clear();
-                              Provider.of<NMapCommand>(context, listen: false)
-                                  .start();
-                            },
-                            child: const Text('START'))
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
