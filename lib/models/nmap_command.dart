@@ -2,30 +2,50 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'dart:convert';
 import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/ip_address_validator.dart';
 
 class NMapCommand with ChangeNotifier {
   late String _program;
+  late String _target;
   List<String>? _arguments;
   ProcessResult? _result;
   String? _stderr;
   String? _consoleOutput;
   GLog log = GLog('NMapCommand', properties: gLogPropALL);
   bool _inProgress = false;
-  Process? _process = null;
+  Process? _process;
 
-  NMapCommand({String program = 'nmap', List<String>? arguments}) {
+  NMapCommand(
+      {String program = 'nmap', List<String>? arguments, String? target}) {
     _program = program;
     _arguments = arguments;
+    _target = target ?? '127.0.0.1';
     // run();
   }
+
+  NMapCommand.fromCommandLine(String commandLine, {String? target}) {
+    List<String> arguments = commandLine.split(' ');
+    if (arguments.isNotEmpty) {
+      _program = arguments.first;
+      if (arguments.length > 1) {
+        _arguments = List<String>.filled(arguments.length - 1, '');
+        _arguments!.setRange(1, arguments.length - 1, arguments, 1);
+      }
+    }
+    if (target != null && !isValidIPAddress(target)) {
+      throw NotAValidIPAddressException('invalid target address '
+          '$target');
+    }
+    _target = target ?? '127.0.0.1';
+  }
+
+//   String get target => _target;
 
   void processLine(String line) {
     _consoleOutput = '${_consoleOutput!}$line\n';
     _inProgress = true;
     notifyListeners();
-    log.debug('processLine: line is $line');
   }
-
 
   void processError(String errorLine) {
     _consoleOutput = '${_consoleOutput!}$errorLine\n';
@@ -39,16 +59,22 @@ class NMapCommand with ChangeNotifier {
     _inProgress = true;
     // notifyListeners();
     if (_arguments == null) {
-      _process = await Process.start(_program, []);
+      log.debug('start: starting $_program with target $_target');
+      _process = await Process.start(_program, [_target]);
     } else {
-      log.debug('start: starting $_program with arguments $_arguments');
-      _process = await Process.start(_program, _arguments!);
+      List<String> cmdLine = List.from(_arguments!);
+      if (cmdLine.isNotEmpty) {
+        cmdLine.removeAt(0);
+      }
+      cmdLine.add(_target);
+      log.debug('start: starting $_program with arguments $cmdLine');
+      _process = await Process.start(_program, cmdLine);
     }
     _process!.stdout
         .transform(utf8.decoder)
         .transform(const LineSplitter())
         .listen((line) => processLine(line), cancelOnError: true, onDone: () {
-          log.debug('onDone<stdout> called.');
+      log.debug('onDone<stdout> called.');
       _inProgress = false;
       _process = null;
       notifyListeners();
@@ -58,11 +84,8 @@ class NMapCommand with ChangeNotifier {
         .transform(const LineSplitter())
         .listen((line) => processLine(line), cancelOnError: true, onDone: () {
       log.debug('onDone<stderr> called.');
-
     });
-
-    
-    }
+  }
 
   void stop() {
     if (_process != null) {
@@ -103,16 +126,37 @@ class NMapCommand with ChangeNotifier {
   String? get stdOut => _consoleOutput;
   bool get inProgress => _inProgress;
   List<String>? get arguments => _arguments;
+
   int? get pid {
     if (_inProgress) {
       return _process!.pid;
-    }
-    else {
+    } else {
       return null;
     }
   }
 
   set arguments(List<String>? argument) {
     _arguments = argument;
+      notifyListeners();
+  }
+
+  void setArguments(List<String>? argument, {bool notify = true}) {
+    _arguments = argument;
+    if (notify) {
+      notifyListeners();
+    }
+  }
+
+
+  set program(String value) {
+    _program = value;
+  }
+
+  set target(String value) {
+    if (!isValidIPAddress(value)) {
+      throw NotAValidIPAddressException('invalid target address '
+          '$value');
+    }
+    _target = value;
   }
 }

@@ -18,9 +18,18 @@ dependencies:
   desktop_window: ^0.4.0
   window_manager: ^0.3.1
   menu_bar: ^0.4.0
+  flutter_parsed_text: ^2.2.1
+  url_launcher: ^6.1.10
+  font_awesome_flutter: ^10.4.0
+  ini: ^2.1.0
+  path_provider: ^2.0.13
+  path: ^1.8.2
+  validators: ^3.0.0
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
   flutter_lints: ^2.0.0
