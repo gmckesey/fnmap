@@ -59,7 +59,7 @@ class FnMapConfig with ChangeNotifier {
   late String fileName;
   late Directory? _appSupportDirectory;
   late Config _config;
-  GLog log = GLog('FnMapConfig', properties: gLogPropALL);
+  GLog log = GLog('FnMapConfig', properties: gLogPropTrace);
 
   FnMapConfig({this.fileName = kConfigFilename});
 

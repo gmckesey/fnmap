@@ -10,6 +10,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuStyle;
 import 'package:window_manager/window_manager.dart';
 import 'package:nmap_gui/models/nmap_command.dart';
+import 'package:nmap_gui/models/nmap_xml.dart';
 import 'package:nmap_gui/widgets/exec_page.dart';
 import 'package:nmap_gui/widgets/quick_scan_dropdown.dart';
 import 'package:nmap_gui/utilities/scan_profile.dart';
@@ -17,6 +18,7 @@ import 'package:nmap_gui/utilities/fnmap_config.dart';
 import 'package:nmap_gui/utilities/cidr_address.dart';
 import 'package:validators/validators.dart' as valid;
 import 'package:nmap_gui/utilities/ip_address_validator.dart';
+import 'package:nmap_gui/models/dark_mode.dart';
 
 Future setWindowParams() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,11 +29,11 @@ Future setWindowParams() async {
   await windowManager.ensureInitialized();
 
   WindowOptions windowOptions = const WindowOptions(
-    title: 'nmap',
+    title: 'fnmap',
     size: Size(800, 600),
     minimumSize: Size(540, 540),
     center: true,
-    backgroundColor: Colors.teal,
+    backgroundColor: kDefaultColor,
     skipTaskbar: false,
     titleBarStyle: TitleBarStyle.normal,
   );
@@ -41,48 +43,11 @@ Future setWindowParams() async {
   });
 }
 
-void testCidr() async {
-  List<String> testData = <String>[
-    '172.24.0.1',
-    '172.24.0.1-64',
-    '127.0.0.1',
-    '10.23.0',
-    '172.24.0.0/22',
-    '192.168.4.0/24',
-    '172.24.0.0/255.255.0.0',
-    'google.com',
-    'news.com',
-    'finance.google.com',
-  ];
-  GLog log = GLog('testCidr:', properties: gLogPropALL);
-  for (var address in testData) {
-    AddressType t = addressType(address);
-    switch (t) {
-      case AddressType.cidr:
-        log.debug('address [$address] is a valid CIDR');
-        break;
-      case AddressType.ipAddress:
-        log.debug('address [$address] is a valid an IP address');
-        break;
-      case AddressType.fqdn:
-        log.debug('address [$address] is a valid FQDN');
-        break;
-      case AddressType.ipRange:
-        log.debug('address [$address] is a valid IP address range');
-        break;
-      default:
-        log.debug('address [$address] is an unrecognized format');
-        break;
-    }
-  }
-}
-
 void main() async {
   if (kDebugMode) {
     GLog.setLevel(LogLevel.debug);
-    GLog.setLogFlags(gLogPropCondition |
-        gLogPropTrace |
-        gLogUtilityTrace /* | gLogPropBugFix*/);
+    GLog.setLogFlags(
+        gLogPropCondition | gLogUtilityTrace /* | gLogPropBugFix*/);
     GLog.setClassProperties(0);
   } else {
     GLog.setLevel(LogLevel.info);
@@ -108,7 +73,10 @@ void main() async {
         ),
         ChangeNotifierProvider.value(value: profile),
         ChangeNotifierProvider.value(value: config),
-      ], child: const MyApp()));
+        ChangeNotifierProvider(create: (_) => NMapXML()),
+        ChangeNotifierProvider(create: (_) => NMapDarkMode()),
+      ],
+      child: const MyApp()));
     });
   }
 }
@@ -124,28 +92,41 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    Provider.of<NMapDarkMode>(context, listen: false).initialize(rootContext: context);
     // Provider.of<ScanProfile>(context, listen: false).parse();
     // Provider.of<NMapCommand>(context, listen: false).start();
   }
 
   @override
   Widget build(BuildContext context) {
+    MaterialColor getMaterialColor(Color color) {
+      final int red = color.red;
+      final int green = color.green;
+      final int blue = color.blue;
+
+      final Map<int, Color> shades = {
+        50: Color.fromRGBO(red, green, blue, .1),
+        100: Color.fromRGBO(red, green, blue, .2),
+        200: Color.fromRGBO(red, green, blue, .3),
+        300: Color.fromRGBO(red, green, blue, .4),
+        400: Color.fromRGBO(red, green, blue, .5),
+        500: Color.fromRGBO(red, green, blue, .6),
+        600: Color.fromRGBO(red, green, blue, .7),
+        700: Color.fromRGBO(red, green, blue, .8),
+        800: Color.fromRGBO(red, green, blue, .9),
+        900: Color.fromRGBO(red, green, blue, 1),
+      };
+
+      return MaterialColor(color.value, shades);
+    }
+
     ScanProfile profile = Provider.of<ScanProfile>(context, listen: true);
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
+
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.lightBlue,
-      ),
-      home: const ExecPage(),
+      title: 'fnmap',
+      theme: mode.themeData,
+      home: const DefaultTabController(length: 5, child: ExecPage()),
     );
   }
 }

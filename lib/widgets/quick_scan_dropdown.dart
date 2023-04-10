@@ -4,7 +4,7 @@ import 'package:nmap_gui/utilities/scan_profile.dart';
 import 'package:nmap_gui/constants.dart';
 
 class QuickScanController with ChangeNotifier {
-  GLog log = GLog('QuickScanController:', properties: gLogPropALL);
+  GLog log = GLog('QuickScanController:', properties: gLogPropTrace);
   final Map<String, String> _defaultChoiceMap = {
     'Regular Scan': '',
     'Intense Scan': '-T4 -A',
@@ -106,8 +106,9 @@ class _QuickScanDropDownState extends State<QuickScanDropDown> {
         // icon: const Icon(Icons.arrow_downward),
         iconSize: 24,
         elevation: 2,
-        style: const TextStyle(color: Colors.black54),
-        focusColor: Colors.white70,
+        style: TextStyle(color: Theme.of(context).primaryColorDark),
+        dropdownColor: Theme.of(context).primaryColorLight,
+        focusColor: Theme.of(context).focusColor,
 /*        underline: Container(
           height: 2,
           color: Colors.deepPurpleAccent,
@@ -134,7 +135,7 @@ class _QuickScanDropDownState extends State<QuickScanDropDown> {
         items: choiceList.map<DropdownMenuItem<String>>((value) {
           return DropdownMenuItem<String>(
             value: value,
-            child: Text(value, overflow: TextOverflow.ellipsis),
+            child: Text(value, overflow: TextOverflow.ellipsis), // style: Theme.of(context).textTheme.bodyMedium,),
           );
         }).toList(),
       ),

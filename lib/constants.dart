@@ -1,5 +1,5 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const String knMAPCommand = 'nmap';
 const String knMAPPing = '-sP';
@@ -12,8 +12,30 @@ const String kProfileFilename = 'scan_profile.usp';
 const String kConfigFilename = 'fnmap.conf';
 const String kZenmapConfFilename = 'zenmap.conf';
 const String kCustomKey = 'Custom';
+//const Color kDefaultColor = Colors.teal;
+const Color kDefaultColor = Colors.indigo;
+const Color kAccentColor = Colors.indigoAccent;
 const Color kValidColor = Colors.green;
 const Color kInvalidColor = Colors.red;
+const Color kTileBackgroundColor = Color(0xD6EAFBFF);
+const Color kDefaultTextColor = Colors.black87;
+const Color kLightTextColor = Colors.white;
+const Color kDisabledColor = Colors.grey;
+const Color kDividerColor = Colors.grey;
+const Color kDefaultBackgroundColor = Color(0xDED5D5FF);
+Color kDetailsBackgroundColor = Colors.grey;
+
+TextStyle kDefaultTextStyle = GoogleFonts.sourceCodePro(
+  fontSize: 16.0,
+  color: kDefaultTextColor,
+);
+
+
+TextStyle kDetailsTextStyle = kDefaultTextStyle.copyWith(fontSize: 14.0);
+TextStyle kDetailsStringStyle = kDetailsTextStyle.copyWith(color: Colors.black);
+TextStyle kDetailsKeyStyle = kDefaultTextStyle.copyWith(color: kDefaultColor);
+
+
 const List<String> kDefaultConfigs = [
   '[hostname_highlight]',
   'regex = ([-a-zA-Z]{2,}://)?\\b([-a-zA-Z0-9_]+\\.)+[a-zA-Z]{2,}\\b',

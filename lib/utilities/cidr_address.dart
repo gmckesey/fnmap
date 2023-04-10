@@ -17,9 +17,11 @@ class CidrCalculator {
     return RegExp(_reCIDRPattern).hasMatch(cidr);
   }
 
+/*
   static bool isValidIP(String ip) {
     return RegExp(_reIPPattern).hasMatch(ip);
   }
+*/
 
   /// parse cidr address info
   static CIDRInfo parse(String cidr) {
