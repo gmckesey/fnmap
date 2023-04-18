@@ -32,7 +32,7 @@ class ExecPage extends StatefulWidget {
 }
 
 class _ExecPageState extends State<ExecPage> {
-  GLog log = GLog('ExecPage', properties: gLogPropALL);
+  GLog log = GLog('ExecPage', flag: gLogTRACE, package: kPackageName);
   TextEditingController ipAddressCtrl = TextEditingController();
   TextEditingController optionsCtrl = TextEditingController();
   TextEditingController targetCtrl = TextEditingController(text: 'item 3');

@@ -31,7 +31,8 @@ class NMapTabularWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     NMapXML nMapXML = Provider.of<NMapXML>(context, listen: true);
     NMapCommand command = Provider.of<NMapCommand>(context, listen: true);
-    GLog log = GLog('NMapTabularWidget', properties: gLogPropALL);
+    GLog log = GLog('NMapTabularWidget',
+        flag: gLogTRACE, package: kPackageName);
     List<NMapHostRecord> hostRecords = nMapXML.hostRecords;
 
     log.debug('build: nMapXML state is ${nMapXML.state}');
@@ -50,8 +51,8 @@ class NMapTabularWidget extends StatelessWidget {
       // processXML(xml: nMapXML, hostRecords: hostRecords, log: log);
       Widget gridImplementation =
           implementation == NMAPTabImplementation.plutoGrid
-              ? NMapPlutoGrid(key: const Key('PlutoGrid-all'),
-              hostRecords: hostRecords)
+              ? NMapPlutoGrid(
+                  key: const Key('PlutoGrid-all'), hostRecords: hostRecords)
               : NMapGridview(hostRecords: hostRecords);
       return Padding(
         padding: const EdgeInsets.all(8.0),
@@ -63,7 +64,7 @@ class NMapTabularWidget extends StatelessWidget {
             lightSource: LightSource.topRight,
             color: Colors.white38,
           ),
-            child: gridImplementation,
+          child: gridImplementation,
         ),
       );
     }
@@ -79,7 +80,8 @@ class NMapPlutoGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    GLog log = GLog('NMapPlutoGrid:', properties: gLogPropALL);
+    GLog log =
+        GLog('NMapPlutoGrid:', flag: gLogTRACE, package: kPackageName);
     Color backgroundColor = Theme.of(context).canvasColor;
     Color textColor = Theme.of(context).primaryColorDark;
 
@@ -89,6 +91,7 @@ class NMapPlutoGrid extends StatelessWidget {
         style: TextStyle(color: textColor),
       );
     }
+
     List<PlutoColumn> columns = [
       PlutoColumn(
           title: 'Host',
@@ -142,9 +145,6 @@ class NMapPlutoGrid extends StatelessWidget {
       ),
     );
   }
-
-
-
 
   List<PlutoRow> _generateRows() {
     List<PlutoRow> list = [];

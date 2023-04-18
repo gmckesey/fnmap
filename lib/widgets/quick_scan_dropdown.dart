@@ -4,7 +4,8 @@ import 'package:nmap_gui/utilities/scan_profile.dart';
 import 'package:nmap_gui/constants.dart';
 
 class QuickScanController with ChangeNotifier {
-  GLog log = GLog('QuickScanController:', properties: gLogPropTrace);
+  GLog log = GLog('QuickScanController:',
+      flag: gLogTRACE, package: kPackageName);
   final Map<String, String> _defaultChoiceMap = {
     'Regular Scan': '',
     'Intense Scan': '-T4 -A',
@@ -15,8 +16,8 @@ class QuickScanController with ChangeNotifier {
     'Quick Scan': '-T4 -F',
     'Quick Scan Plus': '-sV -T4 -O -F --version-light',
     'Quick Traceroute': '-sn --traceroute',
-      'Slow Comprehensive Scan': '-sS -sU -T4 -A -v -PE -PP -PS80,443 -PA3389 '
-          '-PU40125 -PY -g 53 --script "default or (discovery and safe)"',
+    'Slow Comprehensive Scan': '-sS -sU -T4 -A -v -PE -PP -PS80,443 -PA3389 '
+        '-PU40125 -PY -g 53 --script "default or (discovery and safe)"',
     'Custom': '',
   };
   Map<String, String> _choiceMap = {};
@@ -28,9 +29,9 @@ class QuickScanController with ChangeNotifier {
       _choiceMap = _defaultChoiceMap;
     } else {
       _choiceMap.clear();
-      profile!.config.sections().forEach((section) {
-        if (profile!.config.hasOption(section, 'command')) {
-          String? command = profile!.config.get(section, 'command');
+      profile.config.sections().forEach((section) {
+        if (profile.config.hasOption(section, 'command')) {
+          String? command = profile.config.get(section, 'command');
           if (command != null) {
             _choiceMap.addAll({section: command});
             log.debug('added entry command="$command"');
@@ -51,8 +52,8 @@ class QuickScanController with ChangeNotifier {
   Map<String, String> get choiceMap => _choiceMap;
 
   Map<String, String>? get map => _map;
-  String? get key => isSet ? _map!.keys!.first : null;
-  String? get value => isSet ? _map!.values!.first : null;
+  String? get key => isSet ? _map!.keys.first : null;
+  String? get value => isSet ? _map!.values.first : null;
 
   set map(Map<String, String>? m) {
     _map = m;
@@ -117,25 +118,27 @@ class _QuickScanDropDownState extends State<QuickScanDropDown> {
         onChanged: (String? key) {
           setState(() {
             dropdownValue = key!;
-            if (key! == kCustomKey) {
+            if (key == kCustomKey) {
               // Return if value is custom
               // as we don't want to change the command line options
               // as long as the drop down value is set to 'Custom'
               return;
             }
             if (widget.controller.choiceMap.containsKey(key)) {
-              widget.controller.map = {key!: widget.controller.choiceMap[key]!};
+              widget.controller.map = {key: widget.controller.choiceMap[key]!};
             }
 
             if (widget.onChanged != null) {
-              widget.onChanged!(key!);
+              widget.onChanged!(key);
             }
           });
         },
         items: choiceList.map<DropdownMenuItem<String>>((value) {
           return DropdownMenuItem<String>(
             value: value,
-            child: Text(value, overflow: TextOverflow.ellipsis), // style: Theme.of(context).textTheme.bodyMedium,),
+            child: Text(value,
+                overflow: TextOverflow
+                    .ellipsis), // style: Theme.of(context).textTheme.bodyMedium,),
           );
         }).toList(),
       ),

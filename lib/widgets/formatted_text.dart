@@ -3,7 +3,7 @@ import 'package:flutter_parsed_text/flutter_parsed_text.dart';
 import 'package:provider/provider.dart';
 import 'package:nmap_gui/constants.dart';
 import 'package:nmap_gui/utilities/fnmap_config.dart';
-import 'package:url_launcher/url_launcher.dart' show canLaunchUrl, launchUrl;
+import 'package:url_launcher/url_launcher.dart' show launchUrl;
 import 'package:glog/glog.dart';
 import 'package:validators/validators.dart' as valid;
 
@@ -14,7 +14,8 @@ class FormattedText extends StatelessWidget {
   final TextDirection? textDirection;
   final TextOverflow? overflow;
   final int? maxLines;
-  final GLog log = GLog('FormattedText:', properties: gLogPropALL);
+  final GLog log =
+      GLog('FormattedText:', flag: gLogTRACE, package: kPackageName);
 
   final parse = <MatchText>[
     MatchText(
@@ -27,7 +28,7 @@ class FormattedText extends StatelessWidget {
         ),
       ),
       onTap: (String username) {
-        GLog('FormattedText:', properties: gLogPropALL)
+        GLog('FormattedText:', flag: gLogTRACE, package: kPackageName)
             .debug(username.substring(1));
       },
     ),
@@ -41,7 +42,7 @@ class FormattedText extends StatelessWidget {
         ),
       ),
       onTap: (String username) {
-        GLog('FormattedText:', properties: gLogPropALL)
+        GLog('FormattedText:', flag: gLogTRACE, package: kPackageName)
             .debug(username.substring(1));
       },
     ),
@@ -54,9 +55,10 @@ class FormattedText extends StatelessWidget {
         onTap: (url) async {
           Uri uri = Uri.parse(url);
           try {
-            var a = await launchUrl(uri);
+            await launchUrl(uri);
           } catch (e) {
-            GLog('FormattedText', properties: gLogPropALL)
+            GLog('FormattedText',
+                    flag: gLogTRACE, package: kPackageName)
                 .error('MatchText error $e launching $url');
             return;
           }
@@ -84,8 +86,8 @@ class FormattedText extends StatelessWidget {
     // TODO: (2023-03-14) Debugging here
     FnMapConfig nmapConfig = Provider.of<FnMapConfig>(context, listen: true);
 
-    List<HighLightConfig> hConfigs =
-        nmapConfig.highlightsEnabled ? nmapConfig.highlights() : [];
+    /*List<HighLightConfig> hConfigs =
+        nmapConfig.highlightsEnabled ? nmapConfig.highlights() : [];*/
     List<MatchText> matches = generateMatches(nmapConfig);
 
     return ParsedText(
@@ -111,17 +113,18 @@ class FormattedText extends StatelessWidget {
           style: h.textStyle,
         ),
         onTap: (String value) async {
-          if (valid.isURL(value)){
+          if (valid.isURL(value)) {
             Uri uri = Uri.parse(value);
             try {
-              var a = await launchUrl(uri);
+              await launchUrl(uri);
             } catch (e) {
-              GLog('FormattedText', properties: gLogPropALL)
+              GLog('FormattedText',
+                      flag: gLogTRACE, package: kPackageName)
                   .error('MatchText error $e launching $value');
               return;
             }
           } else {
-            GLog('MatchText:', properties: gLogPropALL)
+            GLog('MatchText:', flag: gLogTRACE, package: kPackageName)
                 .debug('onTap: selected $value');
           }
         },

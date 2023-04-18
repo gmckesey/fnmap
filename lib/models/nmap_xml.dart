@@ -1,4 +1,5 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:nmap_gui/constants.dart';
 import 'package:xml/xml.dart';
 import 'dart:io';
 import 'package:glog/glog.dart';
@@ -18,7 +19,7 @@ class NMapXML with ChangeNotifier {
   final List<NMapHostRecord> _hostRecords = [];
   List<NMapServiceRecord>? _serviceRecords;
   File? _file;
-  GLog log = GLog('NMapXML', properties: gLogPropTrace);
+  GLog log = GLog('NMapXML', flag: gLogTRACE, package: kPackageName);
   String? _nMapVersion;
   String? _scanDate;
   String? _target;

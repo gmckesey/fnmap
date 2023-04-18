@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:glog/glog.dart';
+import 'package:nmap_gui/constants.dart';
 import 'package:nmap_gui/utilities/ip_address_validator.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -20,13 +21,12 @@ enum CommandState {
 // when we move between tabs - unfortunate that this is necessary
 // essentially I want a reference to a double rather than a double
 class NMapScrollOffset {
-  late  double offset;
+  late double offset;
 
   NMapScrollOffset(this.offset);
 
   @override
   String toString() => offset.toString();
-
 }
 
 class NMapCommand with ChangeNotifier {
@@ -37,10 +37,10 @@ class NMapCommand with ChangeNotifier {
   ProcessResult? _result;
   String? _stderr;
   String? _consoleOutput;
-  GLog log = GLog('NMapCommand', properties: gLogPropALL);
+  GLog log =
+      GLog('NMapCommand', flag: gLogTRACE, package: kPackageName);
   CommandState state = CommandState.notStarted;
   Process? _process;
-
 
   NMapCommand(
       {String program = 'nmap', List<String>? arguments, String? target}) {
@@ -87,7 +87,7 @@ class NMapCommand with ChangeNotifier {
     log.debug('processError: error is $errorLine');
   }
 
-  Future<String> genTempFile ({String? prefix, String? postfix}) async {
+  Future<String> genTempFile({String? prefix, String? postfix}) async {
     String uniqueId = const Uuid().v4();
     String fName = prefix ?? '';
     // String uniqueFn = '$fName-${uniqueId.substring(0, 16)}${postfix ?? ''}';
@@ -128,7 +128,7 @@ class NMapCommand with ChangeNotifier {
         NMapXML nMapXML = Provider.of<NMapXML>(context, listen: false);
         nMapXML.clear(notify: false);
         nMapXML.open(tmpFile!);
-      } catch(e) {
+      } catch (e) {
         log.warning('start: failed opening ${tmpFile!}');
       }
     });
@@ -167,7 +167,7 @@ class NMapCommand with ChangeNotifier {
 
   set arguments(List<String>? argument) {
     _arguments = argument;
-      notifyListeners();
+    notifyListeners();
   }
 
   void setArguments(List<String>? argument, {bool notify = true}) {
@@ -176,7 +176,6 @@ class NMapCommand with ChangeNotifier {
       notifyListeners();
     }
   }
-
 
   set program(String value) {
     _program = value;

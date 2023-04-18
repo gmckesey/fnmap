@@ -39,11 +39,12 @@ class HighLightConfig {
     return 're: $regex, textStyle:${textStyle.toString()}';
   }
 
-  TextStyle get  textStyle {
+  TextStyle get textStyle {
     // Convert 16 bit color from config file to 8 bit flutter color
-    Color color = Color.fromRGBO(textColorArray[0]~/8, textColorArray[1]~/8, textColorArray[2]~/8, 1.0);
-    Color hiliteColor = Color.fromRGBO(
-        highlightArray[0]~/8, highlightArray[1]~/8, highlightArray[2]~/8, 1.0);
+    Color color = Color.fromRGBO(textColorArray[0] ~/ 8, textColorArray[1] ~/ 8,
+        textColorArray[2] ~/ 8, 1.0);
+    Color hiliteColor = Color.fromRGBO(highlightArray[0] ~/ 8,
+        highlightArray[1] ~/ 8, highlightArray[2] ~/ 8, 1.0);
 
     return TextStyle(
       color: color,
@@ -59,7 +60,8 @@ class FnMapConfig with ChangeNotifier {
   late String fileName;
   late Directory? _appSupportDirectory;
   late Config _config;
-  GLog log = GLog('FnMapConfig', properties: gLogPropTrace);
+  GLog log =
+      GLog('FnMapConfig', flag: gLogTRACE, package: kPackageName);
 
   FnMapConfig({this.fileName = kConfigFilename});
 
@@ -136,7 +138,7 @@ class FnMapConfig with ChangeNotifier {
     Map<String, dynamic> color = {};
     if (value != null) {
       text = '{ "$option": $value }';
-        color = jsonDecode(text);
+      color = jsonDecode(text);
       list = (color[option] as List<dynamic>).map((element) {
         return element as int;
       }).toList();
@@ -174,14 +176,14 @@ class FnMapConfig with ChangeNotifier {
         try {
           textColor =
               _strToIntList(value, section: section, option: textColorOption);
-        } catch(e) {
+        } catch (e) {
           log.warning('highlights: error $e parsing section $section, '
               '$textColorOption = $value');
         }
         try {
           highlightColor =
               _strToIntList(value, section: section, option: highlightOption);
-        } catch(e) {
+        } catch (e) {
           log.warning('highlights: error $e parsing section $section, '
               'highlightOption = $value');
         }

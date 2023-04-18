@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:nmap_gui/constants.dart';
-// import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart';
-import 'package:nmap_gui/utilities/ip_address_validator.dart';
 import 'package:provider/provider.dart';
 import 'package:glog/glog.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
@@ -15,17 +13,11 @@ import 'package:nmap_gui/widgets/exec_page.dart';
 import 'package:nmap_gui/widgets/quick_scan_dropdown.dart';
 import 'package:nmap_gui/utilities/scan_profile.dart';
 import 'package:nmap_gui/utilities/fnmap_config.dart';
-import 'package:nmap_gui/utilities/cidr_address.dart';
-import 'package:validators/validators.dart' as valid;
-import 'package:nmap_gui/utilities/ip_address_validator.dart';
 import 'package:nmap_gui/models/dark_mode.dart';
 
 Future setWindowParams() async {
   WidgetsFlutterBinding.ensureInitialized();
-/*
-  await DesktopWindow.setWindowSize(const Size(800,600));
-  await DesktopWindow.setMinWindowSize(const Size(480,420));
-  // await DesktopWindow.setMaxWindowSize(Size.infinite);*/
+
   await windowManager.ensureInitialized();
 
   WindowOptions windowOptions = const WindowOptions(
@@ -45,13 +37,20 @@ Future setWindowParams() async {
 
 void main() async {
   if (kDebugMode) {
-    GLog.setLevel(LogLevel.debug);
-    GLog.setLogFlags(
-        gLogPropCondition | gLogUtilityTrace /* | gLogPropBugFix*/);
-    GLog.setClassProperties(0);
+    GLog.setLevel(GLogLevel.debug);
+    GLog.setLogFlag(flag: gLogTRACE);
+    GLog.setLogFlag(flag: gLogDEFAULT, enabled: false);
+    // Deprecated
+    // GLog.setClassProperties(0);
   } else {
-    GLog.setLevel(LogLevel.info);
+    GLog.setLevel(GLogLevel.info);
   }
+  GLog.setPackage(packageName: kPackageName, enabled: true);
+  GLog.setPackage(packageName: 'default', enabled: false);
+
+  GLog log = GLog('fnmap<main>:', package: kPackageName);
+
+  log.debug('fnmap started', flag: gLogALL, logType: GLogType.pretty);
 
   ScanProfile profile = ScanProfile(fileName: kProfileFilename);
   await profile.parse();
@@ -120,7 +119,6 @@ class _MyAppState extends State<MyApp> {
       return MaterialColor(color.value, shades);
     }
 
-    ScanProfile profile = Provider.of<ScanProfile>(context, listen: true);
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
 
     return MaterialApp(

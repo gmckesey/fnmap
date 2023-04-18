@@ -8,6 +8,7 @@ const double kDefaultTextSize = 14;
 const double kDefaultIconSize = 16;
 // const double kDefaultMenuFont =
 const double kDefaultMenuFontSize = 12;
+const String kPackageName = 'com.krioltech.fnmap';
 const String kProfileFilename = 'scan_profile.usp';
 const String kConfigFilename = 'fnmap.conf';
 const String kZenmapConfFilename = 'zenmap.conf';
@@ -24,6 +25,8 @@ const Color kDisabledColor = Colors.grey;
 const Color kDividerColor = Colors.grey;
 const Color kDefaultBackgroundColor = Color(0xDED5D5FF);
 Color kDetailsBackgroundColor = Colors.grey;
+
+const String gFlagTrace = 'TRACE';
 
 TextStyle kDefaultTextStyle = GoogleFonts.sourceCodePro(
   fontSize: 16.0,

@@ -19,7 +19,10 @@ class ScanProfile with ChangeNotifier {
   late String fileName;
   late Directory? _appSupportDirectory;
   late Config _config;
-  GLog log = GLog('ScanProfile', /*properties: gLogPropALL*/);
+  GLog log = GLog('ScanProfile',
+    /*flag: gLogALL*/
+    package: kPackageName,
+  );
 
   ScanProfile({this.fileName = 'scan_profile.usp'}) {
     _config = Config();

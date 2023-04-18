@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:nmap_gui/constants.dart';
 import 'package:xml/xml.dart';
 import 'package:glog/glog.dart';
 import 'package:xml2json/xml2json.dart';
@@ -14,6 +15,7 @@ enum NMapDeviceStatus {
   up,
   down,
 }
+
 enum NMapAddressType {
   unknown,
   ipv4,
@@ -26,7 +28,7 @@ class NMapPort {
   String protocol = 'unknown';
   String state = 'unknown';
   int number = -1;
-  GLog log = GLog('NMapPort', properties: gLogPropALL);
+  GLog log = GLog('NMapPort', flag: gLogTRACE, package: kPackageName);
 
   NMapPort({
     String? name,
@@ -50,10 +52,11 @@ class NMapPort {
   String toString() {
     return 'service: $name, port: $protocol/$number';
   }
-  NMapPort.fromXMLElement(XmlElement element) {
 
+  NMapPort.fromXMLElement(XmlElement element) {
     if (element.name.local != 'port') {
-      throw InvalidElementException('Element with nodeType ${element.name.local} '
+      throw InvalidElementException(
+          'Element with nodeType ${element.name.local} '
           'is not supported');
     }
 
@@ -68,7 +71,7 @@ class NMapPort {
             'for XML "port" element - ignored');
       }
     }
-    Iterable<XmlElement> services =  element.findElements('service');
+    Iterable<XmlElement> services = element.findElements('service');
     if (services.length == 1) {
       for (XmlAttribute attribute in services.first.attributes) {
         if (attribute.name.toString() == 'name') {
@@ -76,7 +79,7 @@ class NMapPort {
         }
       }
     }
-    Iterable<XmlElement> states =  element.findElements('state');
+    Iterable<XmlElement> states = element.findElements('state');
     if (services.length == 1) {
       for (XmlAttribute attribute in states.first.attributes) {
         if (attribute.name.toString() == 'state') {
@@ -97,7 +100,8 @@ class NMapHostRecord {
   XmlElement? _element;
   Map<String, dynamic>? _map;
 
-  GLog log = GLog('NMapHostRecord:', properties: gLogPropTrace);
+  GLog log =
+      GLog('NMapHostRecord:', flag: gLogTRACE, package: kPackageName);
 
   String get macAddress => _macAddress;
   String get vendor => _vendor;
@@ -106,7 +110,7 @@ class NMapHostRecord {
   List<NMapPort> get ports => _ports;
   NMapDeviceStatus get deviceStatus => _deviceStatus;
   XmlElement? get element => _element;
-  Map<String, dynamic> get map =>  _map != null ? _map! : {};
+  Map<String, dynamic> get map => _map != null ? _map! : {};
 
   String get firstHostname {
     if (_hostnames.isNotEmpty) {
@@ -133,14 +137,13 @@ class NMapHostRecord {
     }
     return activeHosts;
   }
+
   NMapHostRecord.fromXMLElement(XmlElement hostElement) {
     _element = hostElement;
-    XmlNodeType nodeType = hostElement.nodeType;
     Iterable<XmlElement> hostnames = hostElement.findAllElements('hostname');
     _vendor = 'N/A';
     _macAddress = 'N/A';
     _deviceStatus = NMapDeviceStatus.unknown;
-
 
     for (XmlElement hostname in hostnames) {
       final attributes = hostname.attributes;

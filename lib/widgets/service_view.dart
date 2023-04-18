@@ -1,5 +1,4 @@
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nmap_gui/models/host_record.dart';
 import 'package:nmap_gui/models/nmap_command.dart';
 import 'package:nmap_gui/widgets/nmap_tabular.dart';
 import 'package:split_view/split_view.dart';
@@ -19,7 +18,7 @@ class NMapServiceViewController with ChangeNotifier {
   late NMapScrollOffset _initialPosition;
   int? _selected;
 
-  GLog log = GLog('NMapServiceViewController:', properties: gLogPropALL);
+  GLog log = GLog('NMapServiceViewController:', flag: gLogTRACE);
 
   NMapScrollOffset get initialPosition => _initialPosition;
 
@@ -61,7 +60,7 @@ class NMapServiceView extends StatelessWidget {
     NMapXML nMapXML = Provider.of<NMapXML>(context, listen: true);
     List<NMapServiceRecord> serviceRecords = nMapXML.serviceRecords;
     NMapCommand command = Provider.of<NMapCommand>(context, listen: true);
-    GLog log = GLog('NMapServiceView', properties: gLogPropTrace);
+    GLog log = GLog('NMapServiceView', flag: gLogTRACE);
 
     if (controller != null && controller!.isSelected) {
       log.debug('build: nMapXML state is ${nMapXML.state} selected record is '
@@ -118,13 +117,13 @@ class SelectedServiceWidget extends StatefulWidget {
 }
 
 class _SelectedServiceWidgetState extends State<SelectedServiceWidget> {
-  GLog log = GLog('_SelectedServiceWidgetState', properties: gLogPropALL);
+  GLog log = GLog('_SelectedServiceWidgetState', flag: gLogTRACE);
   late NMapServiceViewController _selectedServiceController;
   late SplitViewController _svController;
 
   @override
   void initState() {
-    log.debug('initState called', color: LogColor.red);
+    log.debug('initState called', color: GLogColor.red);
     super.initState();
 
     _selectedServiceController =

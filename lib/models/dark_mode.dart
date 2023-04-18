@@ -15,7 +15,8 @@ class NMapDarkMode with ChangeNotifier {
   ThemeData? _theme;
   late NMapThemeMode _mode;
   late bool initialized;
-  GLog log = GLog('NMapDarkMode', properties: gLogPropALL);
+  GLog log = GLog('NMapDarkMode',
+      flag: gLogTRACE, package: kPackageName);
 
 
   NMapDarkMode({bool isDark = false}) {
@@ -33,9 +34,9 @@ class NMapDarkMode with ChangeNotifier {
   }
 
   void toggleMode() {
-    log.debug('mode before toggle is $_mode');
+    log.debug('mode before toggle is $_mode', flag: gLogTRACE);
     _mode = _mode == NMapThemeMode.light ? NMapThemeMode.dark : NMapThemeMode.light;
-    log.debug('mode after toggle is $_mode');
+    log.debug('mode after toggle is $_mode', flag: gLogTRACE);
     notifyListeners();
   }
 

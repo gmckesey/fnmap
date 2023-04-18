@@ -1,13 +1,12 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuBar
     hide MenuStyle;
+import 'package:nmap_gui/constants.dart';
 import 'package:nmap_gui/widgets/formatted_text.dart';
 import 'package:glog/glog.dart';
 import 'package:nmap_gui/models/nmap_command.dart';
 
-
 class NMapRawOutputWidget extends StatefulWidget {
-
   const NMapRawOutputWidget({
     super.key,
     required this.outputCtrl,
@@ -24,10 +23,9 @@ class NMapRawOutputWidget extends StatefulWidget {
 }
 
 class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
-
-  GLog log = GLog('_NMapOutputWidgetState:', properties: gLogPropTrace);
+  GLog log = GLog('_NMapOutputWidgetState:',
+      flag: gLogTRACE, package: kPackageName);
   late int lastLength;
-
 
   @override
   void initState() {
@@ -45,6 +43,7 @@ class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
       log.debug('initState: initialPosition is 0.0');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     /*    if (outputCtrl.positions.isNotEmpty &&  outputCtrl.position.hasPixels) {
@@ -69,8 +68,7 @@ class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
       padding: const EdgeInsets.all(8.0),
       child: Neumorphic(
         style: const NeumorphicStyle(
-          border: NeumorphicBorder(
-              width: 3, color: Colors.black12),
+          border: NeumorphicBorder(width: 3, color: Colors.black12),
           shape: NeumorphicShape.convex,
           depth: -10,
           lightSource: LightSource.topRight,
@@ -97,8 +95,8 @@ class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
   // TODO: Temporary call to work on the scroll postion
   void _showPosition() {
     // if (outputCtrl.positions.isNotEmpty &&  outputCtrl.position.hasPixels) {
-      log.debug('showPosition: scroll controller position is '
-          '${widget.outputCtrl.offset}');
+    log.debug('showPosition: scroll controller position is '
+        '${widget.outputCtrl.offset}');
     // }
   }
 

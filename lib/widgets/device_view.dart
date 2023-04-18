@@ -18,7 +18,11 @@ class NMapViewController with ChangeNotifier {
   late NMapScrollOffset _initialPosition;
   int? _selected;
 
-  GLog log = GLog('NMapViewController:', properties: gLogPropTrace);
+  GLog log = GLog(
+    'NMapViewController:',
+    flag: gLogTRACE,
+    package: kPackageName,
+  );
 
   NMapScrollOffset get initialPosition => _initialPosition;
 
@@ -45,7 +49,9 @@ class NMapViewController with ChangeNotifier {
 
   void _scrollListener() {
     _initialPosition.offset = _hostScrollController.offset;
-    log.debug('scrollController: offset is ${_hostScrollController.offset}');
+    log.debug('scrollController: offset is ${_hostScrollController.offset}',
+      flag: gLogTRACE,
+    );
   }
 
   ScrollController get hostScrollController => _hostScrollController;
@@ -74,7 +80,11 @@ class NMapDeviceView extends StatelessWidget {
   Widget build(BuildContext context) {
     NMapXML nMapXML = Provider.of<NMapXML>(context, listen: true);
     NMapCommand command = Provider.of<NMapCommand>(context, listen: true);
-    GLog log = GLog('NMapDeviceView', properties: gLogPropALL);
+    GLog log = GLog(
+      'NMapDeviceView',
+      flag: gLogTRACE,
+      package: kPackageName,
+    );
     List<NMapHostRecord> hostRecords = nMapXML.hostRecords;
     log.debug('build: nMapXML state is ${nMapXML.state}');
 
@@ -122,7 +132,8 @@ class SelectedDeviceWidget extends StatefulWidget {
       {Key? key,
       required this.hostRecords,
       this.hostViewController,
-      required this.viewFunction, this.splitViewController})
+      required this.viewFunction,
+      this.splitViewController})
       : super(key: key);
   final List<NMapHostRecord> hostRecords;
   final NMapViewController? hostViewController;
@@ -134,13 +145,17 @@ class SelectedDeviceWidget extends StatefulWidget {
 }
 
 class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
-  GLog log = GLog('_PortsViewWidgetState', properties: gLogPropALL);
+  GLog log = GLog(
+    '_PortsViewWidgetState',
+    flag: gLogTRACE,
+    package: kPackageName,
+  );
   late NMapViewController _selectedHostController;
   late SplitViewController _svController;
 
   @override
   void initState() {
-    log.debug('initState called', color: LogColor.red);
+    log.debug('initState called', color: GLogColor.red);
     super.initState();
 
     _selectedHostController = widget.hostViewController ?? NMapViewController();
@@ -151,10 +166,11 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
         scroll(_selectedHostController.initialPosition.offset);
       });
     }
-    _svController = widget.splitViewController ?? SplitViewController(
-      weights: _selectedHostController.splitViewWeights,
-      limits: [WeightLimit(min: 0.25, max: 0.75), null],
-    );
+    _svController = widget.splitViewController ??
+        SplitViewController(
+          weights: _selectedHostController.splitViewWeights,
+          limits: [WeightLimit(min: 0.25, max: 0.75), null],
+        );
     _svController.addListener(() {
       log.debug('_svController<Listener>: '
           'limits = ${_svController.limits}'
@@ -175,7 +191,7 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
       activeIndicator: const SplitIndicator(
           viewMode: SplitViewMode.Horizontal, isActive: true),
       children: [
-        Container (
+        Container(
           // flex: 5,
           child: buildReorderableListView(activeHosts),
         ),
@@ -187,10 +203,11 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
           endIndent: 20,
         ),*/
         _selectedHostController.selected != -1
-            ? Container (
+            ? Container(
                 // flex: 9,
                 child: widget.viewFunction(
-                    selectedHost: activeHosts[_selectedHostController.selected]))
+                    selectedHost:
+                        activeHosts[_selectedHostController.selected]))
             : const Center(child: Text('Select a host')),
       ],
     );

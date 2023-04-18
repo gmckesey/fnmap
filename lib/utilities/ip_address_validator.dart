@@ -1,3 +1,4 @@
+import 'package:nmap_gui/constants.dart';
 import 'package:nmap_gui/utilities/cidr_address.dart';
 import 'package:validators/validators.dart' as valid;
 import 'package:glog/glog.dart';
@@ -20,7 +21,7 @@ enum AddressType {
 
 //TODO: Make this check more rigorous
 bool isValidIPRange(String range) {
-  GLog log = GLog('isValidRange', properties: gLogPropALL);
+  GLog log = GLog('isValidRange', flag: gLogTRACE, package: kPackageName);
   bool rc;
   rc = RegExp(_reIPRange).hasMatch(range);
   if (rc) {
@@ -74,7 +75,7 @@ bool isValidIPRange(String range) {
 }
 
 AddressType addressType(String address) {
-  GLog log = GLog('isValidIPAddress:');
+  GLog log = GLog('isValidIPAddress:', flag: gLogTRACE, package: kPackageName);
 
   AddressType type = AddressType.invalidAddress;
   if (CidrCalculator.isValidCIDR(address)) {
