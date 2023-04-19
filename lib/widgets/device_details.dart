@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_json_view/flutter_json_view.dart';
-// import 'package:glog/glog.dart';
 import 'package:nmap_gui/constants.dart';
 import 'package:nmap_gui/models/host_record.dart';
 
@@ -22,8 +21,6 @@ class _NMapDeviceDetailsState extends State<NMapDeviceDetails> {
 
   @override
   Widget build(BuildContext context) {
-    /*GLog log = GLog('NMapDeviceDetails:',
-        flag: gLogTRACE, package: kPackageName);*/
     Map<String, dynamic> map = widget.hostRecord.map;
     JsonViewTheme theme = JsonViewTheme(
       defaultTextStyle: kDetailsTextStyle,

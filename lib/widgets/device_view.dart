@@ -6,7 +6,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuBar
     hide MenuStyle;
 import 'package:provider/provider.dart';
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 import 'package:nmap_gui/models/nmap_xml.dart';
 import 'package:nmap_gui/models/host_record.dart';
 import 'package:nmap_gui/constants.dart';
@@ -18,9 +18,9 @@ class NMapViewController with ChangeNotifier {
   late NMapScrollOffset _initialPosition;
   int? _selected;
 
-  GLog log = GLog(
+  NLog log = NLog(
     'NMapViewController:',
-    flag: gLogTRACE,
+    flag: nLogTRACE,
     package: kPackageName,
   );
 
@@ -50,7 +50,7 @@ class NMapViewController with ChangeNotifier {
   void _scrollListener() {
     _initialPosition.offset = _hostScrollController.offset;
     log.debug('scrollController: offset is ${_hostScrollController.offset}',
-      flag: gLogTRACE,
+      flag: nLogTRACE,
     );
   }
 
@@ -80,19 +80,19 @@ class NMapDeviceView extends StatelessWidget {
   Widget build(BuildContext context) {
     NMapXML nMapXML = Provider.of<NMapXML>(context, listen: true);
     NMapCommand command = Provider.of<NMapCommand>(context, listen: true);
-    GLog log = GLog(
+    NLog trace = NLog(
       'NMapDeviceView',
-      flag: gLogTRACE,
+      flag: nLogTRACE,
       package: kPackageName,
     );
     List<NMapHostRecord> hostRecords = nMapXML.hostRecords;
-    log.debug('build: nMapXML state is ${nMapXML.state}');
+    trace.debug('build: nMapXML state is ${nMapXML.state}');
 
     if (controller != null && controller!.isSelected) {
-      log.debug('build: nMapXML state is ${nMapXML.state} selected record is '
+      trace.debug('build: nMapXML state is ${nMapXML.state} selected record is '
           '${controller!.selected}');
     } else {
-      log.debug('build: nMapXML state is ${nMapXML.state}');
+      trace.debug('build: nMapXML state is ${nMapXML.state}');
     }
     if (!nMapXML.isProcessed) {
       if (nMapXML.error) {
@@ -145,23 +145,26 @@ class SelectedDeviceWidget extends StatefulWidget {
 }
 
 class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
-  GLog log = GLog(
+  NLog trace = NLog(
     '_PortsViewWidgetState',
-    flag: gLogTRACE,
+    flag: nLogTRACE,
     package: kPackageName,
+  );
+  NLog log = NLog(
+    '_PortsViewWidgetState', package: kPackageName,
   );
   late NMapViewController _selectedHostController;
   late SplitViewController _svController;
 
   @override
   void initState() {
-    log.debug('initState called', color: GLogColor.red);
+    trace.debug('initState called');//, color: nLogColor.red);
     super.initState();
 
     _selectedHostController = widget.hostViewController ?? NMapViewController();
     if (_selectedHostController.initialPosition.offset != 0.0) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        log.debug('initState<postFrameCallback>: initialPosition = '
+        trace.debug('initState<postFrameCallback>: initialPosition = '
             '${_selectedHostController.initialPosition.offset}');
         scroll(_selectedHostController.initialPosition.offset);
       });
@@ -172,7 +175,7 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
           limits: [WeightLimit(min: 0.25, max: 0.75), null],
         );
     _svController.addListener(() {
-      log.debug('_svController<Listener>: '
+      trace.debug('_svController<Listener>: '
           'limits = ${_svController.limits}'
           'weights = ${_svController.weights}');
       _selectedHostController.splitViewWeights = _svController.weights;

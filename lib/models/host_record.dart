@@ -1,8 +1,6 @@
 import 'dart:convert';
-
-import 'package:nmap_gui/constants.dart';
 import 'package:xml/xml.dart';
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 import 'package:xml2json/xml2json.dart';
 
 class InvalidElementException implements Exception {
@@ -28,7 +26,7 @@ class NMapPort {
   String protocol = 'unknown';
   String state = 'unknown';
   int number = -1;
-  GLog log = GLog('NMapPort', flag: gLogTRACE, package: kPackageName);
+  NLog log = NLog('NMapPort');
 
   NMapPort({
     String? name,
@@ -100,8 +98,11 @@ class NMapHostRecord {
   XmlElement? _element;
   Map<String, dynamic>? _map;
 
-  GLog log =
-      GLog('NMapHostRecord:', flag: gLogTRACE, package: kPackageName);
+  NLog trace =
+      NLog('NMapHostRecord:', flag: nLogTRACE);
+  NLog log = NLog('NMapHostRecord:');
+
+
 
   String get macAddress => _macAddress;
   String get vendor => _vendor;
@@ -202,7 +203,7 @@ class NMapHostRecord {
 
     if (_element != null) {
       xmlString = _element!.toXmlString();
-      log.debug('_toMap: host $firstHostname');
+      trace.debug('_toMap: host $firstHostname');
       convert.parse(xmlString);
       String jsonStr = convert.toBadgerfish();
       map = jsonDecode(jsonStr);
@@ -270,7 +271,7 @@ class NMapHostRecord {
         _macAddress = id;
         break;
       default:
-        log.warning('fromXMLDoc: ');
+        log.warning('fromXMLDoc: type $type unrecognized');
         break;
     }
   }

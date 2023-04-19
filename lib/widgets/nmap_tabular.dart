@@ -5,7 +5,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuBar
     hide MenuStyle;
 import 'package:provider/provider.dart';
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 import 'package:nmap_gui/models/nmap_xml.dart';
 import 'package:nmap_gui/models/host_record.dart';
 import 'package:nmap_gui/constants.dart';
@@ -31,8 +31,8 @@ class NMapTabularWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     NMapXML nMapXML = Provider.of<NMapXML>(context, listen: true);
     NMapCommand command = Provider.of<NMapCommand>(context, listen: true);
-    GLog log = GLog('NMapTabularWidget',
-        flag: gLogTRACE, package: kPackageName);
+    NLog log = NLog('NMapTabularWidget',
+        flag: nLogTRACE, package: kPackageName);
     List<NMapHostRecord> hostRecords = nMapXML.hostRecords;
 
     log.debug('build: nMapXML state is ${nMapXML.state}');
@@ -80,8 +80,8 @@ class NMapPlutoGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    GLog log =
-        GLog('NMapPlutoGrid:', flag: gLogTRACE, package: kPackageName);
+    NLog log =
+    NLog('NMapPlutoGrid:', package: kPackageName);
     Color backgroundColor = Theme.of(context).canvasColor;
     Color textColor = Theme.of(context).primaryColorDark;
 

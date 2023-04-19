@@ -2,7 +2,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nmap_gui/constants.dart';
 import 'package:xml/xml.dart';
 import 'dart:io';
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 import 'package:nmap_gui/models/host_record.dart';
 import 'package:nmap_gui/models/service_record.dart';
 
@@ -19,7 +19,8 @@ class NMapXML with ChangeNotifier {
   final List<NMapHostRecord> _hostRecords = [];
   List<NMapServiceRecord>? _serviceRecords;
   File? _file;
-  GLog log = GLog('NMapXML', flag: gLogTRACE, package: kPackageName);
+  NLog trace = NLog('NMapXML', flag: nLogTRACE, package: kPackageName);
+  NLog log = NLog('NMapXML', package: kPackageName);
   String? _nMapVersion;
   String? _scanDate;
   String? _target;
@@ -138,7 +139,7 @@ class NMapXML with ChangeNotifier {
       for (XmlElement element in hosts) {
         NMapHostRecord record = NMapHostRecord.fromXMLElement(element);
         _hostRecords.add(record);
-        log.debug('processXML: processed host record $record');
+        trace.debug('processXML: processed host record $record');
       }
       _serviceRecords = NMapServiceRecord.generateServiceRecords(_hostRecords);
     }

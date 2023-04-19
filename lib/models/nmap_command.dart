@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 import 'package:nmap_gui/constants.dart';
 import 'package:nmap_gui/utilities/ip_address_validator.dart';
 import 'package:path/path.dart' as path;
@@ -37,8 +37,9 @@ class NMapCommand with ChangeNotifier {
   ProcessResult? _result;
   String? _stderr;
   String? _consoleOutput;
-  GLog log =
-      GLog('NMapCommand', flag: gLogTRACE, package: kPackageName);
+  NLog trace =
+      NLog('NMapCommand', flag: nLogTRACE, package: kPackageName);
+  NLog log = NLog('NMapCommand', package: kPackageName);
   CommandState state = CommandState.notStarted;
   Process? _process;
 
@@ -102,12 +103,12 @@ class NMapCommand with ChangeNotifier {
     state = CommandState.inProgress;
     // notifyListeners();
     if (_arguments == null) {
-      log.debug('start: starting $_program with target $_target');
+      trace.debug('start: starting $_program with target $_target');
       _process = await Process.start(_program, [_target]);
     } else {
       List<String> cmdLine = List.from(_arguments!);
       cmdLine.add(_target);
-      log.debug('start: starting $_program with arguments $cmdLine');
+      trace.debug('start: starting $_program with arguments $cmdLine');
       // Create a unique file in the tmp directory
       // TODO: We will have to save the filename somewhere for later retrieval
       tmpFile = await genTempFile(prefix: 'nmap-gui', postfix: '.xml');

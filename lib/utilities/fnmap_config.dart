@@ -5,7 +5,7 @@ import 'package:ini/ini.dart';
 import 'package:nmap_gui/constants.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 
 String regexOption = 'regex';
 String boldOption = 'bold';
@@ -60,8 +60,8 @@ class FnMapConfig with ChangeNotifier {
   late String fileName;
   late Directory? _appSupportDirectory;
   late Config _config;
-  GLog log =
-      GLog('FnMapConfig', flag: gLogTRACE, package: kPackageName);
+  NLog log =
+      NLog('FnMapConfig', flag: nLogTRACE, package: kPackageName);
 
   FnMapConfig({this.fileName = kConfigFilename});
 

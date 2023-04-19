@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 import 'package:nmap_gui/utilities/scan_profile.dart';
 import 'package:nmap_gui/constants.dart';
 
 class QuickScanController with ChangeNotifier {
-  GLog log = GLog('QuickScanController:',
-      flag: gLogTRACE, package: kPackageName);
+  NLog log = NLog('QuickScanController:',
+      flag: nLogTRACE, package: kPackageName);
   final Map<String, String> _defaultChoiceMap = {
     'Regular Scan': '',
     'Intense Scan': '-T4 -A',

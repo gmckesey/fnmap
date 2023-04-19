@@ -7,7 +7,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuBar
     hide MenuStyle;
 import 'package:provider/provider.dart';
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 import 'package:nmap_gui/models/nmap_xml.dart';
 import 'package:nmap_gui/models/service_record.dart';
 import 'package:nmap_gui/constants.dart';
@@ -18,7 +18,7 @@ class NMapServiceViewController with ChangeNotifier {
   late NMapScrollOffset _initialPosition;
   int? _selected;
 
-  GLog log = GLog('NMapServiceViewController:', flag: gLogTRACE);
+  NLog log = NLog('NMapServiceViewController:', flag: nLogTRACE);
 
   NMapScrollOffset get initialPosition => _initialPosition;
 
@@ -60,7 +60,7 @@ class NMapServiceView extends StatelessWidget {
     NMapXML nMapXML = Provider.of<NMapXML>(context, listen: true);
     List<NMapServiceRecord> serviceRecords = nMapXML.serviceRecords;
     NMapCommand command = Provider.of<NMapCommand>(context, listen: true);
-    GLog log = GLog('NMapServiceView', flag: gLogTRACE);
+    NLog log = NLog('NMapServiceView', flag: nLogTRACE);
 
     if (controller != null && controller!.isSelected) {
       log.debug('build: nMapXML state is ${nMapXML.state} selected record is '
@@ -117,20 +117,21 @@ class SelectedServiceWidget extends StatefulWidget {
 }
 
 class _SelectedServiceWidgetState extends State<SelectedServiceWidget> {
-  GLog log = GLog('_SelectedServiceWidgetState', flag: gLogTRACE);
+  NLog trace = NLog('_SelectedServiceWidgetState', flag: nLogTRACE);
+  NLog log = NLog('_SelectedServiceWidgetState');
   late NMapServiceViewController _selectedServiceController;
   late SplitViewController _svController;
 
   @override
   void initState() {
-    log.debug('initState called', color: GLogColor.red);
+    trace.debug('initState called'); //, color: NLogColor.red);
     super.initState();
 
     _selectedServiceController =
         widget.serviceViewController ?? NMapServiceViewController();
     if (_selectedServiceController.initialPosition.offset != 0.0) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        log.debug('initState<postFrameCallback>: initialPosition = '
+        trace.debug('initState<postFrameCallback>: initialPosition = '
             '${_selectedServiceController.initialPosition.offset}');
         scroll(_selectedServiceController.initialPosition.offset);
       });

@@ -4,7 +4,7 @@ import 'package:ini/ini.dart';
 import 'package:nmap_gui/constants.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 
 const String kTemporaryPath = 'temporaryPath';
 const String kApplicationSupportPath = 'applicationSupportPath';
@@ -19,8 +19,11 @@ class ScanProfile with ChangeNotifier {
   late String fileName;
   late Directory? _appSupportDirectory;
   late Config _config;
-  GLog log = GLog('ScanProfile',
-    /*flag: gLogALL*/
+  NLog log = NLog('ScanProfile',
+    package: kPackageName,
+  );
+  NLog trace = NLog('ScanProfile',
+    flag: nLogTRACE,
     package: kPackageName,
   );
 
@@ -52,12 +55,12 @@ class ScanProfile with ChangeNotifier {
 
     _config = Config.fromStrings(lines);
     for (String section in _config.sections()) {
-      log.debug('parse: section is [$section].');
+      trace.verbose('parse: section is [$section].');
       if (_config.options(section) != null) {
         Iterable<String> options = _config.options(section)!;
         for (String option in options) {
           String? value = _config.get(section, option);
-          log.debug('parse: option is $option = $value');
+          trace.verbose('parse: option is $option = $value');
         }
       }
     }

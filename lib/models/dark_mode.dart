@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nmap_gui/constants.dart';
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 
 enum NMapThemeMode {
   light,
@@ -15,9 +15,7 @@ class NMapDarkMode with ChangeNotifier {
   ThemeData? _theme;
   late NMapThemeMode _mode;
   late bool initialized;
-  GLog log = GLog('NMapDarkMode',
-      flag: gLogTRACE, package: kPackageName);
-
+  NLog log = NLog('NMapDarkMode');
 
   NMapDarkMode({bool isDark = false}) {
 
@@ -34,9 +32,9 @@ class NMapDarkMode with ChangeNotifier {
   }
 
   void toggleMode() {
-    log.debug('mode before toggle is $_mode', flag: gLogTRACE);
+    log.debug('mode before toggle is $_mode');
     _mode = _mode == NMapThemeMode.light ? NMapThemeMode.dark : NMapThemeMode.light;
-    log.debug('mode after toggle is $_mode', flag: gLogTRACE);
+    log.debug('mode after toggle is $_mode');
     notifyListeners();
   }
 

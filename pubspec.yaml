@@ -10,22 +10,22 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.5
   provider: ^6.0.5
   glog:
     path: ../glog/
   flutter_neumorphic: ^3.2.0
   desktop_window: ^0.4.0
-  window_manager: ^0.3.1
-  menu_bar: ^0.4.0
+  window_manager: ^0.3.2
+  menu_bar: ^0.5.0
   flutter_parsed_text: ^2.2.1
   url_launcher: ^6.1.10
   font_awesome_flutter: ^10.4.0
   ini: ^2.1.0
-  path_provider: ^2.0.13
+  path_provider: ^2.0.14
   path: ^1.8.2
   validators: ^3.0.0
-  dropdown_button2: ^2.0.0
+  dropdown_button2: ^2.1.0
   dropdown_plus:
     path: ../dropdown_plus/
   uuid: ^3.0.7
@@ -33,12 +33,13 @@ dependencies:
   google_fonts: ^4.0.3
   pluto_grid: ^6.0.4
   loading_animation_widget: ^1.2.0+4
-  file_picker: ^5.2.6
+  file_picker: ^5.2.9
   flutter_tree: ^2.0.3
   xml2json: ^5.3.6
   flutter_json_view: ^1.0.0
   split_view: ^3.2.1
   adwaita: ^0.5.2
+  logger: ^1.3.0
 
 dev_dependencies:
   flutter_test:
@@ -46,7 +47,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.0
+  flutter_lints: ^2.0.1
 
 flutter:
   uses-material-design: true

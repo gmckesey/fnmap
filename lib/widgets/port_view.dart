@@ -2,7 +2,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuBar
     hide MenuStyle;
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 import 'package:nmap_gui/models/host_record.dart';
 import 'package:nmap_gui/constants.dart';
 
@@ -12,9 +12,9 @@ class NMapPortGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    GLog log =
-        GLog('NMapPortGrid:', flag: gLogTRACE, package: kPackageName);
-    log.debug('rebuild', color: GLogColor.magenta);
+    NLog trace =
+        NLog('NMapPortGrid:', flag: nLogTRACE, package: kPackageName);
+    trace.debug('rebuild'); //, color: NLogColor.magenta);
     Color backgroundColor = Theme.of(context).canvasColor;
     Color textColor = Theme.of(context).primaryColorDark;
 
@@ -82,8 +82,8 @@ class NMapPortGrid extends StatelessWidget {
   }
 
   List<PlutoRow> _generateRows() {
-    GLog log =
-        GLog('NMapPortGrid:', flag: gLogTRACE, package: kPackageName);
+    NLog trace =
+        NLog('NMapPortGrid:', flag: nLogTRACE, package: kPackageName);
     List<PlutoRow> list = [];
     for (int row = 0; row < hostRecord.ports.length; row++) {
       NMapPort port = hostRecord.ports[row];
@@ -97,16 +97,16 @@ class NMapPortGrid extends StatelessWidget {
         list.add(r);
       }
     }
-    log.debug('_generateRows returning ${list.length} rows');
+    trace.debug('_generateRows returning ${list.length} rows');
     return list;
   }
 
   Widget portStateRenderer(PlutoColumnRendererContext context) {
-    GLog log =
-        GLog('NMapPortGrid:', flag: gLogTRACE, package: kPackageName);
+    NLog trace =
+        NLog('NMapPortGrid:', flag: nLogTRACE, package: kPackageName);
 
     String state = context.cell.value;
-    log.debug('rendering state = $state');
+    trace.debug('rendering state = $state');
     Color color;
     switch (state) {
       case 'filtered':

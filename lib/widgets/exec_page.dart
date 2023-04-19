@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:menu_bar/menu_bar.dart';
@@ -10,7 +11,7 @@ import 'package:nmap_gui/constants.dart';
 import 'package:nmap_gui/widgets/device_view.dart';
 import 'package:nmap_gui/widgets/port_view.dart';
 import 'package:provider/provider.dart';
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuBar
     hide MenuStyle;
@@ -32,7 +33,8 @@ class ExecPage extends StatefulWidget {
 }
 
 class _ExecPageState extends State<ExecPage> {
-  GLog log = GLog('ExecPage', flag: gLogTRACE, package: kPackageName);
+  NLog log = NLog('ExecPage', package: kPackageName);
+  NLog trace = NLog('ExecPage', flag: nLogTRACE, package: kPackageName);
   TextEditingController ipAddressCtrl = TextEditingController();
   TextEditingController optionsCtrl = TextEditingController();
   TextEditingController targetCtrl = TextEditingController(text: 'item 3');
@@ -86,14 +88,14 @@ class _ExecPageState extends State<ExecPage> {
     QuickScanController qsController =
         Provider.of<QuickScanController>(context, listen: false);
 
-    log.debug('_commandLineChanged: command line ="${optionsCtrl.text}"');
+    trace.debug('_commandLineChanged: command line ="${optionsCtrl.text}"');
 
     // Check if Quick Options and Command Line Options are in Sync
     if (qsController.key != null &&
         qsController.choiceMap[qsController.key] != optionsCtrl.text) {
       // Set qsController point to kCustomKey
       if (qsController.key != kCustomKey) {
-        log.debug('_commandLineChanged: set '
+        trace.debug('_commandLineChanged: set '
             '"${qsController.key}" to "$kCustomKey"');
         if (qsController.choiceMap.containsKey(kCustomKey)) {
           qsController.map = {kCustomKey: qsController.choiceMap[kCustomKey]!};
@@ -120,7 +122,7 @@ class _ExecPageState extends State<ExecPage> {
     String commandLine = optionsCtrl.text;
     // Set the command line option text field value
     // optionsCtrl.text = commandLine;
-    log.debug('build: dropdown = "${qsController.key}" '
+    trace.debug('build: dropdown = "${qsController.key}" '
         'command line = "$commandLine"');
 
     if (_aborted && result != null) {
@@ -179,7 +181,7 @@ class _ExecPageState extends State<ExecPage> {
                 QuickScanDropDown(
                   controller: qsController,
                   onChanged: (option) {
-                    log.debug(
+                    trace.debug(
                         'QuickScanDropDown - onChanged: Quick Options changed to "$option"');
                     setState(() {
                       optionsCtrl.text = qsController.choiceMap[option]!;
@@ -391,11 +393,11 @@ class _ExecPageState extends State<ExecPage> {
     if (Platform.isLinux || Platform.isWindows) {
       String reXMLFile = r'^.+\.xml$';
       DateFormat formatter = DateFormat('yyyy-MM-dd-HHmm');
-      w = MenuBar(
-        barStyle: BarStyle(
-            backgroundColor: Theme.of(context).primaryColor), //kDefaultColor),
-        menuStyle: MenuStyle(backgroundColor: backgroundColor),
-        menuButtonStyle: MenuButtonStyle(backgroundColor: backgroundColor),
+      w = MenuBarWidget(
+        barStyle: MenuStyle(
+            backgroundColor: MaterialStatePropertyAll(defaultColor)), //kDefaultColor),
+        barButtonStyle: ButtonStyle(backgroundColor: MaterialStatePropertyAll(defaultColor)),
+        menuButtonStyle: ButtonStyle(backgroundColor: MaterialStatePropertyAll(backgroundColor)),
         barButtons: [
           BarButton(
             text: Text('Scan', style: TextStyle(color: textColor)),
@@ -513,7 +515,7 @@ class _ExecPageState extends State<ExecPage> {
                             allowedExtensions: ['xml'],
                           );
                           if (result != null) {
-                            String? path = result!.files.single.path;
+                            String? path = result.files.single.path;
                             if (path != null) {
                               log.debug('onTap<LoadScan> selected $path');
                               // Clear host records, but don't notify because we are going

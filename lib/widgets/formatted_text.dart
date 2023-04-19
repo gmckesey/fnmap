@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:nmap_gui/constants.dart';
 import 'package:nmap_gui/utilities/fnmap_config.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl;
-import 'package:glog/glog.dart';
+import 'package:nmap_gui/utilities/logger.dart';
 import 'package:validators/validators.dart' as valid;
 
 class FormattedText extends StatelessWidget {
@@ -14,8 +14,8 @@ class FormattedText extends StatelessWidget {
   final TextDirection? textDirection;
   final TextOverflow? overflow;
   final int? maxLines;
-  final GLog log =
-      GLog('FormattedText:', flag: gLogTRACE, package: kPackageName);
+  final NLog log =
+      NLog('FormattedText:', flag: nLogTRACE, package: kPackageName);
 
   final parse = <MatchText>[
     MatchText(
@@ -28,7 +28,7 @@ class FormattedText extends StatelessWidget {
         ),
       ),
       onTap: (String username) {
-        GLog('FormattedText:', flag: gLogTRACE, package: kPackageName)
+        NLog('FormattedText:', flag: nLogTRACE, package: kPackageName)
             .debug(username.substring(1));
       },
     ),
@@ -42,7 +42,7 @@ class FormattedText extends StatelessWidget {
         ),
       ),
       onTap: (String username) {
-        GLog('FormattedText:', flag: gLogTRACE, package: kPackageName)
+        NLog('FormattedText:', flag: nLogTRACE, package: kPackageName)
             .debug(username.substring(1));
       },
     ),
@@ -57,8 +57,8 @@ class FormattedText extends StatelessWidget {
           try {
             await launchUrl(uri);
           } catch (e) {
-            GLog('FormattedText',
-                    flag: gLogTRACE, package: kPackageName)
+            NLog('FormattedText',
+                    flag: nLogTRACE, package: kPackageName)
                 .error('MatchText error $e launching $url');
             return;
           }
@@ -118,13 +118,13 @@ class FormattedText extends StatelessWidget {
             try {
               await launchUrl(uri);
             } catch (e) {
-              GLog('FormattedText',
-                      flag: gLogTRACE, package: kPackageName)
+              NLog('FormattedText',
+                      flag: nLogTRACE, package: kPackageName)
                   .error('MatchText error $e launching $value');
               return;
             }
           } else {
-            GLog('MatchText:', flag: gLogTRACE, package: kPackageName)
+            NLog('MatchText:', package: kPackageName)
                 .debug('onTap: selected $value');
           }
         },
