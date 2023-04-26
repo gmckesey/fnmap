@@ -67,5 +67,18 @@ class ScanProfile with ChangeNotifier {
     notifyListeners();
   }
 
+  void save() async {
+    String scanFile;
+
+    _appSupportDirectory = await getApplicationSupportDirectory();
+    scanFile = path.join(_appSupportDirectory!.path, fileName);
+
+    try {
+      File(scanFile).writeAsString(_config.toString());
+    } catch (e) {
+      log.error('Error $e writing to profile file $e');
+    }
+  }
+
   Config get config => _config;
 }

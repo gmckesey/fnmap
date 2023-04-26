@@ -61,6 +61,7 @@ void main() async {
   // NLog.setPackage(packageName: nLogDEFAULT, enabled: false);
   NLog.setPackage(packageName: kPackageName, enabled: true);
   NLog.setLogFlag(flag: nLogDEFAULT);
+  NLog.setLogFlag(flag: nLogTRACE);
   NLog('fnmap<main>:', type: NLogType.simple, package: kPackageName)
       .debug('fnmap started');
 

@@ -1,11 +1,13 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:nmap_gui/utilities/logger.dart';
 import 'package:nmap_gui/utilities/scan_profile.dart';
 import 'package:nmap_gui/constants.dart';
 
 class QuickScanController with ChangeNotifier {
-  NLog log = NLog('QuickScanController:',
-      flag: nLogTRACE, package: kPackageName);
+  NLog log =
+      NLog('QuickScanController:', flag: nLogTRACE, package: kPackageName);
   final Map<String, String> _defaultChoiceMap = {
     'Regular Scan': '',
     'Intense Scan': '-T4 -A',
@@ -47,9 +49,42 @@ class QuickScanController with ChangeNotifier {
       _map = {_choiceMap.keys.first: _choiceMap.values.first};
     }
   }
+
   Map<String, String>? _map;
   bool get isSet => _map != null;
-  Map<String, String> get choiceMap => _choiceMap;
+  UnmodifiableMapView<String, String> get choiceMap =>
+      UnmodifiableMapView(_choiceMap);
+
+  void addEntry(key, value) {
+    // Only add the entry for a new key
+    if (_choiceMap.containsKey(key)) {
+      log.warning('addEntry: Key [$key] already exists');
+      return;
+    }
+    _choiceMap.addAll({key: value});
+    _choiceMap.remove('Custom');
+    _choiceMap.addAll({'Custom':''});
+    notifyListeners();
+  }
+
+  void editEntry(key, value) {
+    if (_choiceMap.containsKey(key)) {
+      _choiceMap[key] = value;
+      notifyListeners();
+    } else {
+      log.warning('editEntry: Map does not contain key [$key]');
+    }
+  }
+
+  void deleteEntry(key) {
+    if (_choiceMap.containsKey(key)) {
+      _choiceMap.remove(key);
+      _map = { _choiceMap.keys.first: _choiceMap.values.first};
+      notifyListeners();
+    } else {
+      log.warning('deleteEntry: Map does not contain key [$key]');
+    }
+  }
 
   Map<String, String>? get map => _map;
   String? get key => isSet ? _map!.keys.first : null;

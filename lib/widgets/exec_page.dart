@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:menu_bar/menu_bar.dart';
 import 'package:nmap_gui/models/host_record.dart';
+import 'package:nmap_gui/utilities/scan_profile.dart';
 import 'package:nmap_gui/widgets/device_details.dart';
 import 'package:nmap_gui/widgets/service_view.dart';
 import 'package:xml/xml.dart';
@@ -24,6 +25,7 @@ import 'package:nmap_gui/models/nmap_xml.dart';
 import 'package:nmap_gui/models/dark_mode.dart';
 import 'package:nmap_gui/widgets/raw_output_widget.dart';
 import 'package:nmap_gui/widgets/nmap_tabular.dart';
+import 'package:nmap_gui/dialogs/edit_profile.dart';
 
 class ExecPage extends StatefulWidget {
   const ExecPage({Key? key}) : super(key: key);
@@ -179,6 +181,7 @@ class _ExecPageState extends State<ExecPage> {
                   child: SizedBox(width: 80, child: Text('Quick Options:')),
                 ),
                 QuickScanDropDown(
+                  key: Key('QSDropDown - ${qsController.choiceMap.length}'),
                   controller: qsController,
                   onChanged: (option) {
                     trace.debug(
@@ -284,7 +287,7 @@ class _ExecPageState extends State<ExecPage> {
                             controller: _hostViewController,
                           ),
                           NMapServiceView(
-                              placeholder: const Icon(Icons.do_not_disturb),
+                            placeholder: const Icon(Icons.do_not_disturb),
                             controller: _serviceViewController,
                           ),
                         ]),
@@ -395,9 +398,12 @@ class _ExecPageState extends State<ExecPage> {
       DateFormat formatter = DateFormat('yyyy-MM-dd-HHmm');
       w = MenuBarWidget(
         barStyle: MenuStyle(
-            backgroundColor: MaterialStatePropertyAll(defaultColor)), //kDefaultColor),
-        barButtonStyle: ButtonStyle(backgroundColor: MaterialStatePropertyAll(defaultColor)),
-        menuButtonStyle: ButtonStyle(backgroundColor: MaterialStatePropertyAll(backgroundColor)),
+            backgroundColor:
+                MaterialStatePropertyAll(defaultColor)), //kDefaultColor),
+        barButtonStyle: ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(defaultColor)),
+        menuButtonStyle: ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(backgroundColor)),
         barButtons: [
           BarButton(
             text: Text('Scan', style: TextStyle(color: textColor)),
@@ -594,7 +600,9 @@ class _ExecPageState extends State<ExecPage> {
                 MenuButton(
                   text: const Text('New Profile',
                       style: TextStyle(fontSize: kDefaultMenuFontSize)),
-                  onTap: () {},
+                  onTap: inProgress ? null :() {
+                    editProfile(context, edit: false, controller: optionsCtrl);
+                  },
                   icon: const Icon(FontAwesomeIcons.arrowUpRightFromSquare,
                       size: kDefaultIconSize), //const Icon(Icons.copyright),
                 ),
@@ -603,7 +611,21 @@ class _ExecPageState extends State<ExecPage> {
                     'Edit Selected Profile',
                     style: TextStyle(fontSize: kDefaultMenuFontSize),
                   ),
-                  onTap: () {},
+                  onTap: inProgress ? null : () {
+                    editProfile(context, edit: true, controller: optionsCtrl);
+                  },
+                  icon: const Icon(FontAwesomeIcons.solidPenToSquare,
+                      size: kDefaultIconSize), // const Icon(Icons.info),
+                ),
+                MenuButton(
+                  text: const Text(
+                    'Delete Selected Profile',
+                    style: TextStyle(fontSize: kDefaultMenuFontSize),
+                  ),
+                  onTap: inProgress ? null :  () {
+                    editProfile(context,
+                        edit: false, delete: true, controller: optionsCtrl);
+                  },
                   icon: const Icon(FontAwesomeIcons.solidPenToSquare,
                       size: kDefaultIconSize), // const Icon(Icons.info),
                 ),
