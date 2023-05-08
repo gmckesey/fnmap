@@ -1,9 +1,9 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:nmap_gui/utilities/logger.dart';
-import 'package:nmap_gui/utilities/scan_profile.dart';
-import 'package:nmap_gui/constants.dart';
+import 'package:fnmap/utilities/logger.dart';
+import 'package:fnmap/utilities/scan_profile.dart';
+import 'package:fnmap/constants.dart';
 
 class QuickScanController with ChangeNotifier {
   NLog log =

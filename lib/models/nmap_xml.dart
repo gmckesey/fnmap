@@ -1,10 +1,10 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:nmap_gui/constants.dart';
+import 'package:fnmap/constants.dart';
 import 'package:xml/xml.dart';
 import 'dart:io';
-import 'package:nmap_gui/utilities/logger.dart';
-import 'package:nmap_gui/models/host_record.dart';
-import 'package:nmap_gui/models/service_record.dart';
+import 'package:fnmap/utilities/logger.dart';
+import 'package:fnmap/models/host_record.dart';
+import 'package:fnmap/models/service_record.dart';
 
 enum NMapDocumentState {
   uninitialized,

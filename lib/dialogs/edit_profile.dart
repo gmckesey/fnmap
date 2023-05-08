@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ini/ini.dart';
-import 'package:nmap_gui/constants.dart';
-import 'package:nmap_gui/utilities/scan_profile.dart';
+import 'package:fnmap/constants.dart';
+import 'package:fnmap/utilities/scan_profile.dart';
 import 'package:provider/provider.dart';
-import 'package:nmap_gui/widgets/quick_scan_dropdown.dart';
-import 'package:nmap_gui/utilities/logger.dart';
+import 'package:fnmap/widgets/quick_scan_dropdown.dart';
+import 'package:fnmap/utilities/logger.dart';
 
 Future<void> editProfile(BuildContext context,
     {bool edit = true,

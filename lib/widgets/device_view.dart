@@ -1,15 +1,15 @@
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nmap_gui/models/nmap_command.dart';
+import 'package:fnmap/models/nmap_command.dart';
 import 'package:split_view/split_view.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuBar
     hide MenuStyle;
 import 'package:provider/provider.dart';
-import 'package:nmap_gui/utilities/logger.dart';
-import 'package:nmap_gui/models/nmap_xml.dart';
-import 'package:nmap_gui/models/host_record.dart';
-import 'package:nmap_gui/constants.dart';
+import 'package:fnmap/utilities/logger.dart';
+import 'package:fnmap/models/nmap_xml.dart';
+import 'package:fnmap/models/host_record.dart';
+import 'package:fnmap/constants.dart';
 
 class NMapViewController with ChangeNotifier {
   late ScrollController _hostScrollController;

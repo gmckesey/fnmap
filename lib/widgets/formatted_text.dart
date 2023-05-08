@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_parsed_text/flutter_parsed_text.dart';
 import 'package:provider/provider.dart';
-import 'package:nmap_gui/constants.dart';
-import 'package:nmap_gui/utilities/fnmap_config.dart';
+import 'package:fnmap/constants.dart';
+import 'package:fnmap/utilities/fnmap_config.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl;
-import 'package:nmap_gui/utilities/logger.dart';
+import 'package:fnmap/utilities/logger.dart';
 import 'package:validators/validators.dart' as valid;
 
 class FormattedText extends StatelessWidget {

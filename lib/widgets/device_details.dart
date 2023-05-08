@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_json_view/flutter_json_view.dart';
-import 'package:nmap_gui/constants.dart';
-import 'package:nmap_gui/models/host_record.dart';
+import 'package:fnmap/constants.dart';
+import 'package:fnmap/models/host_record.dart';
 
 class NMapDeviceDetails extends StatefulWidget {
   const NMapDeviceDetails({Key? key, required this.hostRecord})

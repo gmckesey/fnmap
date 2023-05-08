@@ -1,20 +1,20 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:nmap_gui/constants.dart';
+import 'package:fnmap/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
-import 'package:nmap_gui/utilities/logger.dart';
+import 'package:fnmap/utilities/logger.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuBar
     hide MenuStyle;
 import 'package:window_manager/window_manager.dart';
-import 'package:nmap_gui/models/nmap_command.dart';
-import 'package:nmap_gui/models/nmap_xml.dart';
-import 'package:nmap_gui/widgets/exec_page.dart';
-import 'package:nmap_gui/widgets/quick_scan_dropdown.dart';
-import 'package:nmap_gui/utilities/scan_profile.dart';
-import 'package:nmap_gui/utilities/fnmap_config.dart';
-import 'package:nmap_gui/models/dark_mode.dart';
+import 'package:fnmap/models/nmap_command.dart';
+import 'package:fnmap/models/nmap_xml.dart';
+import 'package:fnmap/widgets/exec_page.dart';
+import 'package:fnmap/widgets/quick_scan_dropdown.dart';
+import 'package:fnmap/utilities/scan_profile.dart';
+import 'package:fnmap/utilities/fnmap_config.dart';
+import 'package:fnmap/models/dark_mode.dart';
 
 Future setWindowParams() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -3,29 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:menu_bar/menu_bar.dart';
-import 'package:nmap_gui/models/host_record.dart';
-import 'package:nmap_gui/utilities/scan_profile.dart';
-import 'package:nmap_gui/widgets/device_details.dart';
-import 'package:nmap_gui/widgets/service_view.dart';
+import 'package:fnmap/models/host_record.dart';
+import 'package:fnmap/utilities/scan_profile.dart';
+import 'package:fnmap/widgets/device_details.dart';
+import 'package:fnmap/widgets/service_view.dart';
 import 'package:xml/xml.dart';
-import 'package:nmap_gui/constants.dart';
-import 'package:nmap_gui/widgets/device_view.dart';
-import 'package:nmap_gui/widgets/port_view.dart';
+import 'package:fnmap/constants.dart';
+import 'package:fnmap/widgets/device_view.dart';
+import 'package:fnmap/widgets/port_view.dart';
 import 'package:provider/provider.dart';
-import 'package:nmap_gui/utilities/logger.dart';
+import 'package:fnmap/utilities/logger.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuBar
     hide MenuStyle;
-import 'package:nmap_gui/models/nmap_command.dart';
+import 'package:fnmap/models/nmap_command.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nmap_gui/widgets/quick_scan_dropdown.dart';
-import 'package:nmap_gui/utilities/ip_address_validator.dart';
-import 'package:nmap_gui/models/nmap_xml.dart';
-import 'package:nmap_gui/models/dark_mode.dart';
-import 'package:nmap_gui/widgets/raw_output_widget.dart';
-import 'package:nmap_gui/widgets/nmap_tabular.dart';
-import 'package:nmap_gui/dialogs/edit_profile.dart';
+import 'package:fnmap/widgets/quick_scan_dropdown.dart';
+import 'package:fnmap/utilities/ip_address_validator.dart';
+import 'package:fnmap/models/nmap_xml.dart';
+import 'package:fnmap/models/dark_mode.dart';
+import 'package:fnmap/widgets/raw_output_widget.dart';
+import 'package:fnmap/widgets/nmap_tabular.dart';
+import 'package:fnmap/dialogs/edit_profile.dart';
 
 class ExecPage extends StatefulWidget {
   const ExecPage({Key? key}) : super(key: key);

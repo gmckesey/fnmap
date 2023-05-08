@@ -1,4 +1,4 @@
-name: nmap_gui
+name: fnmap
 description: A new Flutter project.
 
 publish_to: 'none'
@@ -12,8 +12,6 @@ dependencies:
 
   cupertino_icons: ^1.0.5
   provider: ^6.0.5
-  glog:
-    path: ../glog/
   flutter_neumorphic: ^3.2.0
   desktop_window: ^0.4.0
   window_manager: ^0.3.2
@@ -27,7 +25,7 @@ dependencies:
   validators: ^3.0.0
   dropdown_button2: ^2.1.0
   dropdown_plus:
-    path: ../dropdown_plus/
+    path: ./dropdown_plus/
   uuid: ^3.0.7
   xml: ^6.2.2
   google_fonts: ^4.0.3

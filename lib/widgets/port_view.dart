@@ -2,9 +2,9 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuBar
     hide MenuStyle;
-import 'package:nmap_gui/utilities/logger.dart';
-import 'package:nmap_gui/models/host_record.dart';
-import 'package:nmap_gui/constants.dart';
+import 'package:fnmap/utilities/logger.dart';
+import 'package:fnmap/models/host_record.dart';
+import 'package:fnmap/constants.dart';
 
 class NMapPortGrid extends StatelessWidget {
   const NMapPortGrid({Key? key, required this.hostRecord}) : super(key: key);

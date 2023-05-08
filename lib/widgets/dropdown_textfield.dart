@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:nmap_gui/utilities/logger.dart';
-import 'package:nmap_gui/constants.dart';
+import 'package:fnmap/utilities/logger.dart';
+import 'package:fnmap/constants.dart';
 
 class TextfieldDropdownButton2 extends StatelessWidget {
   final String hint;

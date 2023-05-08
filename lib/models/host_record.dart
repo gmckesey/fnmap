@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:xml/xml.dart';
-import 'package:nmap_gui/utilities/logger.dart';
+import 'package:fnmap/utilities/logger.dart';
 import 'package:xml2json/xml2json.dart';
 
 class InvalidElementException implements Exception {

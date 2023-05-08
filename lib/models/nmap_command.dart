@@ -2,14 +2,14 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:nmap_gui/utilities/logger.dart';
-import 'package:nmap_gui/constants.dart';
-import 'package:nmap_gui/utilities/ip_address_validator.dart';
+import 'package:fnmap/utilities/logger.dart';
+import 'package:fnmap/constants.dart';
+import 'package:fnmap/utilities/ip_address_validator.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:provider/provider.dart';
-import 'package:nmap_gui/models/nmap_xml.dart';
+import 'package:fnmap/models/nmap_xml.dart';
 
 enum CommandState {
   notStarted,

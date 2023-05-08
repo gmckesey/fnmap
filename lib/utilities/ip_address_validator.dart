@@ -1,7 +1,7 @@
-import 'package:nmap_gui/constants.dart';
-import 'package:nmap_gui/utilities/cidr_address.dart';
+import 'package:fnmap/constants.dart';
+import 'package:fnmap/utilities/cidr_address.dart';
 import 'package:validators/validators.dart' as valid;
-import 'package:nmap_gui/utilities/logger.dart';
+import 'package:fnmap/utilities/logger.dart';
 
 String _reIPRange = r'^((?:[0-9]{1,3}\.)|(?:[0-9]{1,3}\-[0-9]{1,3}\.)){3}(?:([0-9]{1,3})|([0-9]{1,3}\-[0-9]{1,3}))$';
 String _reOctetRange = r'^(?:(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\-(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9]))$';

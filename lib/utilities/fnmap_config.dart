@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:ini/ini.dart';
-import 'package:nmap_gui/constants.dart';
+import 'package:fnmap/constants.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'package:nmap_gui/utilities/logger.dart';
+import 'package:fnmap/utilities/logger.dart';
 
 String regexOption = 'regex';
 String boldOption = 'bold';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nmap_gui/constants.dart';
-import 'package:nmap_gui/utilities/logger.dart';
+import 'package:fnmap/constants.dart';
+import 'package:fnmap/utilities/logger.dart';
 
 enum NMapThemeMode {
   light,

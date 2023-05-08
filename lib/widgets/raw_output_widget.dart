@@ -1,10 +1,10 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuBar
     hide MenuStyle;
-import 'package:nmap_gui/constants.dart';
-import 'package:nmap_gui/widgets/formatted_text.dart';
-import 'package:nmap_gui/utilities/logger.dart';
-import 'package:nmap_gui/models/nmap_command.dart';
+import 'package:fnmap/constants.dart';
+import 'package:fnmap/widgets/formatted_text.dart';
+import 'package:fnmap/utilities/logger.dart';
+import 'package:fnmap/models/nmap_command.dart';
 
 class NMapRawOutputWidget extends StatefulWidget {
   const NMapRawOutputWidget({
