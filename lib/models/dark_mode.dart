@@ -59,44 +59,27 @@ class NMapDarkMode with ChangeNotifier {
       primarySwatch: Colors.indigo, //getMaterialColor(kDefaultColor),
     );
 
-    TextStyle? defaultMenuTextStyle = Theme.of(rootContext).textTheme.bodyMedium?.copyWith(backgroundColor: Colors.white);
-    TextTheme defaultMenuTheme;
-    if (defaultMenuTextStyle != null) {
-      defaultMenuTheme = Theme
-          .of(rootContext)
-          .textTheme
-          .copyWith(bodyMedium: defaultMenuTextStyle);
-    } else {
-      TextStyle textStyle = TextStyle(
-        inherit: false,
-        color: Colors.black,
-        backgroundColor: Colors.indigo.shade100,
-        fontSize: 11,
-      );
-      defaultMenuTheme = Theme
-          .of(rootContext)
-          .textTheme
-          .copyWith(bodyMedium: textStyle);
-    }
     _themeLight = ThemeData.light(useMaterial3: true).copyWith(
       primaryColor: kDefaultColor,
       secondaryHeaderColor: Colors.black,
       primaryColorLight: Colors.indigo.shade100,
       primaryColorDark: Colors.indigo.shade800,
-      focusColor: Colors.indigo.shade50,
-      canvasColor: Colors.indigo.shade800,
+      focusColor: Colors.indigoAccent.shade400,
+      canvasColor: Colors.indigo.shade400,
       disabledColor: Colors.red,
+      scaffoldBackgroundColor: Colors.white70,
       // textTheme: defaultMenuTheme,
     );
     _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
       primaryColor: Colors.indigo.shade200,
-      primaryColorLight: Colors.indigo.shade800,
+      primaryColorLight: Colors.indigo.shade400,
       primaryColorDark: Colors.indigo.shade200,
-      focusColor: Colors.indigo.shade50,
+      focusColor: Colors.indigoAccent.shade100,
       secondaryHeaderColor: Colors.black,
-      canvasColor: Colors.indigo.shade400,
+      canvasColor: Colors.indigo.shade800,
       hintColor: Colors.grey.shade500,
       disabledColor: Colors.grey,
+      scaffoldBackgroundColor: Colors.black87,
     );
     initialized = true;
     _mode = NMapThemeMode.light;

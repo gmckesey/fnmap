@@ -49,7 +49,8 @@ class NMapViewController with ChangeNotifier {
 
   void _scrollListener() {
     _initialPosition.offset = _hostScrollController.offset;
-    log.debug('scrollController: offset is ${_hostScrollController.offset}',
+    log.debug(
+      'scrollController: offset is ${_hostScrollController.offset}',
       flag: nLogTRACE,
     );
   }
@@ -106,15 +107,21 @@ class NMapDeviceView extends StatelessWidget {
         return placeholder;
       }
     } else {
+      // Color textColor = Theme.of(context).primaryColorLight;
+      // Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+      Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Neumorphic(
-          style: const NeumorphicStyle(
-            border: NeumorphicBorder(width: 3, color: Colors.black12),
+          style: NeumorphicStyle(
+            border: const NeumorphicBorder(width: 3, color: Colors.black12),
             shape: NeumorphicShape.convex,
             depth: -10,
             lightSource: LightSource.topRight,
-            color: Colors.white38,
+            // color: Colors.white38,
+            // color: Colors.black54,
+            color: backgroundColor,
           ),
           child: SelectedDeviceWidget(
             viewFunction: viewFunction,
@@ -151,14 +158,15 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
     package: kPackageName,
   );
   NLog log = NLog(
-    '_PortsViewWidgetState', package: kPackageName,
+    '_PortsViewWidgetState',
+    package: kPackageName,
   );
   late NMapViewController _selectedHostController;
   late SplitViewController _svController;
 
   @override
   void initState() {
-    trace.debug('initState called');//, color: nLogColor.red);
+    trace.debug('initState called'); //, color: nLogColor.red);
     super.initState();
 
     _selectedHostController = widget.hostViewController ?? NMapViewController();
@@ -208,6 +216,7 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
         _selectedHostController.selected != -1
             ? Container(
                 // flex: 9,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 child: widget.viewFunction(
                     selectedHost:
                         activeHosts[_selectedHostController.selected]))
@@ -232,8 +241,8 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
             selected: _selectedHostController.selected == index,
             // selectedColor: const Color(0xF8C465FF),
             // tileColor: kTileBackgroundColor,
-            textColor: Theme.of(context).secondaryHeaderColor,
-            selectedColor: Theme.of(context).focusColor,
+            textColor: Theme.of(context).primaryColor,
+            selectedColor: Theme.of(context).highlightColor,
             dense: true,
             contentPadding: const EdgeInsets.only(left: 8.0),
             onTap: () {

@@ -22,11 +22,18 @@ class _NMapDeviceDetailsState extends State<NMapDeviceDetails> {
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> map = widget.hostRecord.map;
+    Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    TextStyle textStyle = kDetailsTextStyle.copyWith(
+        color: Theme.of(context).primaryColor
+    );
+    TextStyle stringStyle = kDetailsTextStyle.copyWith(
+        color: Theme.of(context).focusColor
+    );
     JsonViewTheme theme = JsonViewTheme(
-      defaultTextStyle: kDetailsTextStyle,
-      backgroundColor: kDetailsBackgroundColor,
+      defaultTextStyle: textStyle,
+      backgroundColor: backgroundColor,
       keyStyle: kDetailsKeyStyle,
-      stringStyle: kDetailsStringStyle,
+      stringStyle: stringStyle,
     );
 
     return Padding(
