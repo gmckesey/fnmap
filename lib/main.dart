@@ -42,21 +42,6 @@ void main() async {
   } else {
     NLog.setLevel(Level.warning);
   }
-/*
-  if (kDebugMode) {
-    GLog.setLevel(GLogLevel.debug);
-    GLog.setLogFlag(flag: gLogTRACE);
-    GLog.setLogFlag(flag: gLogDEFAULT, enabled: false);
-    // Deprecated
-    // GLog.setClassProperties(0);
-  } else {
-    GLog.setLevel(GLogLevel.info);
-  }
-  GLog.setPackage(packageName: kPackageName, enabled: true);
-  GLog.setPackage(packageName: 'default', enabled: false);
-*/
-
-  // GLog log = GLog('fnmap<main>:', package: kPackageName);
 
   // NLog.setPackage(packageName: nLogDEFAULT, enabled: false);
   NLog.setPackage(packageName: kPackageName, enabled: true);
@@ -70,8 +55,6 @@ void main() async {
 
   FnMapConfig config = FnMapConfig(fileName: kConfigFilename);
   await config.parse();
-/*  List<HighLightConfig> hConfigs =
-      config.highlightsEnabled ? config.highlights() : [];*/
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowParams().then((_) {
@@ -105,8 +88,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     Provider.of<NMapDarkMode>(context, listen: false)
         .initialize(rootContext: context);
-    // Provider.of<ScanProfile>(context, listen: false).parse();
-    // Provider.of<NMapCommand>(context, listen: false).start();
   }
 
   @override
