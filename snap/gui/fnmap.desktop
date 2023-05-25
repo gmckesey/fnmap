@@ -2,7 +2,7 @@
   Name=fnmap
   Comment=A flutter based nmap gui
   Exec=fnmap
-  Icon=${SNAP}/meta/gui/fnmap.png # replace name to your app name
+  Icon=${SNAP}/meta/gui/icon.png # replace name to your app name
   Terminal=false
   Type=Application
-  Categories=Network;
+  Categories=Internet
