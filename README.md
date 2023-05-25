@@ -6,4 +6,6 @@ depends on nmap being installed and has been tested with nmap 7.93.
 
 ## Getting Started
 
+Run 'flutter create .' at the top of the project tree.
+
 
