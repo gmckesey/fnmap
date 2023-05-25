@@ -175,31 +175,31 @@ Future<void> editProfile(BuildContext context,
                 if (isValid) {
                   if (edit) {
                     qsController.editEntry(
-                        qsController.key!, cmdLineController.text!);
+                        qsController.key!, cmdLineController.text);
                     if (config.hasSection(qsController.key!)) {
                       config.set(qsController.key!, 'command',
-                          cmdLineController.text!);
+                          cmdLineController.text);
                       config.set(qsController.key!, 'description',
-                        descController.text!);
+                        descController.text);
                     }
                   } else {
                     qsController.addEntry(
-                        nameController.text!, cmdLineController.text!);
+                        nameController.text, cmdLineController.text);
                     qsController.map = {
-                      nameController.text!: cmdLineController.text!
+                      nameController.text: cmdLineController.text
                     };
                     if (!config.hasSection(qsController.key!)) {
                       config.addSection(qsController.key!);
                       config.set(qsController.key!, 'command',
-                          cmdLineController.text!);
+                          cmdLineController.text);
                       config.set(qsController.key!, 'description',
-                          descController.text!);
+                          descController.text);
                     } else {
                       log.warning('onPressed: section ${qsController.key!} '
                           'already exists');
                     }
                   }
-                  controller?.text = cmdLineController.text!;
+                  controller?.text = cmdLineController.text;
                   Provider.of<ScanProfile>(context, listen: false).save();
                   Navigator.of(context).pop();
                 } else {
