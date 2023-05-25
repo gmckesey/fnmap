@@ -4,24 +4,14 @@ import 'package:flutter_json_view/flutter_json_view.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/models/host_record.dart';
 
-class NMapDeviceDetails extends StatefulWidget {
+class NMapDeviceDetails extends StatelessWidget {
   const NMapDeviceDetails({Key? key, required this.hostRecord})
       : super(key: key);
   final NMapHostRecord hostRecord;
 
   @override
-  State<NMapDeviceDetails> createState() => _NMapDeviceDetailsState();
-}
-
-class _NMapDeviceDetailsState extends State<NMapDeviceDetails> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> map = widget.hostRecord.map;
+    Map<String, dynamic> map = hostRecord.map;
     Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     TextStyle textStyle = kDetailsTextStyle.copyWith(
         color: Theme.of(context).primaryColor
