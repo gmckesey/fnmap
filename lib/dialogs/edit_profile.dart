@@ -136,8 +136,11 @@ Future<void> editProfile(BuildContext context,
         backgroundColor: backgroundColor,
         content: Form(
           key: formKey,
-          child: Column(
-            children: formFields,
+          child: SizedBox(
+            width: 350,
+            child: Column(
+              children: formFields,
+            ),
           ),
         ),
         actions: <Widget>[

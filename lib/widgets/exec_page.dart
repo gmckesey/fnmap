@@ -27,6 +27,8 @@ import 'package:fnmap/widgets/raw_output_widget.dart';
 import 'package:fnmap/widgets/nmap_tabular.dart';
 import 'package:fnmap/dialogs/edit_profile.dart';
 
+import '../dialogs/show_about.dart';
+
 class ExecPage extends StatefulWidget {
   const ExecPage({Key? key}) : super(key: key);
 
@@ -654,7 +656,8 @@ class _ExecPageState extends State<ExecPage> {
                 MenuButton(
                   text: const Text('View License',
                       style: TextStyle(fontSize: kDefaultMenuFontSize)),
-                  onTap: () {},
+                  onTap: () {
+                  },
                   icon: const Icon(
                     FontAwesomeIcons.solidCopyright,
                     size: kDefaultIconSize,
@@ -663,7 +666,9 @@ class _ExecPageState extends State<ExecPage> {
                 MenuButton(
                   text: const Text('About',
                       style: TextStyle(fontSize: kDefaultMenuFontSize)),
-                  onTap: () {},
+                  onTap: () {
+                    showAbout(context);
+                  },
                   icon: const Icon(FontAwesomeIcons.circleInfo,
                       size: kDefaultIconSize),
                   /*const FaIcon(

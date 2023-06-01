@@ -33,11 +33,12 @@ dependencies:
   loading_animation_widget: ^1.2.0+4
   file_picker: ^5.2.9
   flutter_tree: ^2.0.3
-  xml2json: ^5.3.6
+  xml2json: ^6.1.0
   flutter_json_view: ^1.0.0
   split_view: ^3.2.1
-  adwaita: ^0.5.2
+  adwaita: ^1.0.0
   logger: ^1.3.0
+  flutter_markdown: ^0.6.15
 
 dev_dependencies:
   flutter_test:

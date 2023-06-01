@@ -8,6 +8,8 @@ const double kDefaultTextSize = 14;
 const double kDefaultIconSize = 16;
 // const double kDefaultMenuFont =
 const double kDefaultMenuFontSize = 12;
+const String kProgramName = 'fnmap';
+const String kAppVersion = 'beta-0.1.10';
 const String kPackageName = 'com.krioltech.fnmap';
 const String kProfileFilename = 'scan_profile.usp';
 const String kConfigFilename = 'fnmap.conf';
@@ -27,6 +29,22 @@ const Color kDefaultBackgroundColor = Color(0xDED5D5FF);
 Color kDetailsBackgroundColor = Colors.grey;
 
 const String gFlagTrace = 'TRACE';
+const List<String> kLinuxGPLPaths = [
+  '/etc/fnmap/gpl-2.0.md',
+  './meta/gui/gpl-2.0.md',
+  './gpl-2.0.md',
+  './snap/gui/gpl-2.0.md',
+  '/snap/fnmap/current/meta/gui/gpl-2.0.md',
+];
+
+const List<String> iconPaths = [
+  './meta/gui/fnmap.png'
+  '/tmp/fnmap.png',
+  'assets/fnmap.png',
+  './assets/fnmap.png',
+  '/usr/share/icons/fnmap.png',
+  '/snap/fnmap/current/meta/gui/fnmap.png',
+];
 
 TextStyle kDefaultTextStyle = GoogleFonts.sourceCodePro(
   fontSize: 16.0,
