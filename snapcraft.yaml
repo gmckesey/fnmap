@@ -1,0 +1,62 @@
+name: fnmap # you probably want to 'snapcraft register <name>'
+title:  Flutter NMap GUI
+base: core18 # the base snap is the execution environment for this snap
+version: beta-0.1.10 # just for humans, typically '1.2+git' or '1.3.2'
+summary: A GUI for nmap
+license: GPL-2.0
+compression: xz
+source-code: https://github.com/gmckesey/fnmap
+type: app
+description: |
+  fnmap is a GUI for nmap that runs and parses the output of nmap and provides
+  different views of the data.
+icon: snap/gui/fnmap.png
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+architectures:
+  - build-on: [ amd64 ]
+
+slots:
+  dbus-fnmap:
+    interface: dbus
+    bus: session
+    name: com.krioltech.fnmap
+
+apps:
+  fnmap:
+    command: fnmap
+    common-id: com.krioltech.fnmap
+    extensions: [flutter-stable]
+    plugs:
+      - network
+    slots:
+      - dbus-fnmap
+    environment:
+      DBUS_SESSION_BUS_ADDRESS: $DBUS_SESSION_BUS_ADDRESS
+
+parts:
+  fnmap:
+    source: .
+    plugin: flutter
+    flutter-target: lib/main.dart # The main entry-point file of fnmap
+
+  zenity-integration:
+    plugin: nil
+    stage-snaps:
+      - zenity-integration
+      
+  nmap:
+    stage-packages:
+    - nmap
+    plugin: nil
+
+  config:
+    source-type: local
+    source: snap_data/etc/fnmap
+    plugin: nil
+
+layout:
+  /etc/fnmap/LICENSE.md:
+    bind-file: $SNAP/etc/fnmap/gpl-2.0.md
+    

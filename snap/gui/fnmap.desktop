@@ -1,8 +1,9 @@
- [Desktop Entry]
-  Name=fnmap
-  Comment=A flutter based nmap gui
-  Exec=fnmap
-  Icon=${SNAP}/meta/gui/icon.png # replace name to your app name
-  Terminal=false
-  Type=Application
-  Categories=Internet
+[Desktop Entry]
+Icon=${SNAP}/meta/gui/fnmap.png
+Exec=fnmap
+Version=beta-0.1.10
+Type=Application
+Categories=Internet;Network
+Comment=GUI for nmap - the Network Mapper, a free network scanner
+Name=fnmap
+Terminal=false
