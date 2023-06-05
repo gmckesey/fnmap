@@ -9,7 +9,7 @@ const double kDefaultIconSize = 16;
 // const double kDefaultMenuFont =
 const double kDefaultMenuFontSize = 12;
 const String kProgramName = 'fnmap';
-const String kAppVersion = 'beta-0.1.10';
+const String kAppVersion = 'beta-0.1.14';
 const String kPackageName = 'com.krioltech.fnmap';
 const String kProfileFilename = 'scan_profile.usp';
 const String kConfigFilename = 'fnmap.conf';
@@ -29,20 +29,25 @@ const Color kDefaultBackgroundColor = Color(0xDED5D5FF);
 Color kDetailsBackgroundColor = Colors.grey;
 
 const String gFlagTrace = 'TRACE';
-const List<String> kLinuxGPLPaths = [
-  '/etc/fnmap/gpl-2.0.md',
-  './meta/gui/gpl-2.0.md',
-  './gpl-2.0.md',
-  './snap/gui/gpl-2.0.md',
-  '/snap/fnmap/current/meta/gui/gpl-2.0.md',
+const String gGPLFilename = 'gpl-2.0.md';
+const List<String> kDesktopGPLPaths = [
+  '/etc/fnmap',
+  './meta/gui/assets',
+  './assets',
+  './',
+  './snap/gui/assets',
+  './data/flutter_assets/snap/gui/assets',
+  '/snap/fnmap/current/meta/gui',
 ];
+
+const String kWindowsIconPath = 'snap/gui/assets/fnmap.png';
 
 const List<String> iconPaths = [
   './meta/gui/fnmap.png'
   '/tmp/fnmap.png',
   'assets/fnmap.png',
-  './assets/fnmap.png',
   '/usr/share/icons/fnmap.png',
+  'data/flutter_assets/snap/gui/assets/fnmap.png',
   '/snap/fnmap/current/meta/gui/fnmap.png',
 ];
 

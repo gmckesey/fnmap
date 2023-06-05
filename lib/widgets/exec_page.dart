@@ -654,16 +654,6 @@ class _ExecPageState extends State<ExecPage> {
             submenu: SubMenu(
               menuItems: [
                 MenuButton(
-                  text: const Text('View License',
-                      style: TextStyle(fontSize: kDefaultMenuFontSize)),
-                  onTap: () {
-                  },
-                  icon: const Icon(
-                    FontAwesomeIcons.solidCopyright,
-                    size: kDefaultIconSize,
-                  ), //const Icon(Icons.copyright),
-                ),
-                MenuButton(
                   text: const Text('About',
                       style: TextStyle(fontSize: kDefaultMenuFontSize)),
                   onTap: () {
