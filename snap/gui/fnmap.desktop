@@ -1,5 +1,5 @@
 [Desktop Entry]
-Icon=${SNAP}/meta/gui/fnmap.png
+Icon=${SNAP}/meta/gui/assets/fnmap.png
 Exec=fnmap
 Version=beta-0.1.10
 Type=Application
