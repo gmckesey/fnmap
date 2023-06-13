@@ -9,7 +9,7 @@ const double kDefaultIconSize = 16;
 // const double kDefaultMenuFont =
 const double kDefaultMenuFontSize = 12;
 const String kProgramName = 'fnmap';
-const String kAppVersion = 'beta-0.1.14';
+const String kAppVersion = 'beta-0.1.16';
 const String kPackageName = 'com.krioltech.fnmap';
 const String kProfileFilename = 'scan_profile.usp';
 const String kConfigFilename = 'fnmap.conf';
@@ -21,7 +21,7 @@ const Color kAccentColor = Colors.indigoAccent;
 const Color kValidColor = Colors.green;
 const Color kInvalidColor = Colors.red;
 const Color kTileBackgroundColor = Color(0xD6EAFBFF);
-const Color kDefaultTextColor = Colors.black87;
+const Color kDefaultTextColor = Colors.blue;// Colors.black87;
 const Color kLightTextColor = Colors.white;
 const Color kDisabledColor = Colors.grey;
 const Color kDividerColor = Colors.grey;
@@ -40,7 +40,7 @@ const List<String> kDesktopGPLPaths = [
   '/snap/fnmap/current/meta/gui',
 ];
 
-const String kWindowsIconPath = 'snap/gui/assets/fnmap.png';
+const String kIconPath = 'assets/fnmap.png';
 
 const List<String> iconPaths = [
   './meta/gui/fnmap.png'

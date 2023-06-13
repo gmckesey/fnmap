@@ -12,11 +12,11 @@ class NMapPortGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    NLog trace =
-        NLog('NMapPortGrid:', flag: nLogTRACE, package: kPackageName);
+    NLog trace = NLog('NMapPortGrid:', flag: nLogTRACE, package: kPackageName);
     trace.debug('rebuild'); //, color: NLogColor.magenta);
-    Color backgroundColor = Theme.of(context).canvasColor;
+    Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     Color textColor = Theme.of(context).primaryColorDark;
+    Color gridHeaderTextColor = Theme.of(context).secondaryHeaderColor;
 
     Widget renderFunction(PlutoColumnRendererContext renderContext) {
       return Text(
@@ -78,12 +78,16 @@ class NMapPortGrid extends StatelessWidget {
                 columns: columns,
                 rows: _generateRows(),
                 rowColorCallback: colorCallback,
+                configuration: PlutoGridConfiguration(
+                    style: PlutoGridStyleConfig(
+                      gridBackgroundColor: backgroundColor,
+                        columnTextStyle:
+                            TextStyle(color: gridHeaderTextColor))),
               ));
   }
 
   List<PlutoRow> _generateRows() {
-    NLog trace =
-        NLog('NMapPortGrid:', flag: nLogTRACE, package: kPackageName);
+    NLog trace = NLog('NMapPortGrid:', flag: nLogTRACE, package: kPackageName);
     List<PlutoRow> list = [];
     for (int row = 0; row < hostRecord.ports.length; row++) {
       NMapPort port = hostRecord.ports[row];
@@ -102,8 +106,7 @@ class NMapPortGrid extends StatelessWidget {
   }
 
   Widget portStateRenderer(PlutoColumnRendererContext context) {
-    NLog trace =
-        NLog('NMapPortGrid:', flag: nLogTRACE, package: kPackageName);
+    NLog trace = NLog('NMapPortGrid:', flag: nLogTRACE, package: kPackageName);
 
     String state = context.cell.value;
     trace.debug('rendering state = $state');

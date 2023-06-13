@@ -2,7 +2,7 @@ name: fnmap
 description: A new Flutter project.
 
 publish_to: 'none'
-version: 0.1.14-beta
+version: 0.1.15-beta
 environment:
   sdk: '>=2.19.2 <3.0.0'
 
@@ -29,7 +29,7 @@ dependencies:
   uuid: ^3.0.7
   xml: ^6.2.2
   google_fonts: ^5.0.0
-  pluto_grid: ^7.0.1
+  pluto_grid: ^7.0.2
   loading_animation_widget: ^1.2.0+4
   file_picker: ^5.2.9
   flutter_tree: ^2.0.3
@@ -52,8 +52,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-  - snap/gui/assets/fnmap.png
-  - snap/gui/assets/gpl-2.0.md
+  - assets/fnmap.png
 
 msix_config:
   display_name: fnmap
@@ -62,14 +61,11 @@ msix_config:
   publisher: CN=Krioltech, O=Krioltech
   identity_name: Krioltech.fnmap
   capabilities: internetClient,privateNetworkClientServer
-  msix_version: 1.0.1.14
-  logo_path: .\snap\gui\assets\fnmap.png
+  msix_version: 1.0.1.16
+  logo_path: .\assets\fnmap.png
   languages: en-us
-  #certificate_path: C:\Users\gmcke\StudioProjects\Certificates\Signing.pfx
-  #certificate_password: "jpam895.do!dv8"
   sign_msix: true
-  #output_path: C:\Users\gmcke\StudioProjects\fnmap
-  output_name: fnmap-beta-0.1.14
+  output_name: fnmap-beta-0.1.16
   architecture: x64
 
 

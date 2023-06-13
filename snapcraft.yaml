@@ -1,7 +1,7 @@
 name: fnmap # you probably want to 'snapcraft register <name>'
 title:  Flutter NMap GUI
 base: core18 # the base snap is the execution environment for this snap
-version: beta-0.1.14 # just for humans, typically '1.2+git' or '1.3.2'
+version: beta-0.1.16 # just for humans, typically '1.2+git' or '1.3.2'
 summary: A GUI for nmap
 license: GPL-2.0
 compression: xz
@@ -10,13 +10,23 @@ type: app
 description: |
   fnmap is a GUI for nmap that runs and parses the output of nmap and provides
   different views of the data.
-icon: snap/gui/fnmap.png
+icon: assets/fnmap.png
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: devmode # use 'strict' once you have the right plugs and slots
 
 architectures:
   - build-on: [ amd64 ]
 
+plugs:
+  gtk-3-themes:
+    interface: content
+    target: $SNAP/share/themes
+    default-provider: gtk-common-themes
+  icon-themes:
+    interface: content
+    target: $SNAP/share/icons
+    default-provider: gtk-common-themes
+    
 slots:
   dbus-fnmap:
     interface: dbus
@@ -51,12 +61,6 @@ parts:
     - nmap
     plugin: nil
 
-  config:
-    source-type: local
-    source: snap_data/etc/fnmap
-    plugin: nil
 
-layout:
-  /etc/fnmap/LICENSE.md:
-    bind-file: $SNAP/etc/fnmap/gpl-2.0.md
+
     

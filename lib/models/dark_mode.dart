@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/utilities/logger.dart';
@@ -33,6 +34,13 @@ class NMapDarkMode with ChangeNotifier {
 
   void toggleMode() {
     log.debug('mode before toggle is $_mode');
+    if (kDebugMode) {
+      // Makes debugging themes easier by allowing for the change of
+      // initialize function while the App is being debugged
+      if (rootContext != null) {
+        initialize(rootContext: rootContext!);
+      }
+    }
     _mode = _mode == NMapThemeMode.light ? NMapThemeMode.dark : NMapThemeMode.light;
     log.debug('mode after toggle is $_mode');
     notifyListeners();
@@ -60,6 +68,21 @@ class NMapDarkMode with ChangeNotifier {
     );
 
     _themeLight = ThemeData.light(useMaterial3: true).copyWith(
+      scaffoldBackgroundColor: Colors.indigo.shade50,
+      secondaryHeaderColor: Colors.black54,
+    );
+    _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
+      primaryColor: Colors.indigo.shade200,
+      primaryColorLight: Colors.indigo.shade400,
+      primaryColorDark: Colors.indigo.shade200,
+      secondaryHeaderColor: Colors.white70,// Colors.black54,
+      // canvasColor: Colors.indigo.shade800,
+      // hintColor: Colors.grey.shade500,
+      disabledColor: Colors.grey,
+      scaffoldBackgroundColor: Colors.indigo.shade900,
+    );
+
+/*    _themeLight = ThemeData.light(useMaterial3: true).copyWith(
       primaryColor: kDefaultColor,
       secondaryHeaderColor: Colors.black,
       primaryColorLight: Colors.indigo.shade100,
@@ -80,8 +103,8 @@ class NMapDarkMode with ChangeNotifier {
       hintColor: Colors.grey.shade500,
       disabledColor: Colors.grey,
       scaffoldBackgroundColor: Colors.black87,
-    );
+    );*/
     initialized = true;
-    _mode = NMapThemeMode.light;
+    _mode = NMapThemeMode.dark;
   }
 }
