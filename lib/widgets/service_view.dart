@@ -1,3 +1,4 @@
+import 'package:fnmap/models/dark_mode.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:fnmap/widgets/nmap_tabular.dart';
@@ -60,6 +61,7 @@ class NMapServiceView extends StatelessWidget {
     NMapXML nMapXML = Provider.of<NMapXML>(context, listen: true);
     List<NMapServiceRecord> serviceRecords = nMapXML.serviceRecords;
     NMapCommand command = Provider.of<NMapCommand>(context, listen: true);
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
     NLog log = NLog('NMapServiceView', flag: nLogTRACE);
 
     if (controller != null && controller!.isSelected) {
@@ -80,15 +82,17 @@ class NMapServiceView extends StatelessWidget {
         return placeholder;
       }
     } else {
+      Color backgroundColor = mode.themeData.scaffoldBackgroundColor;
+
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Neumorphic(
-          style: const NeumorphicStyle(
-            border: NeumorphicBorder(width: 3, color: Colors.black12),
+          style: NeumorphicStyle(
+            border: const NeumorphicBorder(width: 3, color: Colors.black12),
             shape: NeumorphicShape.convex,
             depth: -10,
             lightSource: LightSource.topRight,
-            color: Colors.white38,
+            color: backgroundColor, //Colors.white38,
           ),
           child: SelectedServiceWidget(
             serviceRecords: serviceRecords,

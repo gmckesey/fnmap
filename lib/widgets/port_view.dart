@@ -1,3 +1,6 @@
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
+import 'package:fnmap/models/dark_mode.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide MenuBar
@@ -14,9 +17,11 @@ class NMapPortGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     NLog trace = NLog('NMapPortGrid:', flag: nLogTRACE, package: kPackageName);
     trace.debug('rebuild'); //, color: NLogColor.magenta);
-    Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    Color textColor = Theme.of(context).primaryColorDark;
-    Color gridHeaderTextColor = Theme.of(context).secondaryHeaderColor;
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
+    // Color backgroundColor = mode.themeData.scaffoldBackgroundColor;
+    Color backgroundColor = mode.themeData.canvasColor;
+    Color textColor = mode.themeData.primaryColorDark;
+    Color gridHeaderTextColor = mode.themeData.secondaryHeaderColor;
 
     Widget renderFunction(PlutoColumnRendererContext renderContext) {
       return Text(
@@ -74,13 +79,17 @@ class NMapPortGrid extends StatelessWidget {
         child: hostRecord.ports.isEmpty
             ? const Center(child: Text('No Ports Found'))
             : PlutoGrid(
-                key: Key(hostRecord.firstHostname),
+                // key: ValueKey('port_${hostRecord.firstHostname}_$mode'),
+                // key: ValueKey('port_view_$mode'),
+                // key: ValueKey('port_view_$keyValue'),
+                key: UniqueKey(),
                 columns: columns,
                 rows: _generateRows(),
                 rowColorCallback: colorCallback,
                 configuration: PlutoGridConfiguration(
                     style: PlutoGridStyleConfig(
-                      gridBackgroundColor: backgroundColor,
+                        gridBackgroundColor: backgroundColor,
+                        iconColor: gridHeaderTextColor,
                         columnTextStyle:
                             TextStyle(color: gridHeaderTextColor))),
               ));

@@ -1,3 +1,4 @@
+import 'package:fnmap/models/dark_mode.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:split_view/split_view.dart';
@@ -81,6 +82,7 @@ class NMapDeviceView extends StatelessWidget {
   Widget build(BuildContext context) {
     NMapXML nMapXML = Provider.of<NMapXML>(context, listen: true);
     NMapCommand command = Provider.of<NMapCommand>(context, listen: true);
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
     NLog trace = NLog(
       'NMapDeviceView',
       flag: nLogTRACE,
@@ -109,7 +111,7 @@ class NMapDeviceView extends StatelessWidget {
     } else {
       // Color textColor = Theme.of(context).primaryColorLight;
       // Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-      Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+      Color backgroundColor = mode.themeData.scaffoldBackgroundColor;
 
       return Padding(
         padding: const EdgeInsets.all(8.0),

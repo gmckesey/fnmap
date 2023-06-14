@@ -1,3 +1,4 @@
+import 'package:fnmap/models/dark_mode.dart';
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -80,10 +81,13 @@ class NMapPlutoGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    NLog log =
-    NLog('NMapPlutoGrid:', package: kPackageName);
-    Color backgroundColor = Theme.of(context).canvasColor;
-    Color textColor = Theme.of(context).primaryColorDark;
+    NLog trace = NLog('NMapPlutoGrid:', flag:nLogTRACE, package: kPackageName);
+    NLog log = NLog('NMapPlutoGrid:', package: kPackageName);
+    trace.debug('rebuild');
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
+    Color backgroundColor = mode.themeData.canvasColor;
+    Color textColor = mode.themeData.primaryColorDark;
+    Color gridHeaderTextColor = mode.themeData.secondaryHeaderColor;
 
     Widget renderFunction(PlutoColumnRendererContext renderContext) {
       return Text(
@@ -126,13 +130,14 @@ class NMapPlutoGrid extends StatelessWidget {
     List<PlutoRow> rows = _generateRows();
 
     Color colorCallback(PlutoRowColorContext colorContext) {
-      return Theme.of(context).primaryColorLight;
+      return mode.themeData.primaryColorLight;
       //return kDefaultBackgroundColor;
     }
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: PlutoGrid(
+        key: UniqueKey(),
         columns: columns,
         rows: rows,
         onSelected: (event) {
@@ -142,6 +147,12 @@ class NMapPlutoGrid extends StatelessWidget {
           log.debug('PlutoGrid<onSorted>: event is $event');
         },
         rowColorCallback: colorCallback,
+        configuration: PlutoGridConfiguration(
+            style: PlutoGridStyleConfig(
+                gridBackgroundColor: backgroundColor,
+                iconColor: gridHeaderTextColor,
+                columnTextStyle:
+                TextStyle(color: gridHeaderTextColor))),
       ),
     );
   }

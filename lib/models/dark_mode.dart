@@ -27,6 +27,15 @@ class NMapDarkMode with ChangeNotifier {
 
   NMapThemeMode get mode => _mode;
 
+  @override
+  String toString() {
+    if (_mode == NMapThemeMode.dark) {
+      return 'dark';
+    } else {
+      return 'light';
+    }
+  }
+
   set mode(NMapThemeMode value) {
     _mode = value;
     notifyListeners();
