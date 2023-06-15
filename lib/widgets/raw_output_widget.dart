@@ -1,6 +1,4 @@
-import 'package:flutter_neumorphic/flutter_neumorphic.dart'
-    hide MenuBar
-    hide MenuStyle;
+import 'package:flutter/material.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/widgets/formatted_text.dart';
 import 'package:fnmap/utilities/logger.dart';
@@ -66,14 +64,14 @@ class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _showPosition());
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Neumorphic(
+ /*     child: Neumorphic(
         style: const NeumorphicStyle(
           border: NeumorphicBorder(width: 3, color: Colors.black12),
           shape: NeumorphicShape.convex,
           depth: -10,
           lightSource: LightSource.topRight,
           color: Colors.white38,
-        ),
+        ),*/
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SingleChildScrollView(
@@ -84,7 +82,7 @@ class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
                 overflow: TextOverflow.visible,
               )),
         ),
-      ),
+//      ),
     );
   }
 

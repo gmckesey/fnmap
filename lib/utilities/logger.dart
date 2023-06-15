@@ -34,7 +34,7 @@ class DefaultPrinter extends LogPrinter {
   List<String> log(LogEvent event) {
     var messageStr = _stringifyMessage(event.message);
     var errorStr = event.error != null ? '  ERROR: ${event.error}' : '';
-    var timeStr = printTime ? '${event.time.toIso8601String()}' : '';
+    var timeStr = printTime ? event.time.toIso8601String() : '';
     return ['${_labelFor(event.level)} $timeStr $messageStr$errorStr'];
   }
 

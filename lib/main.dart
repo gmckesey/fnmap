@@ -1,12 +1,10 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:fnmap/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
 import 'package:fnmap/utilities/logger.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart'
-    hide MenuBar
-    hide MenuStyle;
 import 'package:window_manager/window_manager.dart';
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:fnmap/models/nmap_xml.dart';

@@ -11,8 +11,6 @@ class CidrCalculator {
   static const String _reCIDRPattern = r'^(?:'
       r'(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\/([1-9]|[1-2]\d|3[0-2])$';
 
-  static const String _reIPPattern = r"@([a-z][a-z0-9_]{4,31})";
-
   static bool isValidCIDR(String cidr) {
     return RegExp(_reCIDRPattern).hasMatch(cidr);
   }

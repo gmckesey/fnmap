@@ -1,10 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:fnmap/models/dark_mode.dart';
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart'
-    hide MenuBar
-    hide MenuStyle;
 import 'package:provider/provider.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/models/nmap_xml.dart';
@@ -57,7 +55,8 @@ class NMapTabularWidget extends StatelessWidget {
               : NMapGridview(hostRecords: hostRecords);
       return Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Neumorphic(
+        child: gridImplementation,
+/*        child: Neumorphic(
           style: const NeumorphicStyle(
             border: NeumorphicBorder(width: 3, color: Colors.black12),
             shape: NeumorphicShape.convex,
@@ -66,7 +65,7 @@ class NMapTabularWidget extends StatelessWidget {
             color: Colors.white38,
           ),
           child: gridImplementation,
-        ),
+        ),*/
       );
     }
   }

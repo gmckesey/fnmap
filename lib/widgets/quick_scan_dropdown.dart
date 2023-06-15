@@ -1,5 +1,4 @@
 import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/utilities/scan_profile.dart';

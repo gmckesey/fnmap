@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fnmap/constants.dart';
 import 'package:fnmap/utilities/logger.dart';
 
 enum NMapThemeMode {

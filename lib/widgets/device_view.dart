@@ -1,11 +1,8 @@
-import 'package:fnmap/models/dark_mode.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:split_view/split_view.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart'
-    hide MenuBar
-    hide MenuStyle;
 import 'package:provider/provider.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/models/nmap_xml.dart';
@@ -82,7 +79,6 @@ class NMapDeviceView extends StatelessWidget {
   Widget build(BuildContext context) {
     NMapXML nMapXML = Provider.of<NMapXML>(context, listen: true);
     NMapCommand command = Provider.of<NMapCommand>(context, listen: true);
-    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
     NLog trace = NLog(
       'NMapDeviceView',
       flag: nLogTRACE,
@@ -111,11 +107,11 @@ class NMapDeviceView extends StatelessWidget {
     } else {
       // Color textColor = Theme.of(context).primaryColorLight;
       // Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-      Color backgroundColor = mode.themeData.scaffoldBackgroundColor;
+      // Color backgroundColor = mode.themeData.scaffoldBackgroundColor;
 
       return Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Neumorphic(
+        /* child: Neumorphic(
           style: NeumorphicStyle(
             border: const NeumorphicBorder(width: 3, color: Colors.black12),
             shape: NeumorphicShape.convex,
@@ -124,13 +120,13 @@ class NMapDeviceView extends StatelessWidget {
             // color: Colors.white38,
             // color: Colors.black54,
             color: backgroundColor,
-          ),
+          ),*/
           child: SelectedDeviceWidget(
             viewFunction: viewFunction,
             hostRecords: hostRecords,
             hostViewController: controller,
           ),
-        ),
+ //       ),
       );
     }
   }

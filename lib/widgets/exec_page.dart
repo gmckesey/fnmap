@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:menu_bar/menu_bar.dart';
 import 'package:fnmap/models/host_record.dart';
-import 'package:fnmap/utilities/scan_profile.dart';
 import 'package:fnmap/widgets/device_details.dart';
 import 'package:fnmap/widgets/service_view.dart';
 import 'package:xml/xml.dart';
@@ -13,9 +12,6 @@ import 'package:fnmap/widgets/device_view.dart';
 import 'package:fnmap/widgets/port_view.dart';
 import 'package:provider/provider.dart';
 import 'package:fnmap/utilities/logger.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart'
-    hide MenuBar
-    hide MenuStyle;
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -26,8 +22,7 @@ import 'package:fnmap/models/dark_mode.dart';
 import 'package:fnmap/widgets/raw_output_widget.dart';
 import 'package:fnmap/widgets/nmap_tabular.dart';
 import 'package:fnmap/dialogs/edit_profile.dart';
-
-import '../dialogs/show_about.dart';
+import 'package:fnmap/dialogs/show_about.dart';
 
 class ExecPage extends StatefulWidget {
   const ExecPage({Key? key}) : super(key: key);
@@ -47,13 +42,13 @@ class _ExecPageState extends State<ExecPage> {
   late bool _aborted;
   late bool _ipFieldFilled;
   late bool _ipIsValid;
-  late double _scrollOffset;
+  //late double _scrollOffset;
   late NMapScrollOffset _outputPosition;
   List<String> dropdownItems = ['item 1', 'default', 'item 2', 'item 3'];
   late NMapViewController _hostViewController;
   late NMapServiceViewController _serviceViewController;
   String? saveFName;
-  late bool _darkMode;
+  // late bool _darkMode;
 
   @override
   void initState() {
@@ -65,7 +60,7 @@ class _ExecPageState extends State<ExecPage> {
     _outputPosition = NMapScrollOffset(0.0);
     _hostViewController = NMapViewController();
     _serviceViewController = NMapServiceViewController();
-    _darkMode = false;
+    // _darkMode = false;
 
     optionsCtrl.addListener(_commandLineChanged);
     _outputCtrl.addListener(() {
@@ -117,7 +112,7 @@ class _ExecPageState extends State<ExecPage> {
     bool inProgress = nMapCommand.inProgress;
     NMapXML nMapXML = Provider.of<NMapXML>(context, listen: true);
     Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    Color foregroundColor = Theme.of(context).secondaryHeaderColor;
+    // Color foregroundColor = Theme.of(context).secondaryHeaderColor;
     Color defaultColor = Theme.of(context).primaryColor;
     Color textColor = Theme.of(context).primaryColorLight;
 
@@ -498,7 +493,7 @@ class _ExecPageState extends State<ExecPage> {
 
                             log.debug('onTap<SaveScanAs> selected $saveFName');
                             // TODO: Add code to save a scan
-                            File file = File(saveFName!);
+                            // File file = File(saveFName!);
                           } else {
                             log.debug('onTap<SaveScanAs> cancelled.');
                           }
