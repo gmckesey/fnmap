@@ -12,17 +12,25 @@ class NMapDeviceDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> map = hostRecord.map;
-    Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    ThemeData mode = Theme.of(context);
+    Color backgroundColor = mode.scaffoldBackgroundColor;
     TextStyle textStyle = kDetailsTextStyle.copyWith(
-        color: Theme.of(context).primaryColor
+        //color: Theme.of(context).primaryColor
+      color: mode.dividerColor,
     );
     TextStyle stringStyle = kDetailsTextStyle.copyWith(
-        color: Theme.of(context).focusColor
+        // color: Theme.of(context).focusColor
+      color: mode.highlightColor,
     );
+
+    TextStyle keyStyle = kDetailsTextStyle.copyWith(
+      color: mode.secondaryHeaderColor,
+    );
+
     JsonViewTheme theme = JsonViewTheme(
       defaultTextStyle: textStyle,
       backgroundColor: backgroundColor,
-      keyStyle: kDetailsKeyStyle,
+      keyStyle: keyStyle,
       stringStyle: stringStyle,
     );
 

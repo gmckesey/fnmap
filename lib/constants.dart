@@ -9,7 +9,7 @@ const double kDefaultIconSize = 16;
 // const double kDefaultMenuFont =
 const double kDefaultMenuFontSize = 12;
 const String kProgramName = 'fnmap';
-const String kAppVersion = 'beta-0.1.16';
+const String kAppVersion = 'beta-0.1.18';
 const String kPackageName = 'com.krioltech.fnmap';
 const String kProfileFilename = 'scan_profile.usp';
 const String kConfigFilename = 'fnmap.conf';
@@ -59,7 +59,7 @@ TextStyle kDefaultTextStyle = GoogleFonts.sourceCodePro(
 
 TextStyle kDetailsTextStyle = kDefaultTextStyle.copyWith(fontSize: 14.0);
 TextStyle kDetailsStringStyle = kDetailsTextStyle.copyWith(color: Colors.black);
-TextStyle kDetailsKeyStyle = kDefaultTextStyle.copyWith(color: kDefaultColor);
+TextStyle kDetailsKeyStyle = kDefaultTextStyle.copyWith(color: kAccentColor);
 
 
 const List<String> kDefaultConfigs = [
