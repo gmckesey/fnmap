@@ -11,7 +11,7 @@ showAbout(BuildContext context) async {
           return AboutDialog(
             applicationName: kProgramName,
             applicationVersion: kAppVersion,
-            applicationLegalese: 'Copyright © 2023 - Gregory McKesey',
+            applicationLegalese: 'Copyright © 2023 - Kriol Technologies',
             applicationIcon: image,
           );
         });
