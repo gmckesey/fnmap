@@ -478,6 +478,8 @@ class _ExecPageState extends State<ExecPage> {
                           : null,
                       size: kDefaultIconSize), //const Icon(Icons.save),
                   shortcutText: 'Ctrl+S',
+                  shortcut: const SingleActivator(LogicalKeyboardKey.keyS,
+                      control: true),
                 ),
                 MenuButton(
                   text: const Text('Save Scan As',
@@ -521,6 +523,10 @@ class _ExecPageState extends State<ExecPage> {
                           : null,
                       size: kDefaultIconSize), //const Icon(Icons.save),
                   shortcutText: 'Ctrl+Alt+S',
+                  shortcut: const SingleActivator(LogicalKeyboardKey.keyS,
+                      control: true,
+                      alt: true),
+
                 ),
                 MenuButton(
                   text: const Text('Load Scan',
@@ -585,6 +591,9 @@ class _ExecPageState extends State<ExecPage> {
                       color: inProgress ? kDisabledColor : null,
                       size: kDefaultIconSize), //const Icon(Icons.save),
                   shortcutText: 'Ctrl+L',
+                  shortcut: const SingleActivator(LogicalKeyboardKey.keyL,
+                      control: true),
+
                 ),
                 const MenuDivider(),
                 MenuButton(
@@ -600,6 +609,9 @@ class _ExecPageState extends State<ExecPage> {
                   icon: const Icon(FontAwesomeIcons.rightFromBracket,
                       size: kDefaultIconSize), //const Icon(Icons.exit_to_app),
                   shortcutText: 'Ctrl+Q',
+                  shortcut: const SingleActivator(LogicalKeyboardKey.keyQ,
+                      control: true),
+
                 ),
               ],
             ),
