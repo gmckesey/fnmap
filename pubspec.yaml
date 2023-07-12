@@ -2,7 +2,7 @@ name: fnmap
 description: A new Flutter project.
 
 publish_to: 'none'
-version: 0.1.19-beta
+version: 1.0.0
 environment:
   sdk: '>=2.19.2 <3.0.0'
 
@@ -14,11 +14,11 @@ dependencies:
   intl: ^0.18.1
   provider: ^6.0.5
   desktop_window: ^0.4.0
-  window_manager: ^0.3.4
-  menu_bar: ^0.5.2
+  window_manager: ^0.3.5
+  menu_bar: ^0.5.3
   flutter_parsed_text: ^2.2.1
-  url_launcher: ^6.1.11
-  font_awesome_flutter: ^10.4.0
+  url_launcher: ^6.1.12
+  font_awesome_flutter: ^10.5.0
   ini: ^2.1.0
   path_provider: ^2.0.15
   path: ^1.8.3
@@ -27,7 +27,7 @@ dependencies:
   dropdown_plus: ^0.0.9
   uuid: ^3.0.7
   xml: ^6.3.0
-  google_fonts: ^5.0.0
+  google_fonts: ^5.1.0
   pluto_grid: ^7.0.2
   loading_animation_widget: ^1.2.0+4
   file_picker: ^5.3.2
@@ -37,7 +37,7 @@ dependencies:
   split_view: ^3.2.1
   adwaita: ^1.0.1
   logger: ^1.4.0
-  flutter_markdown: ^0.6.15
+  flutter_markdown: ^0.6.17
   package_info_plus: ^4.0.2
 
 dev_dependencies:
@@ -46,8 +46,8 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.1
-  msix: ^3.14.2
+  flutter_lints: ^2.0.2
+  msix: ^3.15.0
 
 flutter:
   uses-material-design: true
@@ -61,11 +61,11 @@ msix_config:
   publisher: CN=Krioltech, O=Kriol Technologies
   identity_name: Krioltech.fnmap
   capabilities: internetClient,privateNetworkClientServer
-  msix_version: 1.0.1.19
+  msix_version: 1.1.0.0
   logo_path: .\assets\fnmap.png
   languages: en-us
   sign_msix: true
-  #output_name: fnmap-beta-0.1.19
+  #output_name: fnmap-1.0.0
   output_name: fnmap-${FNMAP_STABILITY}-${FNMAP_SUBVERSION}
   architecture: x64
 
