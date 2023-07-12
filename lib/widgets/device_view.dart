@@ -240,7 +240,7 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
             // selectedColor: const Color(0xF8C465FF),
             // tileColor: kTileBackgroundColor,
             textColor: Theme.of(context).secondaryHeaderColor,
-            selectedColor: Theme.of(context).focusColor,
+            selectedColor: Theme.of(context).highlightColor,
             dense: true,
             contentPadding: const EdgeInsets.only(left: 8.0),
             onTap: () {

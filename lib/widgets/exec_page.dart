@@ -7,6 +7,7 @@ import 'package:fnmap/models/host_record.dart';
 import 'package:fnmap/widgets/device_details.dart';
 import 'package:fnmap/widgets/service_view.dart';
 import 'package:xml/xml.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/widgets/device_view.dart';
 import 'package:fnmap/widgets/port_view.dart';
@@ -34,6 +35,14 @@ class ExecPage extends StatefulWidget {
 class _ExecPageState extends State<ExecPage> {
   NLog log = NLog('ExecPage', package: kPackageName);
   NLog trace = NLog('ExecPage', flag: nLogTRACE, package: kPackageName);
+  PackageInfo _packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+    buildSignature: 'Unknown',
+    installerStore: 'Unknown',
+  );
   TextEditingController ipAddressCtrl = TextEditingController();
   TextEditingController optionsCtrl = TextEditingController();
   TextEditingController targetCtrl = TextEditingController(text: 'item 3');
@@ -53,6 +62,7 @@ class _ExecPageState extends State<ExecPage> {
   @override
   void initState() {
     super.initState();
+    _initPackageInfo();
     // log.debug('initState called.', color: LogColor.red);
     _aborted = false;
     _ipFieldFilled = false;
@@ -81,6 +91,13 @@ class _ExecPageState extends State<ExecPage> {
     _hostViewController.dispose();
     _serviceViewController.dispose();
     super.dispose();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
   }
 
   void _commandLineChanged() {
@@ -652,7 +669,7 @@ class _ExecPageState extends State<ExecPage> {
                   text: const Text('About',
                       style: TextStyle(fontSize: kDefaultMenuFontSize)),
                   onTap: () {
-                    showAbout(context);
+                    showAbout(context, packageInfo: _packageInfo);
                   },
                   icon: const Icon(FontAwesomeIcons.circleInfo,
                       size: kDefaultIconSize),

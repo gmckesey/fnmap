@@ -82,7 +82,7 @@ class NMapDarkMode with ChangeNotifier {
       dividerColor: Colors.red,
       highlightColor: Colors.indigo[900],
       primaryColorLight: Colors.indigo[200],
-      focusColor: Colors.blue[900],
+      focusColor: Colors.indigo[100],
       canvasColor: Colors.indigo[100],
     );
     _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
@@ -97,7 +97,7 @@ class NMapDarkMode with ChangeNotifier {
       disabledColor: Colors.grey,
       splashColor: Colors.purple,
       scaffoldBackgroundColor: Colors.indigo.shade900,
-      focusColor: Colors.blue[100],
+      focusColor: Colors.indigo[800],
       canvasColor: Colors.indigo.shade600,
     );
 
