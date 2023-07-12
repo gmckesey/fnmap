@@ -603,8 +603,7 @@ class _ExecPageState extends State<ExecPage> {
                   onTap: () {
                     // SystemNavigator.pop(animated: true);
                     log.debug('Quit: exiting app');
-                    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-                    exit(0);
+                    SystemNavigator.pop();
                   },
                   icon: const Icon(FontAwesomeIcons.rightFromBracket,
                       size: kDefaultIconSize), //const Icon(Icons.exit_to_app),
