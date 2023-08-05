@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:fnmap/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
-import 'package:fnmap/utilities/logger.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:fnmap/models/nmap_xml.dart';
 import 'package:fnmap/widgets/exec_page.dart';
@@ -13,6 +13,7 @@ import 'package:fnmap/widgets/quick_scan_dropdown.dart';
 import 'package:fnmap/utilities/scan_profile.dart';
 import 'package:fnmap/utilities/fnmap_config.dart';
 import 'package:fnmap/models/dark_mode.dart';
+import 'package:fnmap/dialogs/edit_profile.dart';
 
 Future setWindowParams() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -93,9 +94,18 @@ class _MyAppState extends State<MyApp> {
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
 
     return MaterialApp(
-      title: 'fnmap',
-      theme: mode.themeData,
-      home: const DefaultTabController(length: 5, child: ExecPage()),
-    );
+        title: 'fnmap',
+        theme: mode.themeData,
+        initialRoute: '/',
+        routes: {
+          '/': (context) =>
+              const DefaultTabController(length: 5, child: ExecPage()),
+          '/newProfile': (context) =>
+          const EditProfile(edit: false, delete: false),
+          '/editProfile': (context) =>
+              const EditProfile(edit: true, delete: false),
+          '/deleteProfile': (context) =>
+          const EditProfile(edit: false, delete: true),
+        });
   }
 }

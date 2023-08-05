@@ -80,5 +80,10 @@ class ScanProfile with ChangeNotifier {
     }
   }
 
+  void saveAndUpdate() {
+    notifyListeners();
+    save();
+  }
+
   Config get config => _config;
 }

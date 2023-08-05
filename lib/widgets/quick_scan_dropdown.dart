@@ -22,6 +22,7 @@ class QuickScanController with ChangeNotifier {
     'Custom': '',
   };
   Map<String, String> _choiceMap = {};
+  Map<String, String>? _map;
 
   // This controller is used to pass values to/from the QuickScanDropdown
   QuickScanController({String? key, ScanProfile? profile}) {
@@ -49,7 +50,6 @@ class QuickScanController with ChangeNotifier {
     }
   }
 
-  Map<String, String>? _map;
   bool get isSet => _map != null;
   UnmodifiableMapView<String, String> get choiceMap =>
       UnmodifiableMapView(_choiceMap);
@@ -73,6 +73,11 @@ class QuickScanController with ChangeNotifier {
     } else {
       log.warning('editEntry: Map does not contain key [$key]');
     }
+  }
+
+  void editCurrentEntry(key, value) {
+    _map = { key : value };
+    editEntry(key, value);
   }
 
   void deleteEntry(key) {

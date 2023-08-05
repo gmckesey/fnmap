@@ -1,21 +1,21 @@
 import 'dart:io';
+import 'package:intl/intl.dart';
+import 'package:xml/xml.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:menu_bar/menu_bar.dart';
 import 'package:fnmap/models/host_record.dart';
 import 'package:fnmap/widgets/device_details.dart';
 import 'package:fnmap/widgets/service_view.dart';
-import 'package:xml/xml.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/widgets/device_view.dart';
 import 'package:fnmap/widgets/port_view.dart';
-import 'package:provider/provider.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/models/nmap_command.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fnmap/widgets/quick_scan_dropdown.dart';
 import 'package:fnmap/utilities/ip_address_validator.dart';
 import 'package:fnmap/models/nmap_xml.dart';
@@ -134,10 +134,15 @@ class _ExecPageState extends State<ExecPage> {
     Color textColor = Theme.of(context).primaryColorLight;
 
     // If the drop down has a value then set the commandLine to that value
-    // String commandLine = qsController.value == null ? '' : qsController.value!;
-    String commandLine = optionsCtrl.text;
+    String commandLine;
+    commandLine = qsController.key == null ?
+        qsController.choiceMap.values.first :
+        qsController.choiceMap[qsController.key]!;
+
+
+    // String commandLine = optionsCtrl.text;
     // Set the command line option text field value
-    // optionsCtrl.text = commandLine;
+    optionsCtrl.text = commandLine;
     trace.debug('build: dropdown = "${qsController.key}" '
         'command line = "$commandLine"');
 
@@ -146,6 +151,7 @@ class _ExecPageState extends State<ExecPage> {
     }
 
     Widget scaffold = Scaffold(
+      backgroundColor: backgroundColor,
 /*      appBar: AppBar(
         title: const Padding(
           padding: EdgeInsets.all(8.0),
@@ -615,7 +621,8 @@ class _ExecPageState extends State<ExecPage> {
                   text: const Text('New Profile',
                       style: TextStyle(fontSize: kDefaultMenuFontSize)),
                   onTap: inProgress ? null :() {
-                    editProfile(context, edit: false, controller: optionsCtrl);
+                    Navigator.pushNamed(context, '/newProfile');
+                    // editProfile(context, edit: false, controller: optionsCtrl);
                   },
                   icon: const Icon(FontAwesomeIcons.arrowUpRightFromSquare,
                       size: kDefaultIconSize), //const Icon(Icons.copyright),
@@ -626,7 +633,8 @@ class _ExecPageState extends State<ExecPage> {
                     style: TextStyle(fontSize: kDefaultMenuFontSize),
                   ),
                   onTap: inProgress ? null : () {
-                    editProfile(context, edit: true, controller: optionsCtrl);
+                    Navigator.pushNamed(context, '/editProfile');
+                    //editProfile(context, edit: true, controller: optionsCtrl);
                   },
                   icon: const Icon(FontAwesomeIcons.solidPenToSquare,
                       size: kDefaultIconSize), // const Icon(Icons.info),
@@ -637,8 +645,9 @@ class _ExecPageState extends State<ExecPage> {
                     style: TextStyle(fontSize: kDefaultMenuFontSize),
                   ),
                   onTap: inProgress ? null :  () {
-                    editProfile(context,
-                        edit: false, delete: true, controller: optionsCtrl);
+                    Navigator.pushNamed(context, '/deleteProfile');
+                    // editProfile(context,
+                    //    edit: false, delete: true, controller: optionsCtrl);
                   },
                   icon: const Icon(FontAwesomeIcons.solidPenToSquare,
                       size: kDefaultIconSize), // const Icon(Icons.info),
