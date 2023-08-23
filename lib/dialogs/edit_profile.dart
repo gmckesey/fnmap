@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ini/ini.dart';
 import 'package:provider/provider.dart';
-import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/utilities/scan_profile.dart';
 import 'package:fnmap/widgets/quick_scan_dropdown.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/models/dark_mode.dart';
+import 'package:fnmap/models/nmap_command.dart';
 
 /*
 void editProfile(BuildContext context,
@@ -58,6 +58,7 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
+    NMapCommand nMapCommand = Provider.of<NMapCommand>(context, listen: true);
     Color backgroundColor = mode.themeData.scaffoldBackgroundColor;
     Color titleTextColor = mode.themeData.primaryColorLight;
     Color textColor = mode.themeData.primaryColorLight;
@@ -67,13 +68,147 @@ class _EditProfileState extends State<EditProfile> {
     QuickScanController qsController =
         Provider.of<QuickScanController>(context, listen: false);
 
+    Widget textField({
+      required TextEditingController controllerP,
+      IconData? iconP,
+      String? hintP,
+      String? labelP,
+      void Function(String ?)? onSavedP,
+      String? Function(String ?)? validatorP,
+      void Function(String ?)? onSubmittedP,
+
+    }) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: SizedBox(
+          width: 200,
+          child: TextFormField(
+            controller: controllerP,
+            style: TextStyle(color: textColor),
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              icon: iconP != null ? Icon(iconP): null,
+              hintText: hintP,
+              hintStyle:
+              TextStyle(color: disabledColor, fontStyle: FontStyle.italic),
+              labelText: labelP,
+              labelStyle: TextStyle(color: labelColor),
+            ),
+            onSaved: onSavedP,
+            validator: validatorP,
+            onFieldSubmitted: onSubmittedP,
+          ),
+        ),
+      );
+    }
+
+    Widget textOption({
+      required TextEditingController controllerP,
+      required bool enabledP,
+      required String titleP,
+    }) {
+      return Row(children: [
+        Text(titleP,
+          style: TextStyle(
+            color: textColor,
+          ),
+        ),
+        SizedBox(
+          width: 150,
+          child: TextField(
+            controller: controllerP,
+            enabled: enabledP,
+          ),
+        ),
+      ]);
+    }
+
     Widget deleteQuery() {
       return const Text('Please confirm deletion');
     }
 
-    Widget optionsTabBar() {
+    Widget scanOptions() {
+      return Column(
+        children: [
+          Row(
+            children: [
+              textField(
+                iconP: Icons.edit,
+
+                hintP: 'Targets (optional)',
+                labelP: 'Targets:',
+                controllerP: TextEditingController(text: nMapCommand.target),
+              )
+            ],
+          )
+        ],
+      );
+    }
+
+    Widget pingOptions() {
       return const Placeholder(
         fallbackHeight: 300,
+      );
+    }
+
+    Widget targetOptions() {
+      return const Placeholder(
+        fallbackHeight: 300,
+      );
+    }
+
+    Widget otherOptions() {
+      return const Placeholder(
+        fallbackHeight: 300,
+      );
+    }
+
+    Widget timingOptions() {
+      return const Placeholder(
+        fallbackHeight: 300,
+      );
+    }
+
+    Widget optionsTabBar() {
+      return DefaultTabController(
+        length: 5,
+        child: Column(children: [
+          TabBar(
+            labelColor: Theme.of(context).primaryColorDark,
+            tabs: const [
+              Tab(text: 'Scan', icon: Icon(Icons.account_tree_outlined)),
+              Tab(text: 'Ping', icon: Icon(Icons.network_ping_outlined)),
+              Tab(text: 'Target', icon: Icon(Icons.adjust_outlined)),
+              Tab(
+                  text: 'Other',
+                  icon: Icon(Icons.miscellaneous_services_outlined)),
+              Tab(
+                  text: 'Timing',
+                  icon: Icon(Icons.access_time_filled_outlined)),
+            ],
+          ),
+          SizedBox(
+            height: 100,
+            child: TabBarView(children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: scanOptions(),
+              ),
+              pingOptions(),
+              targetOptions(),
+              otherOptions(),
+              timingOptions(),
+            ]),
+          )
+          /*
+          Builder(builder: (context) {
+            return const Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+
+                ]);
+          }) */
+        ]),
       );
     }
 
@@ -85,8 +220,8 @@ class _EditProfileState extends State<EditProfile> {
           controller: nameController,
           style: TextStyle(color: textColor),
           decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            icon: Icon(Icons.edit),
+            border: const OutlineInputBorder(),
+            icon: const Icon(Icons.edit),
             hintText: 'Name of this profile',
             hintStyle:
                 TextStyle(color: disabledColor, fontStyle: FontStyle.italic),
@@ -151,8 +286,8 @@ class _EditProfileState extends State<EditProfile> {
           controller: descController,
           style: TextStyle(color: textColor),
           decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            icon: Icon(Icons.edit),
+            border: const OutlineInputBorder(),
+            icon: const Icon(Icons.edit),
             hintText: 'Description of profile',
             hintStyle:
                 TextStyle(color: disabledColor, fontStyle: FontStyle.italic),
@@ -181,7 +316,7 @@ class _EditProfileState extends State<EditProfile> {
       } else {
         if (edit) {
           String profileName = qsController.key!;
-          title = 'Edit Profile $profileName';
+          title = 'Edit Profile \'$profileName\'';
           cmdLineController.text =
               qsController.value != null ? qsController.value! : '';
         } else {
@@ -245,10 +380,10 @@ class _EditProfileState extends State<EditProfile> {
                     qsController.deleteEntry(qsController.key!);
                     config.removeSection(qsController.key!);
                     if (qsController.map != null) {
-                      controller?.text = qsController.map!.values.first;
+                      controller.text = qsController.map!.values.first;
                       // controller?.text = qsController.map!.values.first;
                     } else {
-                      controller?.text = '';
+                      controller.text = '';
                     }
                     profile.save();
                     Navigator.of(context).pop();
@@ -281,7 +416,7 @@ class _EditProfileState extends State<EditProfile> {
                               'already exists');
                         }
                       }
-                      controller?.text = cmdLineController
+                      controller.text = cmdLineController
                           .text; // TODO: I don't think this does anything, Remove?
                       profile.save();
                       Navigator.of(context).pop();
@@ -310,7 +445,6 @@ class DialogButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
-    Color buttonColor = mode.themeData.splashColor;
     Color defaultColor = mode.themeData.primaryColor;
     return Expanded(
       flex: 3,

@@ -21,7 +21,7 @@ class NMapRawOutputWidget extends StatefulWidget {
 }
 
 class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
-  NLog log = NLog('_NMapOutputWidgetState:',
+  NLog log = NLog('_NMapRawOutputWidgetState:',
       flag: nLogTRACE, package: kPackageName);
   late int lastLength;
 

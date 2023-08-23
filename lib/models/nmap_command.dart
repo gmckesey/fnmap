@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/utilities/ip_address_validator.dart';
@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:provider/provider.dart';
 import 'package:fnmap/models/nmap_xml.dart';
+import 'package:fnmap/utilities/nmap_fe.dart';
 
 enum CommandState {
   notStarted,
@@ -33,12 +34,11 @@ class NMapCommand with ChangeNotifier {
   late String _program;
   late String _target;
   String? tmpFile;
-  List<String>? _arguments;
+  late NFECommand _command;
   ProcessResult? _result;
   String? _stderr;
   String? _consoleOutput;
-  NLog trace =
-      NLog('NMapCommand', flag: nLogTRACE, package: kPackageName);
+  NLog trace = NLog('NMapCommand', flag: nLogTRACE, package: kPackageName);
   NLog log = NLog('NMapCommand', package: kPackageName);
   CommandState state = CommandState.notStarted;
   Process? _process;
@@ -46,7 +46,8 @@ class NMapCommand with ChangeNotifier {
   NMapCommand(
       {String program = 'nmap', List<String>? arguments, String? target}) {
     _program = program;
-    _arguments = arguments;
+    arguments ??= [];
+    _command = NFECommand(arguments: arguments);
     _target = target ?? '127.0.0.1';
     // run();
   }
@@ -56,8 +57,11 @@ class NMapCommand with ChangeNotifier {
     if (arguments.isNotEmpty) {
       _program = arguments.first;
       if (arguments.length > 1) {
-        _arguments = List<String>.filled(arguments.length - 1, '');
-        _arguments!.setRange(1, arguments.length - 1, arguments, 1);
+/*        List<String> cmdLine = List<String>.filled(arguments.length - 1, '');
+        cmdLine.setRange(1, cmdLine.length - 1, cmdLine, 1);*/
+        _command = NFECommand(arguments: arguments);
+      } else {
+        _command = NFECommand(arguments: []);
       }
     }
     if (target != null && !isValidIPAddress(target)) {
@@ -102,20 +106,16 @@ class NMapCommand with ChangeNotifier {
     _consoleOutput = '';
     state = CommandState.inProgress;
     // notifyListeners();
-    if (_arguments == null) {
-      trace.debug('start: starting $_program with target $_target');
-      _process = await Process.start(_program, [_target]);
-    } else {
-      List<String> cmdLine = List.from(_arguments!);
-      cmdLine.add(_target);
-      trace.debug('start: starting $_program with arguments $cmdLine');
-      // Create a unique file in the tmp directory
-      // TODO: We will have to save the filename somewhere for later retrieval
-      tmpFile = await genTempFile(prefix: 'nmap-gui', postfix: '.xml');
-      cmdLine.add('-oX');
-      cmdLine.add(tmpFile!);
-      _process = await Process.start(_program, cmdLine);
-    }
+
+    List<String> cmdLine = List.from(_command.arguments);
+    cmdLine.add(_target);
+    trace.debug('start: starting $_program with arguments $cmdLine');
+    // Create a unique file in the tmp directory
+    tmpFile = await genTempFile(prefix: 'nmap-gui', postfix: '.xml');
+    cmdLine.add('-oX');
+    cmdLine.add(tmpFile!);
+    _process = await Process.start(_program, cmdLine);
+
     _process!.stdout
         .transform(utf8.decoder)
         .transform(const LineSplitter())
@@ -156,7 +156,8 @@ class NMapCommand with ChangeNotifier {
   ProcessResult? get result => _result;
   String? get stdError => _stderr;
   String? get stdOut => _consoleOutput;
-  List<String>? get arguments => _arguments;
+  List<String>? get arguments => _command.arguments;
+  String get target => _target;
 
   int? get pid {
     if (inProgress) {
@@ -165,14 +166,15 @@ class NMapCommand with ChangeNotifier {
       return null;
     }
   }
-
+/*
   set arguments(List<String>? argument) {
     _arguments = argument;
     notifyListeners();
-  }
+  }*/
 
   void setArguments(List<String>? argument, {bool notify = true}) {
-    _arguments = argument;
+    argument ??= [];
+    _command = NFECommand(arguments: argument);
     if (notify) {
       notifyListeners();
     }

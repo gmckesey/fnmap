@@ -44,6 +44,7 @@ void main() async {
 
   // NLog.setPackage(packageName: nLogDEFAULT, enabled: false);
   NLog.setPackage(packageName: kPackageName, enabled: true);
+  NLog.setPackage(packageName: 'NFECommand', enabled: true);
   NLog.setLogFlag(flag: nLogDEFAULT);
   NLog.setLogFlag(flag: nLogTRACE);
   NLog('fnmap<main>:', type: NLogType.simple, package: kPackageName)
@@ -55,16 +56,19 @@ void main() async {
   FnMapConfig config = FnMapConfig(fileName: kConfigFilename);
   await config.parse();
 
+  QuickScanController qsController = QuickScanController(profile: profile);
+  String commandLine = qsController.key == null
+      ? qsController.choiceMap.values.first
+      : qsController.choiceMap[qsController.key]!;
+
+  NMapCommand nMapCommand =
+      NMapCommand.fromCommandLine(commandLine, target: '192.168.0.1/24');
+
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowParams().then((_) {
       runApp(MultiProvider(providers: [
-        ChangeNotifierProvider(
-          create: (_) =>
-              NMapCommand.fromCommandLine('nmap', target: '172.24.0.1-32'),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => QuickScanController(profile: profile),
-        ),
+        ChangeNotifierProvider.value(value: nMapCommand),
+        ChangeNotifierProvider.value(value: qsController),
         ChangeNotifierProvider.value(value: profile),
         ChangeNotifierProvider.value(value: config),
         ChangeNotifierProvider(create: (_) => NMapXML()),
@@ -101,11 +105,11 @@ class _MyAppState extends State<MyApp> {
           '/': (context) =>
               const DefaultTabController(length: 5, child: ExecPage()),
           '/newProfile': (context) =>
-          const EditProfile(edit: false, delete: false),
+              const EditProfile(edit: false, delete: false),
           '/editProfile': (context) =>
               const EditProfile(edit: true, delete: false),
           '/deleteProfile': (context) =>
-          const EditProfile(edit: false, delete: true),
+              const EditProfile(edit: false, delete: true),
         });
   }
 }

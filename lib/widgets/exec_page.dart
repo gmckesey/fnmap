@@ -22,7 +22,6 @@ import 'package:fnmap/models/nmap_xml.dart';
 import 'package:fnmap/models/dark_mode.dart';
 import 'package:fnmap/widgets/raw_output_widget.dart';
 import 'package:fnmap/widgets/nmap_tabular.dart';
-import 'package:fnmap/dialogs/edit_profile.dart';
 import 'package:fnmap/dialogs/show_about.dart';
 
 class ExecPage extends StatefulWidget {
@@ -43,9 +42,9 @@ class _ExecPageState extends State<ExecPage> {
     buildSignature: 'Unknown',
     installerStore: 'Unknown',
   );
-  TextEditingController ipAddressCtrl = TextEditingController();
-  TextEditingController optionsCtrl = TextEditingController();
-  TextEditingController targetCtrl = TextEditingController(text: 'item 3');
+  late TextEditingController ipAddressCtrl;
+  late TextEditingController optionsCtrl;
+  // TextEditingController targetCtrl = TextEditingController(text: 'item 3');
   final TrackingScrollController _outputCtrl =
       TrackingScrollController(keepScrollOffset: true);
   late bool _aborted;
@@ -66,10 +65,19 @@ class _ExecPageState extends State<ExecPage> {
     // log.debug('initState called.', color: LogColor.red);
     _aborted = false;
     _ipFieldFilled = false;
-    _ipIsValid = false;
+    // _ipIsValid = false;
     _outputPosition = NMapScrollOffset(0.0);
     _hostViewController = NMapViewController();
     _serviceViewController = NMapServiceViewController();
+
+    NMapCommand nMapCommand = Provider.of<NMapCommand>(context, listen: false);
+    ipAddressCtrl = TextEditingController(text: nMapCommand.target);
+    if (nMapCommand.target != '') {
+      _ipFieldFilled = true;
+      _ipIsValid = isValidIPAddress(nMapCommand.target);
+    }
+    String options = nMapCommand.arguments != null ? nMapCommand.arguments!.join(" ") : "";
+    optionsCtrl = TextEditingController(text: options);
     // _darkMode = false;
 
     optionsCtrl.addListener(_commandLineChanged);
@@ -86,7 +94,7 @@ class _ExecPageState extends State<ExecPage> {
     // This also removes the _printLatestValue listener.
     ipAddressCtrl.dispose();
     optionsCtrl.dispose();
-    targetCtrl.dispose();
+    // targetCtrl.dispose();
     _outputCtrl.dispose();
     _hostViewController.dispose();
     _serviceViewController.dispose();
@@ -134,15 +142,16 @@ class _ExecPageState extends State<ExecPage> {
     Color textColor = Theme.of(context).primaryColorLight;
 
     // If the drop down has a value then set the commandLine to that value
-    String commandLine;
-    commandLine = qsController.key == null ?
+    String commandLine = optionsCtrl.text;
+
+    /*commandLine = qsController.key == null ?
         qsController.choiceMap.values.first :
-        qsController.choiceMap[qsController.key]!;
+        qsController.choiceMap[qsController.key]!;*/
 
 
     // String commandLine = optionsCtrl.text;
     // Set the command line option text field value
-    optionsCtrl.text = commandLine;
+    // optionsCtrl.text = commandLine;
     trace.debug('build: dropdown = "${qsController.key}" '
         'command line = "$commandLine"');
 
