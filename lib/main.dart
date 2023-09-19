@@ -22,8 +22,8 @@ Future setWindowParams() async {
 
   WindowOptions windowOptions = const WindowOptions(
     title: 'fnmap',
-    size: Size(800, 600),
-    minimumSize: Size(540, 540),
+    size: Size(850, 750),
+    minimumSize: Size(850, 750),
     center: true,
     backgroundColor: kDefaultColor,
     skipTaskbar: false,
@@ -99,7 +99,8 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
         title: 'fnmap',
-        theme: mode.themeData,
+        theme: mode.light,
+        darkTheme: mode.dark,
         initialRoute: '/',
         routes: {
           '/': (context) =>

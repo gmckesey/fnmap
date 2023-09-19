@@ -9,7 +9,7 @@ const double kDefaultIconSize = 16;
 // const double kDefaultMenuFont =
 const double kDefaultMenuFontSize = 12;
 const String kProgramName = 'fnmap';
-const String kAppVersion = '1.0.1';
+const String kAppVersion = '1.0.2';
 const String kPackageName = 'com.krioltech.fnmap';
 const String kProfileFilename = 'scan_profile.usp';
 const String kConfigFilename = 'fnmap.conf';
@@ -113,7 +113,7 @@ const List<String> kDefaultProfiles = [
   'command = nmap',
   'description = A basic port scan with no extra options.',
   '[Slow comprehensive scan]',
-  'command = nmap -sS -sU -T4 -A -v -PE -PS80,443 -PA3389 -PP -PU40125 '
+  'command = nmap -sS -sU -T4 -A -v -PE -PS 80,443 -PA 3389 -PP -PU 40125 '
       '-PY --source-port 53 --script "default or (discovery and safe)"',
   'description = This is a comprehensive, slow scan. Every TCP and UDP '
       'port is scanned. OS detection (-O), version detection (-sV), script '

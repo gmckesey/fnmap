@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:args/args.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fnmap/utilities/logger.dart';
@@ -35,7 +36,7 @@ class NMapCommand with ChangeNotifier {
   late String _target;
   String? tmpFile;
   late NFECommand _command;
-  ProcessResult? _result;
+  ProcessResult? _processResult;
   String? _stderr;
   String? _consoleOutput;
   NLog trace = NLog('NMapCommand', flag: nLogTRACE, package: kPackageName);
@@ -153,11 +154,16 @@ class NMapCommand with ChangeNotifier {
     notifyListeners();
   }
 
-  ProcessResult? get result => _result;
+  ProcessResult? get processResult => _processResult;
   String? get stdError => _stderr;
   String? get stdOut => _consoleOutput;
   List<String>? get arguments => _command.arguments;
   String get target => _target;
+  ArgResults get results => _command.results;
+  List<String> get tcpScanOptions => _command.tcpScanOptions;
+  List<String> get otherScanOptions => _command.otherScanOptions;
+  List<({String legacy, String flag})> get timingFlags => _command.timingFlags;
+  String get program => _program;
 
   int? get pid {
     if (inProgress) {
@@ -181,16 +187,28 @@ class NMapCommand with ChangeNotifier {
   }
 
   set program(String value) {
+    setProgram(value);
+  }
+
+  void setProgram(String value, {bool notify=true}) {
     _program = value;
-    notifyListeners();
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   set target(String value) {
+    setTarget(value);
+  }
+
+  void setTarget(String value, {bool notify = true}) {
     if (!isValidIPAddress(value)) {
       throw NotAValidIPAddressException('invalid target address '
           '$value');
     }
     _target = value;
-    notifyListeners();
+    if (notify) {
+      notifyListeners();
+    }
   }
 }

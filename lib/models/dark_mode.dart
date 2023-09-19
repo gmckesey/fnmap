@@ -70,6 +70,9 @@ class NMapDarkMode with ChangeNotifier {
     return rc;
   }
 
+  ThemeData get dark => _themeDark!;
+  ThemeData get light => _themeLight!;
+
   void initialize({required BuildContext rootContext}) {
     _theme = ThemeData(
       primarySwatch: Colors.indigo, //getMaterialColor(kDefaultColor),
@@ -84,6 +87,7 @@ class NMapDarkMode with ChangeNotifier {
       primaryColorLight: Colors.indigo[200],
       focusColor: Colors.indigo[100],
       canvasColor: Colors.indigo[100],
+      iconTheme: const IconThemeData(color: Colors.white, opacity: 1.0),
     );
     _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
       primaryColor: Colors.indigo.shade200,
@@ -99,6 +103,7 @@ class NMapDarkMode with ChangeNotifier {
       scaffoldBackgroundColor: Colors.indigo.shade900,
       focusColor: Colors.indigo[800],
       canvasColor: Colors.indigo.shade600,
+      iconTheme: const IconThemeData(color: Colors.black, opacity: 1.0),
     );
 
 /*    _themeLight = ThemeData.light(useMaterial3: true).copyWith(

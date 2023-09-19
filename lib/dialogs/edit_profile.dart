@@ -1,26 +1,20 @@
+import 'package:args/args.dart';
 import 'package:flutter/material.dart';
 import 'package:ini/ini.dart';
 import 'package:provider/provider.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/utilities/scan_profile.dart';
 import 'package:fnmap/widgets/quick_scan_dropdown.dart';
+import 'package:fnmap/tab_screens/scan_options.dart';
+import 'package:fnmap/tab_screens/ping_options.dart';
+import 'package:fnmap/tab_screens/other_options.dart';
+import 'package:fnmap/tab_screens/timing_options.dart';
+import 'package:fnmap/tab_screens/target_options.dart';
+import 'package:fnmap/tab_screens/source_options.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/models/dark_mode.dart';
 import 'package:fnmap/models/nmap_command.dart';
-
-/*
-void editProfile(BuildContext context,
-    {bool edit = true,
-    bool delete = false,
-    TextEditingController? controller}) {
-  NLog log = NLog('editProfile:');
-  Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-
-  String titleVar;
-
-  runApp(EditProfile(delete: delete, edit: edit));
-}
-*/
+import 'package:fnmap/models/edit_profile_controllers.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({
@@ -41,143 +35,51 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfile> {
   NLog log = NLog('_EditProfileState:');
-  TextEditingController controller = TextEditingController();
   late String title;
+  late EditProfileControllers controllers;
 
   var formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController cmdLineController = TextEditingController();
-  TextEditingController descController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    NMapCommand nMapCommand = Provider.of<NMapCommand>(context, listen: false);
+
+    controllers = EditProfileControllers(nMapCommand: nMapCommand);
     title = '';
   }
 
   @override
   Widget build(BuildContext context) {
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
-    NMapCommand nMapCommand = Provider.of<NMapCommand>(context, listen: true);
+
     Color backgroundColor = mode.themeData.scaffoldBackgroundColor;
     Color titleTextColor = mode.themeData.primaryColorLight;
     Color textColor = mode.themeData.primaryColorLight;
     Color defaultColor = mode.themeData.primaryColor;
     Color disabledColor = mode.themeData.disabledColor;
     Color labelColor = mode.themeData.secondaryHeaderColor;
+    Color darkColor = mode.themeData.primaryColorDark;
+
     QuickScanController qsController =
         Provider.of<QuickScanController>(context, listen: false);
-
-    Widget textField({
-      required TextEditingController controllerP,
-      IconData? iconP,
-      String? hintP,
-      String? labelP,
-      void Function(String ?)? onSavedP,
-      String? Function(String ?)? validatorP,
-      void Function(String ?)? onSubmittedP,
-
-    }) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: SizedBox(
-          width: 200,
-          child: TextFormField(
-            controller: controllerP,
-            style: TextStyle(color: textColor),
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              icon: iconP != null ? Icon(iconP): null,
-              hintText: hintP,
-              hintStyle:
-              TextStyle(color: disabledColor, fontStyle: FontStyle.italic),
-              labelText: labelP,
-              labelStyle: TextStyle(color: labelColor),
-            ),
-            onSaved: onSavedP,
-            validator: validatorP,
-            onFieldSubmitted: onSubmittedP,
-          ),
-        ),
-      );
-    }
-
-    Widget textOption({
-      required TextEditingController controllerP,
-      required bool enabledP,
-      required String titleP,
-    }) {
-      return Row(children: [
-        Text(titleP,
-          style: TextStyle(
-            color: textColor,
-          ),
-        ),
-        SizedBox(
-          width: 150,
-          child: TextField(
-            controller: controllerP,
-            enabled: enabledP,
-          ),
-        ),
-      ]);
-    }
 
     Widget deleteQuery() {
       return const Text('Please confirm deletion');
     }
 
-    Widget scanOptions() {
-      return Column(
-        children: [
-          Row(
-            children: [
-              textField(
-                iconP: Icons.edit,
-
-                hintP: 'Targets (optional)',
-                labelP: 'Targets:',
-                controllerP: TextEditingController(text: nMapCommand.target),
-              )
-            ],
-          )
-        ],
-      );
-    }
-
-    Widget pingOptions() {
-      return const Placeholder(
-        fallbackHeight: 300,
-      );
-    }
-
-    Widget targetOptions() {
-      return const Placeholder(
-        fallbackHeight: 300,
-      );
-    }
-
-    Widget otherOptions() {
-      return const Placeholder(
-        fallbackHeight: 300,
-      );
-    }
-
-    Widget timingOptions() {
-      return const Placeholder(
-        fallbackHeight: 300,
-      );
-    }
-
     Widget optionsTabBar() {
       return DefaultTabController(
-        length: 5,
+        length: 6,
         child: Column(children: [
           TabBar(
-            labelColor: Theme.of(context).primaryColorDark,
+            labelColor: darkColor,
             tabs: const [
               Tab(text: 'Scan', icon: Icon(Icons.account_tree_outlined)),
               Tab(text: 'Ping', icon: Icon(Icons.network_ping_outlined)),
+              Tab(
+                  text: 'Source',
+                  icon: Icon(Icons.arrow_circle_right_outlined)),
               Tab(text: 'Target', icon: Icon(Icons.adjust_outlined)),
               Tab(
                   text: 'Other',
@@ -188,26 +90,22 @@ class _EditProfileState extends State<EditProfile> {
             ],
           ),
           SizedBox(
-            height: 100,
+            height: 330,
             child: TabBarView(children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: scanOptions(),
+                child:
+                    ScanOptions(scanControllers: controllers.scanControllers),
               ),
-              pingOptions(),
-              targetOptions(),
-              otherOptions(),
-              timingOptions(),
+              PingOptions(pingControllers: controllers.pingControllers),
+              SourceOptions(
+                  sourceScanControllers: controllers.sourceScanControllers),
+              TargetOptions(
+                  targetScanControllers: controllers.targetScanControllers),
+              OtherOptions(otherScanControllers: controllers.otherScanControllers),
+              TimingOptions(timingScanControllers: controllers.timingScanControllers),
             ]),
           )
-          /*
-          Builder(builder: (context) {
-            return const Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-
-                ]);
-          }) */
         ]),
       );
     }
@@ -216,8 +114,7 @@ class _EditProfileState extends State<EditProfile> {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: TextFormField(
-          // autovalidateMode: AutovalidateMode.onUserInteraction,
-          controller: nameController,
+          controller: controllers.nameController,
           style: TextStyle(color: textColor),
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
@@ -250,7 +147,7 @@ class _EditProfileState extends State<EditProfile> {
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: TextFormField(
           // autovalidateMode: AutovalidateMode.onUserInteraction,
-          controller: cmdLineController,
+          controller: controllers.cmdLineController,
           style: TextStyle(color: textColor),
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
@@ -283,7 +180,7 @@ class _EditProfileState extends State<EditProfile> {
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: TextFormField(
           // autovalidateMode: AutovalidateMode.onUserInteraction,
-          controller: descController,
+          controller: controllers.descController,
           style: TextStyle(color: textColor),
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
@@ -317,7 +214,7 @@ class _EditProfileState extends State<EditProfile> {
         if (edit) {
           String profileName = qsController.key!;
           title = 'Edit Profile \'$profileName\'';
-          cmdLineController.text =
+          controllers.cmdLineController.text =
               qsController.value != null ? qsController.value! : '';
         } else {
           title = 'New Profile';
@@ -330,6 +227,7 @@ class _EditProfileState extends State<EditProfile> {
       return formFields;
     }
 
+    log.debug('building widget');
     List<Widget> form = createForm(delete: widget.delete, edit: widget.edit);
 
     return MaterialApp(
@@ -342,95 +240,118 @@ class _EditProfileState extends State<EditProfile> {
         backgroundColor: defaultColor,
       ),
       body: Column(children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: form,
+        Expanded(
+          flex: 8,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Form(
+              key: formKey,
+              child: Column(
+                children: form,
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 5),
-        Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              DialogButton(
+        // const Spacer(flex: 1),
+        Expanded(
+          flex: 1,
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                DialogButton(
 /*            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.labelLarge,
-            ),*/
-                buttonName: 'Cancel',
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              const Spacer(flex: 10),
-              DialogButton(
-                /*        style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.labelLarge,
-            ),*/
-                /*child: const Text('Accept'),*/
-                buttonName: 'Accept',
-                onPressed: () {
-                  log.debug('onPressed - Accept pressed.');
-                  ScanProfile profile =
-                      Provider.of<ScanProfile>(context, listen: false);
-                  Config config = profile.config;
-                  if (widget.delete) {
-                    qsController.deleteEntry(qsController.key!);
-                    config.removeSection(qsController.key!);
-                    if (qsController.map != null) {
-                      controller.text = qsController.map!.values.first;
-                      // controller?.text = qsController.map!.values.first;
-                    } else {
-                      controller.text = '';
-                    }
-                    profile.save();
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),*/
+                  buttonName: 'Cancel',
+                  onPressed: () {
                     Navigator.of(context).pop();
-                  } else {
-                    bool isValid = formKey.currentState!.validate();
-                    if (isValid) {
-                      if (widget.edit) {
-                        qsController.editCurrentEntry(
-                            qsController.key!, cmdLineController.text);
-                        if (config.hasSection(qsController.key!)) {
-                          config.set(qsController.key!, 'command',
-                              cmdLineController.text);
-                          config.set(qsController.key!, 'description',
-                              descController.text);
-                        }
+                  },
+                ),
+                const Spacer(flex: 10),
+                DialogButton(
+                  /*        style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),*/
+                  /*child: const Text('Accept'),*/
+                  buttonName: 'Accept',
+                  onPressed: () {
+                    log.debug('onPressed - Accept pressed.');
+                    ScanProfile profile =
+                        Provider.of<ScanProfile>(context, listen: false);
+                    Config config = profile.config;
+                    if (widget.delete) {
+                      qsController.deleteEntry(qsController.key!);
+                      config.removeSection(qsController.key!);
+/*                      if (qsController.map != null) {
+                        controllers.controller.text =
+                            qsController.map!.values.first;
+                        // controller?.text = qsController.map!.values.first;
                       } else {
-                        qsController.addEntry(
-                            nameController.text, cmdLineController.text);
-                        qsController.map = {
-                          nameController.text: cmdLineController.text
-                        };
-                        if (!config.hasSection(qsController.key!)) {
-                          config.addSection(qsController.key!);
-                          config.set(qsController.key!, 'command',
-                              cmdLineController.text);
-                          config.set(qsController.key!, 'description',
-                              descController.text);
-                        } else {
-                          log.warning('onPressed: section ${qsController.key!} '
-                              'already exists');
-                        }
-                      }
-                      controller.text = cmdLineController
-                          .text; // TODO: I don't think this does anything, Remove?
+                        controllers.controller.text = '';
+                      }*/
                       profile.save();
                       Navigator.of(context).pop();
                     } else {
-                      log.warning('onPressed - profile ${nameController.text}: '
-                          '${cmdLineController.text} not valid');
+                      bool isValid = formKey.currentState!.validate();
+                      if (isValid) {
+                        if (widget.edit) {
+                          qsController.editCurrentEntry(qsController.key!,
+                              controllers.cmdLineController.text);
+                          if (config.hasSection(qsController.key!)) {
+                            config.set(qsController.key!, 'command',
+                                controllers.cmdLineController.text);
+                            config.set(qsController.key!, 'description',
+                                controllers.descController.text);
+                          }
+                        } else {
+                          qsController.addEntry(controllers.nameController.text,
+                              controllers.cmdLineController.text);
+                          qsController.map = {
+                            controllers.nameController.text:
+                                controllers.cmdLineController.text
+                          };
+                          if (!config.hasSection(qsController.key!)) {
+                            config.addSection(qsController.key!);
+                            config.set(qsController.key!, 'command',
+                                controllers.cmdLineController.text);
+                            config.set(qsController.key!, 'description',
+                                controllers.descController.text);
+                          } else {
+                            log.warning(
+                                'onPressed: section ${qsController.key!} '
+                                'already exists');
+                          }
+                        }
+/*                        controllers.controller.text = controllers
+                            .cmdLineController
+                            .text;*/ // TODO: I don't think this does anything, Remove?
+                        profile.save();
+                        Navigator.of(context).pop();
+                      } else {
+                        log.warning(
+                            'onPressed - profile ${controllers.nameController.text}: '
+                            '${controllers.cmdLineController.text} not valid');
+                      }
                     }
-                  }
-                  return;
-                },
-              ),
-            ]),
+                    return;
+                  },
+                ),
+              ]),
+        ),
       ]),
     ));
+  }
+
+  Color _getColor(Set<MaterialState> states) {
+    const Set<MaterialState> interactiveStates = <MaterialState>{
+      MaterialState.pressed,
+      MaterialState.hovered,
+      MaterialState.focused,
+    };
+    if (states.any(interactiveStates.contains)) {
+      return Colors.blue;
+    }
+    return Colors.red;
   }
 }
 
@@ -459,5 +380,42 @@ class DialogButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class TextOption extends StatelessWidget {
+  const TextOption({
+    super.key,
+    required this.controllerP,
+    required this.enabledP,
+    required this.titleP,
+    this.textColor,
+  });
+
+  final TextEditingController controllerP;
+  final bool enabledP;
+  final String titleP;
+  final Color? textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: false);
+    Color defaultTextColor = mode.themeData.primaryColorLight;
+
+    return Row(children: [
+      Text(
+        titleP,
+        style: TextStyle(
+          color: textColor ?? defaultTextColor,
+        ),
+      ),
+      SizedBox(
+        width: 150,
+        child: TextField(
+          controller: controllerP,
+          enabled: enabledP,
+        ),
+      ),
+    ]);
   }
 }

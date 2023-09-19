@@ -76,9 +76,12 @@ class _ExecPageState extends State<ExecPage> {
       _ipFieldFilled = true;
       _ipIsValid = isValidIPAddress(nMapCommand.target);
     }
-    String options = nMapCommand.arguments != null ? nMapCommand.arguments!.join(" ") : "";
+
+    // Reconstruct initial command line from the arguments list
+    String options = nMapCommand.arguments != null
+        ? '${nMapCommand.program} ${nMapCommand.arguments!.join(" ")}'
+        : '';
     optionsCtrl = TextEditingController(text: options);
-    // _darkMode = false;
 
     optionsCtrl.addListener(_commandLineChanged);
     _outputCtrl.addListener(() {
@@ -94,12 +97,42 @@ class _ExecPageState extends State<ExecPage> {
     // This also removes the _printLatestValue listener.
     ipAddressCtrl.dispose();
     optionsCtrl.dispose();
-    // targetCtrl.dispose();
     _outputCtrl.dispose();
     _hostViewController.dispose();
     _serviceViewController.dispose();
     super.dispose();
   }
+
+  List<String> commandToList({required String cmd, required String ipAddress}) {
+    // Get Command Line from Controller
+    String argumentText = cmd;
+    // _aborted = false;
+    List<String> args;
+    if (argumentText.isNotEmpty) {
+      args = optionsCtrl.value.text.split(RegExp(r' +'));
+    } else {
+      args = [];
+    }
+    return args;
+  }
+
+  List<String> stripTarget(List<String> args) {
+    List<String> cmdList;
+    if (args.isNotEmpty) {
+      if (args.length > 1) {
+        cmdList = List<String>.filled(
+            args.length - 1, '')
+          ..setRange(0, args.length - 1,
+              args, 1);
+      } else {
+        cmdList = [];
+      }
+    } else {
+      cmdList = [];
+    }
+    return cmdList;
+  }
+
 
   Future<void> _initPackageInfo() async {
     final info = await PackageInfo.fromPlatform();
@@ -136,10 +169,12 @@ class _ExecPageState extends State<ExecPage> {
         Provider.of<QuickScanController>(context, listen: true);
     bool inProgress = nMapCommand.inProgress;
     NMapXML nMapXML = Provider.of<NMapXML>(context, listen: true);
-    Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
+    Color backgroundColor = mode.themeData.scaffoldBackgroundColor;
     // Color foregroundColor = Theme.of(context).secondaryHeaderColor;
-    Color defaultColor = Theme.of(context).primaryColor;
-    Color textColor = Theme.of(context).primaryColorLight;
+    Color defaultColor = mode.themeData.primaryColor;
+    Color textColor = mode.themeData.primaryColorLight;
+    Color darkColor = mode.themeData.primaryColorDark;
 
     // If the drop down has a value then set the commandLine to that value
     String commandLine = optionsCtrl.text;
@@ -149,15 +184,49 @@ class _ExecPageState extends State<ExecPage> {
         qsController.choiceMap[qsController.key]!;*/
 
 
+    void initCommand({bool notify=true}) {
+      // Get Command Line from Controller
+      String ipAddress =
+          ipAddressCtrl.value.text;
+      List<String> args = commandToList(
+          cmd: optionsCtrl.value.text,
+          ipAddress: ipAddress);
+      _aborted = false;
+
+      if (ipAddress.isNotEmpty) {
+        log.debug(
+            'MaterialButton - onPressed: setting ip address to '
+                '$ipAddress');
+        if (ipAddress.isNotEmpty) {
+          nMapCommand.setTarget(ipAddress, notify: notify);
+        } /*else {
+                                          // TODO: Get rid of default address
+                                          // TODO: Disable Scan button until a target address is chosen
+                                          ipAddress = '172.24.0.1-100';
+                                        }*/
+        if (args.isNotEmpty) {
+          List<String> cmdList = stripTarget(args);
+          nMapCommand.setProgram(args.first, notify: false);
+          // Trying .. for the first time
+          nMapCommand.setArguments(args, notify: false);
+        }
+      }
+
+    }
+
     // String commandLine = optionsCtrl.text;
     // Set the command line option text field value
     // optionsCtrl.text = commandLine;
     trace.debug('build: dropdown = "${qsController.key}" '
         'command line = "$commandLine"');
 
+    // if (nMapCommand.arguments == )
+
     if (_aborted && result != null) {
       result += '\nAborted by user.';
     }
+
+    initCommand(notify: false);
 
     Widget scaffold = Scaffold(
       backgroundColor: backgroundColor,
@@ -211,6 +280,7 @@ class _ExecPageState extends State<ExecPage> {
                 ),
                 QuickScanDropDown(
                   key: Key('QSDropDown - ${qsController.choiceMap.length}'),
+                  width: 260,
                   controller: qsController,
                   onChanged: (option) {
                     trace.debug(
@@ -263,7 +333,7 @@ class _ExecPageState extends State<ExecPage> {
             ),
           ),
           TabBar(
-            labelColor: Theme.of(context).primaryColorDark,
+            labelColor: darkColor,
             tabs: const [
               Tab(text: 'Raw Output', icon: Icon(Icons.wysiwyg)),
               Tab(text: 'Tabular Output', icon: Icon(Icons.grid_on)),
@@ -360,46 +430,7 @@ class _ExecPageState extends State<ExecPage> {
                                 onPressed: inProgress || !_ipIsValid
                                     ? null
                                     : () {
-                                        // Get Command Line from Controller
-                                        String argumentText =
-                                            optionsCtrl.value.text;
-                                        _aborted = false;
-                                        String ipAddress =
-                                            ipAddressCtrl.value.text;
-                                        List<String> args;
-                                        if (argumentText.isNotEmpty) {
-                                          args = optionsCtrl.value.text
-                                              .split(RegExp(r' +'));
-                                        } else {
-                                          args = [];
-                                        }
-                                        if (ipAddress.isNotEmpty) {
-                                          log.debug(
-                                              'MaterialButton - onPressed: setting ip address to '
-                                              '$ipAddress');
-                                          if (ipAddress.isNotEmpty) {
-                                            nMapCommand.target = ipAddress;
-                                          } /*else {
-                                          // TODO: Get rid of default address
-                                          // TODO: Disable Scan button until a target address is chosen
-                                          ipAddress = '172.24.0.1-100';
-                                        }*/
-                                          if (args.isNotEmpty) {
-                                            nMapCommand.program = args.first;
-                                            // Trying .. for the first time
-                                            List<String> cmdList;
-                                            if (args.length > 1) {
-                                              cmdList = List<String>.filled(
-                                                  args.length - 1, '')
-                                                ..setRange(0, args.length - 1,
-                                                    args, 1);
-                                            } else {
-                                              cmdList = [];
-                                            }
-                                            nMapCommand.setArguments(cmdList,
-                                                notify: false);
-                                          }
-                                        }
+                                        initCommand();
                                         _outputPosition.offset = 0.0;
                                         nMapCommand.clear();
                                         nMapXML.clear();
@@ -629,10 +660,12 @@ class _ExecPageState extends State<ExecPage> {
                 MenuButton(
                   text: const Text('New Profile',
                       style: TextStyle(fontSize: kDefaultMenuFontSize)),
-                  onTap: inProgress ? null :() {
-                    Navigator.pushNamed(context, '/newProfile');
-                    // editProfile(context, edit: false, controller: optionsCtrl);
-                  },
+                  onTap: inProgress
+                      ? null
+                      : () {
+                          Navigator.pushNamed(context, '/newProfile');
+                          // editProfile(context, edit: false, controller: optionsCtrl);
+                        },
                   icon: const Icon(FontAwesomeIcons.arrowUpRightFromSquare,
                       size: kDefaultIconSize), //const Icon(Icons.copyright),
                 ),
@@ -641,10 +674,12 @@ class _ExecPageState extends State<ExecPage> {
                     'Edit Selected Profile',
                     style: TextStyle(fontSize: kDefaultMenuFontSize),
                   ),
-                  onTap: inProgress ? null : () {
-                    Navigator.pushNamed(context, '/editProfile');
-                    //editProfile(context, edit: true, controller: optionsCtrl);
-                  },
+                  onTap: inProgress
+                      ? null
+                      : () {
+                          Navigator.pushNamed(context, '/editProfile');
+                          //editProfile(context, edit: true, controller: optionsCtrl);
+                        },
                   icon: const Icon(FontAwesomeIcons.solidPenToSquare,
                       size: kDefaultIconSize), // const Icon(Icons.info),
                 ),
@@ -653,11 +688,13 @@ class _ExecPageState extends State<ExecPage> {
                     'Delete Selected Profile',
                     style: TextStyle(fontSize: kDefaultMenuFontSize),
                   ),
-                  onTap: inProgress ? null :  () {
-                    Navigator.pushNamed(context, '/deleteProfile');
-                    // editProfile(context,
-                    //    edit: false, delete: true, controller: optionsCtrl);
-                  },
+                  onTap: inProgress
+                      ? null
+                      : () {
+                          Navigator.pushNamed(context, '/deleteProfile');
+                          // editProfile(context,
+                          //    edit: false, delete: true, controller: optionsCtrl);
+                        },
                   icon: const Icon(FontAwesomeIcons.solidPenToSquare,
                       size: kDefaultIconSize), // const Icon(Icons.info),
                 ),

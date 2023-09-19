@@ -103,9 +103,10 @@ class QuickScanController with ChangeNotifier {
 class QuickScanDropDown extends StatefulWidget {
   final QuickScanController controller;
   final void Function(String value)? onChanged;
+  final double width;
 
   const QuickScanDropDown(
-      {super.key, required this.controller, this.onChanged});
+      {super.key, required this.controller, this.onChanged, this.width = 220});
 
   @override
   State<QuickScanDropDown> createState() => _QuickScanDropDownState();
@@ -133,7 +134,7 @@ class _QuickScanDropDownState extends State<QuickScanDropDown> {
       dropdownValue = widget.controller.key!;
     }
     return SizedBox(
-      width: 220,
+      width: widget.width,
       child: DropdownButtonFormField<String>(
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
