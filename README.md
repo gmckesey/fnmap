@@ -9,3 +9,8 @@ depends on nmap being installed and has been tested with nmap 7.93 and nmap 7.60
 Run 'flutter create .' at the top of the project tree.
 
 
+
+
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/fnmap)
+
+

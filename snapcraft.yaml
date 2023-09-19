@@ -12,7 +12,7 @@ description: |
   different views of the data.
 icon: assets/fnmap.png
 grade: stable # must be 'stable' to release into candidate/stable channels
-confinement: devmode # use 'strict' once you have the right plugs and slots
+confinement: strict # use 'strict' once you have the right plugs and slots
 
 architectures:
   - build-on: [ amd64 ]
