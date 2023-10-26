@@ -1,14 +1,6 @@
 import 'package:fnmap/widgets/check_textfield.dart';
-import 'package:provider/provider.dart';
-import 'package:args/args.dart';
 import 'package:flutter/material.dart';
-import 'package:fnmap/widgets/text_field.dart';
-import 'package:fnmap/widgets/dropdown_string.dart';
-import 'package:fnmap/widgets/checkbox.dart';
-import 'package:fnmap/models/edit_profile_controllers.dart';
-import 'package:fnmap/models/dark_mode.dart';
-import 'package:fnmap/models/nmap_command.dart';
-import 'package:fnmap/utilities/logger.dart';
+import 'package:fnmap/controllers/edit_profile_controllers.dart';
 
 class SourceOptions extends StatefulWidget {
   final SourceScanControllers sourceScanControllers;
@@ -26,8 +18,6 @@ class _SourceOptionsState extends State<SourceOptions> {
   @override
   void initState() {
     super.initState();
-    NMapCommand nMapCommand = Provider.of<NMapCommand>(context, listen: false);
-    ArgResults results = nMapCommand.results;
     sourceScanControllers = widget.sourceScanControllers;
   }
 
@@ -39,30 +29,56 @@ class _SourceOptionsState extends State<SourceOptions> {
         iconP: Icons.edit,
         hintP: 'Decoys',
         labelP: 'Use decoys to hide identity',
-        controllerP: sourceScanControllers.decoy.controller,
-        enabledP: sourceScanControllers.decoy.enabled!,
+        helpP:
+            'Send probes from fake a comma separated list of decoy addresses optionally use ME to include\n'
+            'your own IP and use RND for a random address, RND:n where n is a number for n random addresses\n(-D)',
+        controllerP: sourceScanControllers.decoy,
+        enabledP: sourceScanControllers.decoy.enabled,
+        onChangedP: (enabled, textValue) {
+          setState(() {
+            sourceScanControllers.decoy.enabled = enabled!;
+          });
+        },
       ),
       KriolCheckTextField(
         width: 300,
         iconP: Icons.edit,
         hintP: 'Source IP Address',
         labelP: 'Sets source IP address',
-        controllerP: sourceScanControllers.sourceIP.controller,
-        enabledP: sourceScanControllers.sourceIP.enabled!,
+        helpP: 'The IP of the interface to use as the source (-S)',
+        controllerP: sourceScanControllers.sourceIP,
+        enabledP: sourceScanControllers.sourceIP.enabled,
+        onChangedP: (enabled, textValue) {
+          setState(() {
+            sourceScanControllers.sourceIP.enabled = enabled!;
+          });
+        },
       ),
       KriolCheckTextField(
         iconP: Icons.edit,
         hintP: 'Source port',
         labelP: 'Set source port',
-        controllerP: sourceScanControllers.sourcePort.controller,
-        enabledP: sourceScanControllers.sourcePort.enabled!,
+        helpP: 'Send probe packets from the chosen port when possible (--source-port)',
+        controllerP: sourceScanControllers.sourcePort,
+        enabledP: sourceScanControllers.sourcePort.enabled,
+        onChangedP: (enabled, textValue) {
+          setState(() {
+            sourceScanControllers.sourcePort.enabled = enabled!;
+          });
+        },
       ),
       KriolCheckTextField(
         iconP: Icons.edit,
         hintP: 'Network Interface',
         labelP: 'Set network interface',
-        controllerP: sourceScanControllers.networkIF.controller,
-        enabledP: sourceScanControllers.networkIF.enabled!,
+        helpP: 'Set the network interface to send packets out of, for example: eth0 (-e)',
+        controllerP: sourceScanControllers.networkIF,
+        enabledP: sourceScanControllers.networkIF.enabled,
+        onChangedP: (enabled, textValue) {
+          setState(() {
+            sourceScanControllers.networkIF.enabled = enabled!;
+          });
+        },
       ),
     ]);
   }

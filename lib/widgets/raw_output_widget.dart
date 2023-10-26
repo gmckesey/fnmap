@@ -60,8 +60,7 @@ class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
     }
     // WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToEnd());
     log.debug('build: initialPosition = ${widget.initialPosition}');
-    // TODO: Temporary call just to work on the initial scroll position
-    WidgetsBinding.instance.addPostFrameCallback((_) => _showPosition());
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
  /*     child: Neumorphic(
@@ -88,14 +87,6 @@ class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
 
   void scroll(double position) {
     widget.outputCtrl.jumpTo(position);
-  }
-
-  // TODO: Temporary call to work on the scroll postion
-  void _showPosition() {
-    // if (outputCtrl.positions.isNotEmpty &&  outputCtrl.position.hasPixels) {
-    log.debug('showPosition: scroll controller position is '
-        '${widget.outputCtrl.offset}');
-    // }
   }
 
   // Scroll output window to the end

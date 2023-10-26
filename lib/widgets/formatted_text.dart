@@ -83,7 +83,6 @@ class FormattedText extends StatelessWidget {
   Widget build(BuildContext context) {
     final defaultTextStyle = DefaultTextStyle.of(context);
 
-    // TODO: (2023-03-14) Debugging here
     FnMapConfig nmapConfig = Provider.of<FnMapConfig>(context, listen: true);
 
     /*List<HighLightConfig> hConfigs =

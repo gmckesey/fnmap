@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:args/args.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fnmap/controllers/edit_profile_controllers.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/utilities/ip_address_validator.dart';
@@ -19,6 +20,118 @@ enum CommandState {
   complete,
 }
 
+
+class CmdBool with ChangeNotifier {
+  late bool _isSet;
+
+  CmdBool(bool value) {
+    _isSet = value;
+  }
+
+  bool
+  get isSet => _isSet;
+
+  set isSet(bool value) {
+    _isSet = value;
+    notifyListeners();
+  }
+
+  void call(bool value) {
+    isSet = value;
+  }
+
+}
+
+class CmdInt with ChangeNotifier {
+  late int _intValue;
+  late TextEditingController? _controller;
+
+  CmdInt(int value, {TextEditingController? controller}) {
+    _intValue = value;
+    if (controller != null) {
+      _controller = TextEditingController();
+      _controller!.text = _intValue.toString();
+    }
+  }
+
+  CmdInt.fromString(String value, {TextEditingController? controller}) {
+    _intValue = int.tryParse(value)!;
+    if (controller != null) {
+      _controller = TextEditingController();
+      _controller!.text = _intValue.toString();
+    }
+  }
+
+  bool
+  get hasController => _controller != null;
+
+  int
+  get value => _intValue;
+
+  set value(int intValue) {
+    _intValue = intValue;
+    notifyListeners();
+  }
+
+
+  set controller(TextEditingController? controller) {
+    _controller = controller;
+  }
+
+  @override
+  String toString() => _intValue.toString();
+
+  void call(int intValue) {
+    value = intValue;
+  }
+}
+
+class CmdEnabledInt extends CmdInt {
+  CmdEnabledInt(super.value);
+
+
+}
+
+class CmdString with ChangeNotifier {
+  late String? _text;
+  late TextEditingController? _controller;
+
+  CmdString(String? value, {TextEditingController? controller}) {
+    _text = value;
+    if (controller == null) {
+      _controller = TextEditingController();
+      if (_text != null) {
+        _controller!.text = _text!;
+      }
+    } else {
+      _controller!.text = _text!;
+    }
+  }
+
+  bool
+  get hasController => _controller != null;
+
+  String?
+  get text => _text;
+
+  set text(String? value) {
+    _text = value;
+    notifyListeners();
+  }
+
+  set controller(TextEditingController? controller) {
+    _controller = controller;
+  }
+
+  @override
+  String toString() => _text ?? '';
+
+  void call(String? value) {
+    text = value;
+  }
+
+}
+
 // A kind of controller to store the scroll position
 // when we move between tabs - unfortunate that this is necessary
 // essentially I want a reference to a double rather than a double
@@ -29,6 +142,17 @@ class NMapScrollOffset {
 
   @override
   String toString() => offset.toString();
+}
+
+
+class ProfileCommand with ChangeNotifier {
+  late EditProfileControllers controllers;
+
+  ProfileCommand({required this.controllers});
+
+  void update() {
+    notifyListeners();
+  }
 }
 
 class NMapCommand with ChangeNotifier {
@@ -65,11 +189,17 @@ class NMapCommand with ChangeNotifier {
         _command = NFECommand(arguments: []);
       }
     }
+    if (target == null) {
+      List<String> value = _command.results != null ? _command.results!.rest : [];
+      if (value.isNotEmpty) {
+        target = value.join(" ");
+      }
+    }
     if (target != null && !isValidIPAddress(target)) {
       throw NotAValidIPAddressException('invalid target address '
           '$target');
     }
-    _target = target ?? '127.0.0.1';
+    _target = target ?? ''; //If there is no target in command or passed thru set it to a blank string
   }
 
   bool get inProgress => state == CommandState.inProgress;
@@ -77,6 +207,8 @@ class NMapCommand with ChangeNotifier {
     _consoleOutput = value;
     notifyListeners();
   }
+
+  NFECommand get command => _command;
 
 //   String get target => _target;
 
@@ -125,7 +257,7 @@ class NMapCommand with ChangeNotifier {
       state = CommandState.complete;
       _process = null;
       notifyListeners();
-      // TODO: Open could fail, so wrap in try catch
+
       try {
         NMapXML nMapXML = Provider.of<NMapXML>(context, listen: false);
         nMapXML.clear(notify: false);
@@ -159,7 +291,7 @@ class NMapCommand with ChangeNotifier {
   String? get stdOut => _consoleOutput;
   List<String>? get arguments => _command.arguments;
   String get target => _target;
-  ArgResults get results => _command.results;
+  ArgResults? get results => _command.results;
   List<String> get tcpScanOptions => _command.tcpScanOptions;
   List<String> get otherScanOptions => _command.otherScanOptions;
   List<({String legacy, String flag})> get timingFlags => _command.timingFlags;
@@ -203,8 +335,9 @@ class NMapCommand with ChangeNotifier {
 
   void setTarget(String value, {bool notify = true}) {
     if (!isValidIPAddress(value)) {
-      throw NotAValidIPAddressException('invalid target address '
-          '$value');
+      // throw NotAValidIPAddressException('invalid target address '
+      //    '$value');
+      return;
     }
     _target = value;
     if (notify) {

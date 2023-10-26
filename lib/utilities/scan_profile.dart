@@ -53,14 +53,15 @@ class ScanProfile with ChangeNotifier {
       lines = kDefaultProfiles;
     }
 
+    log.info('parse: reading config from [$scanFile]');
     _config = Config.fromStrings(lines);
     for (String section in _config.sections()) {
-      trace.verbose('parse: section is [$section].');
+      trace.trace('parse: section is [$section].');
       if (_config.options(section) != null) {
         Iterable<String> options = _config.options(section)!;
         for (String option in options) {
           String? value = _config.get(section, option);
-          trace.verbose('parse: option is $option = $value');
+          trace.trace('parse: option is $option = $value');
         }
       }
     }

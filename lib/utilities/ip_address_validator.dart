@@ -19,6 +19,17 @@ enum AddressType {
   invalidAddress,
 }
 
+bool isHostname(String value) {
+  bool response = false;
+  if (value.isNotEmpty && value.length < 255) {
+    if (valid.isAlphanumeric(value)) {
+      response = true;
+    } else if (valid.isAlphanumeric(value.replaceAll('-', '')) && value[0] != '_') {
+      response = true;
+    }
+  }
+  return response;
+}
 //TODO: Make this check more rigorous
 bool isValidIPRange(String range) {
   NLog log = NLog('isValidRange', flag: nLogTRACE, package: kPackageName);

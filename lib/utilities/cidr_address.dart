@@ -201,7 +201,6 @@ class CIDRInfo {
   }
 
   @override
-  // TODO: implement hashCode
   int get hashCode =>
       mask.hashCode ^
       network.hashCode ^

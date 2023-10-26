@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fnmap/utilities/logger.dart';
-import 'package:fnmap/constants.dart';
+import 'package:fnmap/widgets/kriol_widgets.dart';
 
-class TextfieldDropdownButton2 extends StatelessWidget {
+class KriolDropdownButton extends StatelessWidget {
   final String hint;
   final String? value;
   final List<String> dropdownItems;
@@ -31,7 +31,7 @@ class TextfieldDropdownButton2 extends StatelessWidget {
   final Offset offset;
   final TextEditingController? editingController;
 
-  const TextfieldDropdownButton2({
+  const KriolDropdownButton({
     required this.hint,
     required this.value,
     required this.dropdownItems,
@@ -65,7 +65,7 @@ class TextfieldDropdownButton2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    NLog log = NLog('TextfieldDropdownButton2:', package: kPackageName);
+    NLog log = NLog('TextfieldDropdownButton2:', package: kriolWidgets);
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         //To avoid long text overflowing.

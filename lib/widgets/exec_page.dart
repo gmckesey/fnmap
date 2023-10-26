@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:fnmap/utilities/nmap_fe.dart';
 import 'package:intl/intl.dart';
 import 'package:xml/xml.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +66,7 @@ class _ExecPageState extends State<ExecPage> {
     // log.debug('initState called.', color: LogColor.red);
     _aborted = false;
     _ipFieldFilled = false;
-    // _ipIsValid = false;
+    _ipIsValid = false;
     _outputPosition = NMapScrollOffset(0.0);
     _hostViewController = NMapViewController();
     _serviceViewController = NMapServiceViewController();
@@ -120,10 +121,8 @@ class _ExecPageState extends State<ExecPage> {
     List<String> cmdList;
     if (args.isNotEmpty) {
       if (args.length > 1) {
-        cmdList = List<String>.filled(
-            args.length - 1, '')
-          ..setRange(0, args.length - 1,
-              args, 1);
+        cmdList = List<String>.filled(args.length - 1, '')
+          ..setRange(0, args.length - 1, args, 1);
       } else {
         cmdList = [];
       }
@@ -132,7 +131,6 @@ class _ExecPageState extends State<ExecPage> {
     }
     return cmdList;
   }
-
 
   Future<void> _initPackageInfo() async {
     final info = await PackageInfo.fromPlatform();
@@ -175,6 +173,7 @@ class _ExecPageState extends State<ExecPage> {
     Color defaultColor = mode.themeData.primaryColor;
     Color textColor = mode.themeData.primaryColorLight;
     Color darkColor = mode.themeData.primaryColorDark;
+    bool isTargetEnabled = true;
 
     // If the drop down has a value then set the commandLine to that value
     String commandLine = optionsCtrl.text;
@@ -183,35 +182,49 @@ class _ExecPageState extends State<ExecPage> {
         qsController.choiceMap.values.first :
         qsController.choiceMap[qsController.key]!;*/
 
-
-    void initCommand({bool notify=true}) {
+    void initCommand({bool notify = true}) {
       // Get Command Line from Controller
-      String ipAddress =
-          ipAddressCtrl.value.text;
-      List<String> args = commandToList(
-          cmd: optionsCtrl.value.text,
-          ipAddress: ipAddress);
+      NFECommand nfeCommand = NFECommand.fromString(optionsCtrl.text);
+      String? target = nfeCommand.target;
+      String ipAddress;
+
+      if (target != null) {
+        // Disable target field if the target is in the profile
+        isTargetEnabled = false;
+        // Fill the target field with the value from the profile
+        if (isValidIPAddress(target)) {
+          ipAddressCtrl.text = target;
+        }
+        ipAddress = ipAddressCtrl.text;
+      } else {
+        // Enable the target field if the target is not in the profile
+        isTargetEnabled = true;
+        // Set the ip address with the value in the target field
+        ipAddress = ipAddressCtrl.value.text;
+      }
+      List<String> args = nfeCommand.arguments;
+      // Add the target to the list of arguments
+      if (!isTargetEnabled && target!=null) {
+        args.add(target);
+      }
+      // commandToList(cmd: optionsCtrl.value.text, ipAddress: ipAddress);
       _aborted = false;
 
       if (ipAddress.isNotEmpty) {
-        log.debug(
-            'MaterialButton - onPressed: setting ip address to '
-                '$ipAddress');
+        log.debug('build(initCommand) - setting ip address to '
+            '$ipAddress');
         if (ipAddress.isNotEmpty) {
           nMapCommand.setTarget(ipAddress, notify: notify);
-        } /*else {
-                                          // TODO: Get rid of default address
-                                          // TODO: Disable Scan button until a target address is chosen
-                                          ipAddress = '172.24.0.1-100';
-                                        }*/
+          _ipIsValid = isValidIPAddress(ipAddress);
+        } else {
+          _ipIsValid = false;
+        }
+        nMapCommand.setProgram(nfeCommand.program, notify: false);
         if (args.isNotEmpty) {
-          List<String> cmdList = stripTarget(args);
-          nMapCommand.setProgram(args.first, notify: false);
           // Trying .. for the first time
           nMapCommand.setArguments(args, notify: false);
         }
       }
-
     }
 
     // String commandLine = optionsCtrl.text;
@@ -255,6 +268,7 @@ class _ExecPageState extends State<ExecPage> {
                   child: SizedBox(
                       width: 120,
                       child: TextField(
+                        enabled: isTargetEnabled,
                         controller: ipAddressCtrl,
                         decoration: InputDecoration(
                           filled: _ipFieldFilled,
@@ -510,7 +524,6 @@ class _ExecPageState extends State<ExecPage> {
                                   'OnTap<Save Scan>: XML document is null');
                             } else {
                               log.debug('OnTap<Save Scan>: XML document found');
-                              // TODO: Add code to save a scan
                               File file = File(saveFName!);
                               file.writeAsString(document.toXmlString(
                                   pretty: true, indent: '  '));
@@ -558,7 +571,18 @@ class _ExecPageState extends State<ExecPage> {
 
                             log.debug('onTap<SaveScanAs> selected $saveFName');
                             // TODO: Add code to save a scan
-                            // File file = File(saveFName!);
+                            if (saveFName != null && context.mounted) {
+                              XmlDocument? document = nMapXML.document;
+                              if (document == null) {
+                                log.warning(
+                                    'OnTap<Save Scan>: XML document is null');
+                              } else {
+                                log.debug('OnTap<Save Scan>: XML document found');
+                                File file = File(saveFName!);
+                                file.writeAsString(document.toXmlString(
+                                    pretty: true, indent: '  '));
+                              }
+                            }
                           } else {
                             log.debug('onTap<SaveScanAs> cancelled.');
                           }
@@ -570,9 +594,7 @@ class _ExecPageState extends State<ExecPage> {
                       size: kDefaultIconSize), //const Icon(Icons.save),
                   shortcutText: 'Ctrl+Alt+S',
                   shortcut: const SingleActivator(LogicalKeyboardKey.keyS,
-                      control: true,
-                      alt: true),
-
+                      control: true, alt: true),
                 ),
                 MenuButton(
                   text: const Text('Load Scan',
@@ -639,24 +661,28 @@ class _ExecPageState extends State<ExecPage> {
                   shortcutText: 'Ctrl+L',
                   shortcut: const SingleActivator(LogicalKeyboardKey.keyL,
                       control: true),
-
                 ),
                 const MenuDivider(),
                 MenuButton(
                   text: const Text('Quit',
                       style: TextStyle(fontSize: kDefaultMenuFontSize)),
 
-                  onTap: () {
+                  onTap: () async {
                     // SystemNavigator.pop(animated: true);
                     log.debug('Quit: exiting app');
-                    SystemNavigator.pop();
+                    await SystemChannels.platform
+                        .invokeMethod<void>('SystemNavigator.pop', false);
+                    if (Platform.isWindows ||
+                        Platform.isLinux ||
+                        Platform.isMacOS) {
+                      exit(0);
+                    }
                   },
                   icon: const Icon(FontAwesomeIcons.rightFromBracket,
                       size: kDefaultIconSize), //const Icon(Icons.exit_to_app),
                   shortcutText: 'Ctrl+Q',
                   shortcut: const SingleActivator(LogicalKeyboardKey.keyQ,
                       control: true),
-
                 ),
               ],
             ),
@@ -674,7 +700,19 @@ class _ExecPageState extends State<ExecPage> {
                   onTap: inProgress
                       ? null
                       : () {
-                          Navigator.pushNamed(context, '/newProfile');
+                          Navigator.pushNamed(
+                            context,
+                            '/newProfile',
+                            arguments: qsController,
+                          ).then((value) {
+                            setState(() {
+                              // Make sure that the updated Command Line gets
+                              // updated with the edited value, which is now already
+                              // saved on file and in qsController
+                              optionsCtrl.text =
+                                  qsController.choiceMap[qsController.key!]!;
+                            });
+                          });
                           // editProfile(context, edit: false, controller: optionsCtrl);
                         },
                   icon: const Icon(FontAwesomeIcons.arrowUpRightFromSquare,
@@ -688,7 +726,19 @@ class _ExecPageState extends State<ExecPage> {
                   onTap: inProgress
                       ? null
                       : () {
-                          Navigator.pushNamed(context, '/editProfile');
+                          Navigator.pushNamed(
+                            context,
+                            '/editProfile',
+                            arguments: qsController,
+                          ).then((value) {
+                            setState(() {
+                              // Make sure that the updated Command Line gets
+                              // updated with the edited value, which is now already
+                              // saved on file and in qsController
+                              optionsCtrl.text =
+                                  qsController.choiceMap[qsController.key!]!;
+                            });
+                          });
                           //editProfile(context, edit: true, controller: optionsCtrl);
                         },
                   icon: const Icon(FontAwesomeIcons.solidPenToSquare,
@@ -702,7 +752,11 @@ class _ExecPageState extends State<ExecPage> {
                   onTap: inProgress
                       ? null
                       : () {
-                          Navigator.pushNamed(context, '/deleteProfile');
+                          Navigator.pushNamed(
+                            context,
+                            '/deleteProfile',
+                            arguments: qsController,
+                          );
                           // editProfile(context,
                           //    edit: false, delete: true, controller: optionsCtrl);
                         },

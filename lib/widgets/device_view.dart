@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:split_view/split_view.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -233,7 +233,8 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
           return ListTile(
             title: Text(
               hostname,
-              style: GoogleFonts.lato(fontSize: 14.0),
+              // style: GoogleFonts.lato(fontSize: 14.0),
+              style: const TextStyle(fontSize: 14.0),
             ),
             key: Key(hostname),
             selected: _selectedHostController.selected == index,

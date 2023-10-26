@@ -2,12 +2,15 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fnmap/constants.dart';
+import 'package:fnmap/controllers/edit_profile_controllers.dart';
 import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:fnmap/models/nmap_xml.dart';
+import 'package:fnmap/models/help_text.dart';
+import 'package:fnmap/models/validity_notifier.dart';
 import 'package:fnmap/widgets/exec_page.dart';
 import 'package:fnmap/widgets/quick_scan_dropdown.dart';
 import 'package:fnmap/utilities/scan_profile.dart';
@@ -22,8 +25,8 @@ Future setWindowParams() async {
 
   WindowOptions windowOptions = const WindowOptions(
     title: 'fnmap',
-    size: Size(850, 750),
-    minimumSize: Size(850, 750),
+    size: Size(1200, 900),
+    minimumSize: Size(900, 880),
     center: true,
     backgroundColor: kDefaultColor,
     skipTaskbar: false,
@@ -44,7 +47,9 @@ void main() async {
 
   // NLog.setPackage(packageName: nLogDEFAULT, enabled: false);
   NLog.setPackage(packageName: kPackageName, enabled: true);
-  NLog.setPackage(packageName: 'NFECommand', enabled: true);
+  NLog.setPackage(packageName: 'NFECommand', enabled: false);
+  NLog.setPackage(packageName: 'Kriol Widgets', enabled: false);
+  NLog.setPackage(packageName: 'TARGET_DEBUG', enabled: false);
   NLog.setLogFlag(flag: nLogDEFAULT);
   NLog.setLogFlag(flag: nLogTRACE);
   NLog('fnmap<main>:', type: NLogType.simple, package: kPackageName)
@@ -62,7 +67,9 @@ void main() async {
       : qsController.choiceMap[qsController.key]!;
 
   NMapCommand nMapCommand =
-      NMapCommand.fromCommandLine(commandLine, target: '192.168.0.1/24');
+      NMapCommand.fromCommandLine(commandLine);
+
+  EditProfileControllers profileControllers = EditProfileControllers(nfeCommand: nMapCommand.command);
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowParams().then((_) {
@@ -71,8 +78,11 @@ void main() async {
         ChangeNotifierProvider.value(value: qsController),
         ChangeNotifierProvider.value(value: profile),
         ChangeNotifierProvider.value(value: config),
+        ChangeNotifierProvider.value(value: profileControllers),
         ChangeNotifierProvider(create: (_) => NMapXML()),
         ChangeNotifierProvider(create: (_) => NMapDarkMode()),
+        ChangeNotifierProvider(create: (_) => HelpText()),
+        ChangeNotifierProvider(create: (_) => ValidityNotifier()),
       ], child: const MyApp()));
     });
   }

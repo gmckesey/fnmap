@@ -1,14 +1,19 @@
 import 'package:args/args.dart';
+import 'package:fnmap/utilities/ip_address_validator.dart';
 import 'package:fnmap/utilities/logger.dart';
 
 // Class to convert nmap command line to and from
 // flutter flags and options
 class NFECommand {
+  //TODO: (2023-10-12) Consider explicitly adding a target field rather than relying on it being
+  // the last String in the _argument List.
   late List<String> _arguments;
+  late String _program;
   late ArgParser _parser;
-  late ArgResults _results;
+  ArgResults? _results;
+  bool _isValid = true;
 
-  late NLog log = NLog('NFECommand', package: 'NFECommand');
+  late NLog log = NLog('NFECommand'); // package: 'NFECommand');
   NLog trace = NLog('NFECommand', flag: nLogTRACE, package: 'NFECommand');
 
   // We are using Records to capture the conversions
@@ -86,7 +91,10 @@ class NFECommand {
     (legacy: '-Pn', flag: 'no-ping-before-scan'),
     (legacy: '-PE', flag: 'icmp-ping'),
     (legacy: '-PP', flag: 'icmp-timestamp-request'),
-    (legacy: '-PM', flag: 'icmp-netmask-request')
+    (legacy: '-PM', flag: 'icmp-netmask-request'),
+    (legacy: '-Pn', flag: 'skip-host-discovery'),
+    (legacy: '-PR', flag: 'arp-ping'),
+    (legacy: '--disable-arp-ping', flag: 'disable-arp-ping'),
   ];
 
   // Here are additional options
@@ -95,8 +103,8 @@ class NFECommand {
     (legacy: '-d', option: 'debug-level'),
     (legacy: '-v', option: 'verbosity-level'),
     (legacy: '--max-retries', option: 'max-retries'),
-    (legacy: '-sl', option: 'idle-scan'),
-    (legacy: '-b', option: 'ftp-bounce-attack'),
+    (legacy: '-sI', option: 'idle-scan'),
+    (legacy: '-b', option: 'ftp-bounce-attack'), // TODO: Support optional arguments
     (legacy: '--version-intensity', option: 'version-intensity'),
     (legacy: '--extra-options', option: 'extra-options'),
   ];
@@ -110,6 +118,13 @@ class NFECommand {
     (legacy: '-sV', flag: 'version-detection'),
     (legacy: '--version-trace', flag: 'version-trace'),
     (legacy: '--allports', flag: 'allports'),
+/*
+    (legacy: '-v1', flag: 'verbosity-level-1'),
+    (legacy: '-v2', flag: 'verbosity-level-2'),
+    (legacy: '-v3', flag: 'verbosity-level-3'),
+    (legacy: '-v4', flag: 'verbosity-level-4'),
+*/
+
   ];
 
   final List<({String legacy, String option})> _pingOptions = [
@@ -141,25 +156,107 @@ class NFECommand {
     (legacy: '--scan-delay', option: 'min-scan-delay'),
   ];
 
-  NFECommand({required List<String> arguments}) {
+  NFECommand({List<String>? arguments}) {
     _initializeVars();
-    if (arguments.length > 1) {
+    if (arguments == null || arguments.isEmpty) {
+      _arguments = [];
+      _program = 'nmap';
+    } else {
       _arguments = arguments.sublist(1);
+      _program = arguments[0];
+    }
+
+    List<String> modern = toModern(_arguments);
+    ArgResults? oldResults = _results;
+    try {
+      _results = _parser.parse(modern);
+      _isValid = true;
+    } catch (parserException) {
+      log.debug(
+          'NFECommand:Constructor - exception $parserException parsing $modern');
+      _results = oldResults;
+      _isValid = false;
+    }
+  }
+
+  NFECommand.fromString(String cmd) {
+    List<String> arguments;
+
+    _initializeVars();
+    // This RegExp finds quoted arguments in the command line
+    if (cmd.isNotEmpty) {
+      RegExp re = RegExp(r'([XYZ])(.*)\1'
+          .replaceAll("X", r'"')
+          .replaceAll('Y', r"`")
+          .replaceAll('Z', r"'"));
+      Iterable<Match> matches = re.allMatches(cmd);
+
+      // Replace all of the quoted arguments with a placeholder
+      // We need to do this so that we can parse the arguments
+      int n = 1;
+      for (var m in matches) {
+        String strMatch = m[0]!;
+        cmd = cmd.replaceFirst(strMatch, 'place_holder_$n');
+        n++;
+      }
+
+      // With the placeholders we can now split the command line using whitespace as
+      // a separator between arguments.
+      arguments = cmd.split(RegExp(r'\s'));
+
+      // Now that we have the arguments as a list of strings we can
+      // replace the placeholders with the strings that they replaced.
+      int l = 1;
+      for (var m in matches) {
+        String placeHolder = 'place_holder_$l';
+        for (int index = 0; index < arguments.length; index++) {
+          if (arguments[index] == placeHolder) {
+            arguments[index] = m[0]!;
+            break;
+          }
+        }
+        n++;
+      }
+      _arguments = arguments.sublist(1);
+      _program = arguments[0];
     } else {
       _arguments = [];
+      _program = 'nmap';
     }
+
     List<String> modern = toModern(_arguments);
-    _results = _parser.parse(modern);
+    ArgResults? oldResults = _results;
+    try {
+      _results = _parser.parse(modern);
+      String? ip = target;
+      if (ip == null) {
+        _isValid = true;
+      } else if (isValidIPAddress(ip)) {
+        _isValid = true;
+      } else {
+        _isValid = false;
+      }
+    } catch (parserException) {
+      log.debug('fromString - parser exception $parserException parsing $modern');
+      _results = oldResults;
+      _isValid = false;
+    }
   }
 
-  NFECommand.fromModern({required List<String> arguments}) {
+  NFECommand.fromModern({required List<String> arguments, String? program}) {
     _initializeVars();
-    _results = _parser.parse(_arguments);
-    _arguments = toLegacy();
+    if (program != null) {
+      _program = program;
+      _results = _parser.parse(arguments);
+    } else {
+      _program = arguments[0];
+      _results = _parser.parse(arguments.sublist(1));
+    }
+    if (_results != null) {
+      _arguments = toLegacy(_results!);
+    }
   }
 
-  List<String> get arguments => _arguments;
-  List<({String legacy, String flag})> get timingFlags => _timingFlags;
 
   void _initializeVars() {
     _parser = ArgParser();
@@ -170,6 +267,60 @@ class NFECommand {
     _otherOptionConfig();
     _timingOptionConfig();
   }
+
+  List<String> get arguments => _arguments;
+
+  String get cmdLine => _results != null
+      ? '$_program ${arguments.join(" ")} ${_results!.rest.join(" ")}'
+      : '$_program ${arguments.join(" ")}';
+
+  bool get isValid => _isValid;
+
+  List<({String legacy, String flag})> get timingFlags => _timingFlags;
+
+  String get program => _program;
+  ArgResults? get results => _results;
+
+  // Target is the last argument that is not parsed
+  String? get target {
+    String? value; // Will return null, if there is no target
+    ArgResults? results = _results;
+    if (results != null && results.rest.isNotEmpty) {
+        // will return anything at the end of the parsed options
+        value = results.rest.join(" ").trim();
+        if (value.isEmpty) {
+          value = null;
+        }
+    }
+    return value;
+  }
+
+  List<String>
+  get tcpScanOptions {
+    List<String> rc = [];
+    for (var o in _scanOptions) {
+      if (o.option == 'tcp-scan') {
+        for (var arg in o.allowed) {
+          rc.add(arg.argument);
+        }
+      }
+    }
+    return rc;
+  }
+
+  List<String>
+  get otherScanOptions {
+    List<String> rc = [];
+    for (var o in _scanOptions) {
+      if (o.option == 'other-scan') {
+        for (var arg in o.allowed) {
+          rc.add(arg.argument);
+        }
+      }
+    }
+    return rc;
+  }
+
 
   void _pingOptionConfig() {
     for (var f in _pingFlags) {
@@ -206,7 +357,6 @@ class NFECommand {
       trace.debug('_scanOptionConfig adding flag ${f.flag}');
     }
 
-    /// TODO: Check here
     for (var o in _scanOptions) {
       _parser.addOption(o.option, allowed: toAllowed((o.allowed)));
       trace.debug('_scanOptionConfig adding option ${o.option} '
@@ -240,30 +390,7 @@ class NFECommand {
     }
   }
 
-  get results => _results;
-  get tcpScanOptions {
-    List<String> rc = [];
-    for (var o in _scanOptions) {
-      if (o.option == 'tcp-scan') {
-        for (var arg in o.allowed) {
-          rc.add(arg.argument);
-        }
-      }
-    }
-    return rc;
-  }
 
-  get otherScanOptions {
-    List<String> rc = [];
-    for (var o in _scanOptions) {
-      if (o.option == 'other-scan') {
-        for (var arg in o.allowed) {
-          rc.add(arg.argument);
-        }
-      }
-    }
-    return rc;
-  }
 
   String? _toModernFlag(String legacyFlag) {
     String? modernFlag;
@@ -273,6 +400,7 @@ class NFECommand {
         break;
       }
     }
+
     trace.debug('_toModernFlag: processing flag $legacyFlag '
         '${modernFlag != null ? 'found' : 'not found'}');
     return modernFlag;
@@ -280,17 +408,17 @@ class NFECommand {
 
   // Take a legacy option and convert it modern option that may also
   // have an argument
-  ({String option, String? argument})? _toModernOption(String legacyOption) {
+  ({String option, String? argument, bool skipArg})? _toModernOption(
+      String legacyOption) {
     String? modernOption;
     String? modernArgument;
-
+    bool skip = false;
     bool found = false;
+
     trace.debug('_toModernOption: processing option $legacyOption');
-    for (var f in _targetOptions +
-        _sourceOptions +
-        _pingOptions +
-        _otherOptions +
-        _timingOptions) {
+    // These are normal looking options
+    for (var f
+        in _targetOptions + _sourceOptions + _otherOptions + _timingOptions) {
       if (f.legacy == legacyOption) {
         modernOption = '--${f.option}';
         found = true;
@@ -298,6 +426,21 @@ class NFECommand {
       }
     }
     if (!found) {
+      // Need to treat ping Options as flags as there is no space between the
+      // option and the arguments
+      for (var f in _pingOptions) {
+        if (legacyOption.startsWith(f.legacy)) {
+          modernOption = '--${f.option}';
+          String argument = legacyOption.substring(f.legacy.length);
+          modernArgument = argument.isNotEmpty ? argument : null;
+          skip = true;
+          found = true;
+          break;
+        }
+      }
+    }
+    if (!found) {
+      // Some scan options have specific allowable values for the arguments
       for (var f in _scanOptions) {
         for (var a in f.allowed) {
           if (a.legacy == legacyOption) {
@@ -315,9 +458,10 @@ class NFECommand {
     trace.debug('_toModernOption: processing flag $legacyOption '
         '${modernOption != null ? 'found' : 'not found'}');
     if (modernOption != null) {
-      return (option: modernOption, argument: modernArgument);
+      return (option: modernOption, argument: modernArgument, skipArg: skip);
     } else {
-      return (option: "", argument: "");
+      //return (option: "", argument: "", skipArg: false);
+      return null;
     }
   }
 
@@ -346,13 +490,17 @@ class NFECommand {
             }
             modernOptions.add('--verbosity-level');
             modernOptions.add('$level');
-            optIndex += level; // TODO: (2022-09-19) was level + 1
+            optIndex += level;
           } else {
-            ({String option, String? argument})? modernOption =
+            ({String option, String? argument, bool skipArg})? modernOption =
                 _toModernOption(currentOpt);
             if (modernOption != null) {
               modernOptions.add(modernOption.option);
-              optIndex++;
+              // Ugly, but ping options don't have spaces so
+              // there is no argument to skip while parsing
+              if (!modernOption.skipArg) {
+                optIndex++;
+              }
               if (modernOption.argument != null) {
                 modernOptions.add(modernOption.argument!);
               } else {
@@ -361,6 +509,9 @@ class NFECommand {
 /*              if (optIndex + 1 <= legacyOptions.length) {
                 modernOptions.add(legacyOptions[optIndex + 1]);
               }*/
+            } else {
+              // The option doesn't fit any option or flag so just pass through
+              modernOptions.add(currentOpt);
             }
             optIndex++;
           }
@@ -372,35 +523,46 @@ class NFECommand {
     return modernOptions;
   }
 
-  List<String> toLegacy() {
-    ArgResults results = _results;
+  List<String> toLegacy(ArgResults results) {
     String? scanOption;
     List<String> legacyOptions = [];
 
     /// Check options
     // TARGET OPTIONS
-    for (var o in _targetOptions +
-        _pingOptions +
-        _sourceOptions +
-        _otherOptions +
-        _timingOptions) {
+    for (var o
+        in _targetOptions + _sourceOptions + _otherOptions + _timingOptions) {
       if (o.option == 'verbosity-level' && results[o.option] != null) {
         int level = int.tryParse(results[o.option]) ?? 0;
         // For verbosity level you repeat the option # of level times
+        // TODO: add support for -vn as well as -vv...
+        // legacyOptions.add('${o.legacy}$level');
         String output = '';
         for (int i = 0; i < level; i++) {
           legacyOptions.add(o.legacy);
           output += '-v ';
         }
         if (level > 0) {
-          trace.debug('{$o.option} $level = $output');
+          trace.debug('toLegacy: {$o.option} $level = $level');
         }
         // Most options can be handled with this code.
       } else if (results[o.option] != null) {
-        trace.debug(
-            '(generic-one) ${o.option} = ${o.legacy} ${results[o.option]}');
-        legacyOptions.add(o.legacy);
-        legacyOptions.add(results[o.option]);
+        switch (o.option) {
+          case 'ping-tcp-ack':
+          case 'ping-tcp-syn':
+          case 'probe-udp':
+          case 'probe-ip-proto':
+          case 'ping-sctop-init':
+            legacyOptions.add('${o.legacy}${results[o.option]}');
+            trace.debug(
+                '(generic-one) ${o.option} = ${o.legacy}${results[o.option]}');
+            break;
+          default:
+            trace.debug(
+                '(generic-one) ${o.option} = ${o.legacy} ${results[o.option]}');
+            legacyOptions.add(o.legacy);
+            legacyOptions.add(results[o.option]);
+            break;
+        }
       }
     }
 
@@ -438,9 +600,39 @@ class NFECommand {
               break;
           }
           if (scanOption != null) {
-            trace.debug('scanOption = $scanOption');
+            trace.debug('toLegacy: scanOption = $scanOption');
             legacyOptions.add(scanOption);
+            // Break out of loop
+            break;
           } // special handling for other-scan options
+        } else if (sOptions.option == 'other-scan' && results[sOptions.option] != null) {
+          switch (results[sOptions.option]) {
+            case 'udp':
+              scanOption = '-sU';
+              break;
+            case 'ip':
+              scanOption = '-sO';
+              break;
+            case 'list':
+              scanOption = '-sL';
+              break;
+            case 'no-port':
+              scanOption = '-sn';
+              break;
+            case 'sctp-init':
+              scanOption = '-sY';
+              break;
+            case 'sctp-cookie-echo':
+              scanOption = '-sZ';
+              break;
+            default:
+              break;
+          }
+          if (scanOption != null) {
+            trace.debug('toLegacy: scanOption = $scanOption');
+            legacyOptions.add(scanOption);
+            break;
+          }
         } else if (sOptions.option == 'version' &&
             results[sOptions.option] != null) {
           switch (results[sOptions.option]) {
@@ -454,21 +646,28 @@ class NFECommand {
               break;
           }
           if (scanOption != null) {
-            trace.debug('adding $scanOption/legacy flag');
+            // trace.debug('adding $scanOption/legacy flag');
             legacyOptions.add(scanOption);
+            // Break out of loop
+            break;
           }
         } else if (results[sOptions.option] != null) {
-          trace.debug(
-              '(generic-option) ${sOptions.option} = ${o.legacy} ${results[sOptions.option]}');
+          // trace.debug(
+          //    '(generic-option) ${sOptions.option} = ${o.legacy} ${results[sOptions.option]}');
           legacyOptions.add(o.legacy);
           legacyOptions.add(results[sOptions.option]);
+          // Break out of loop
+          break;
         }
       }
     }
 
-    for (var f in _scanFlags + _timingFlags + _pingFlags + _otherFlags) {
-      trace.debug('(generic-flag) ${f.flag} = ${f.legacy}');
-      legacyOptions.add(f.legacy);
+    for (var f in _scanFlags + _timingFlags + _otherFlags) {
+      // trace.debug('(generic-flag) ${f.flag} = ${f.legacy}');
+      if (results[f.flag]) {
+        trace.debug('toLegacy: found ${f.flag} adding ${f.legacy}');
+        legacyOptions.add(f.legacy);
+      }
     }
 
     // PING OPTIONS
@@ -478,7 +677,8 @@ class NFECommand {
 
       for (var f in _pingFlags) {
         if (results[f.flag]) {
-          trace.debug('${f.flag} = ${f.legacy}');
+          trace.debug(''
+              'processPingOptions: ${f.flag} = ${f.legacy}');
           legacyOptions.add(f.legacy);
         }
       }
@@ -486,8 +686,9 @@ class NFECommand {
       for (var f in _pingOptions) {
         if (results[f.option] != null) {
           trace.debug('${f.option} = ${f.legacy} ${results[f.option]}');
-          legacyOptions.add(f.legacy);
-          legacyOptions.add(results[f.option]);
+          // legacyOptions.add(f.legacy);
+          legacyOptions.add(f.legacy + results[f.option]);
+          // legacyOptions.add(results[f.option]);
         }
       }
     }

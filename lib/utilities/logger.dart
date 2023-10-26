@@ -8,21 +8,21 @@ const String nLogDEFAULT = 'default';
 
 class DefaultPrinter extends LogPrinter {
   static final levelPrefixes = {
-    Level.verbose: '[VERBOSE]',
+    Level.trace: '[TRACE]',
     Level.debug: '[DEBUG]',
     Level.info: '[INFO]',
     Level.warning: '[WARNING]',
     Level.error: '[ERROR]',
-    Level.wtf: '[FATAL]',
+    Level.fatal: '[FATAL]',
   };
 
   static final levelColors = {
-    Level.verbose: AnsiColor.fg(AnsiColor.grey(0.5)),
-    Level.debug: AnsiColor.none(),
-    Level.info: AnsiColor.fg(12),
-    Level.warning: AnsiColor.fg(208),
-    Level.error: AnsiColor.fg(196),
-    Level.wtf: AnsiColor.fg(199),
+    Level.trace: AnsiColor.fg(AnsiColor.grey(0.5)),
+    Level.debug: const AnsiColor.none(),
+    Level.info: const AnsiColor.fg(12),
+    Level.warning: const AnsiColor.fg(208),
+    Level.error: const AnsiColor.fg(196),
+    Level.fatal: const AnsiColor.fg(199),
   };
 
   final bool printTime;
@@ -190,9 +190,9 @@ class NLog {
     return rc;
   }
 
-  void verbose(dynamic msg, {String? flag}) {
+  void trace(dynamic msg, {String? flag}) {
     if (_isFlagSet(flag) && _packageEnabled(_package)) {
-      _getLogger(_type).v(_formatMessage(msg));
+      _getLogger(_type).t(_formatMessage(msg));
     }
   }
 
@@ -222,7 +222,7 @@ class NLog {
 
   void fatal(dynamic msg, {String? flag}) {
     if (_isFlagSet(flag) && _packageEnabled(_package)) {
-      _getLogger(_type).wtf(_formatMessage(msg));
+      _getLogger(_type).f(_formatMessage(msg));
     }
   }
 
