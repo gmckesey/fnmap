@@ -27,6 +27,7 @@ class _ScanOptionsState extends State<ScanOptions> {
   @override
   Widget build(BuildContext context) {
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
+    // Color textColor = theme.textTheme.labelMedium != null ? mode.themeData.textTheme.labelMedium!.color! : theme.primaryColorLight;
     Color textColor = mode.themeData.primaryColorLight;
     Color focusColor = mode.themeData.focusColor;
     Color dropDownColor = mode.themeData.primaryColorLight;

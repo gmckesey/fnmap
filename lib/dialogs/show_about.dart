@@ -16,6 +16,16 @@ showAbout(BuildContext context, {PackageInfo? packageInfo}) async {
                 packageInfo != null ? packageInfo.version : kAppVersion,
             applicationLegalese: 'Copyright © 2023 - Kriol Technologies',
             applicationIcon: image,
+            children: const [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 16.0),
+                  child: Text('email: krioltech@gmail.com'),
+                ),
+              ]),
+            ],
           );
         });
   }

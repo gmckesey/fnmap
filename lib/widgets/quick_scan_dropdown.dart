@@ -1,8 +1,10 @@
 import 'dart:collection';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/utilities/scan_profile.dart';
 import 'package:fnmap/constants.dart';
+import 'package:fnmap/models/dark_mode.dart';
 
 class QuickScanController with ChangeNotifier {
   NLog log =
@@ -130,6 +132,8 @@ class _QuickScanDropDownState extends State<QuickScanDropDown> {
 
   @override
   Widget build(BuildContext context) {
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
+
     if (widget.controller.key != null) {
       dropdownValue = widget.controller.key!;
     }
@@ -147,9 +151,9 @@ class _QuickScanDropDownState extends State<QuickScanDropDown> {
         // icon: const Icon(Icons.arrow_downward),
         iconSize: 24,
         elevation: 2,
-        style: TextStyle(color: Theme.of(context).primaryColorDark),
-        dropdownColor: Theme.of(context).primaryColorLight,
-        focusColor: Theme.of(context).focusColor,
+        style: TextStyle(color: mode.themeData.primaryColorDark),
+        dropdownColor: mode.themeData.primaryColorLight,
+        focusColor: mode.themeData.focusColor,
 /*        underline: Container(
           height: 2,
           color: Colors.deepPurpleAccent,
@@ -177,6 +181,7 @@ class _QuickScanDropDownState extends State<QuickScanDropDown> {
           return DropdownMenuItem<String>(
             value: value,
             child: Text(value,
+                style: mode.themeData.textTheme.labelMedium,
                 overflow: TextOverflow
                     .ellipsis), // style: Theme.of(context).textTheme.bodyMedium,),
           );

@@ -68,8 +68,8 @@ msix_config:
   logo_path: .\assets\fnmap.png
   languages: en-us
   sign_msix: true
-  #output_name: fnmap-1.0.0
-  output_name: fnmap-${FNMAP_STABILITY}-${FNMAP_SUBVERSION}
+  output_name: fnmap-1.1.0-alpha
+  #output_name: fnmap-${FNMAP_STABILITY}-${FNMAP_SUBVERSION}
   architecture: x64
 
 

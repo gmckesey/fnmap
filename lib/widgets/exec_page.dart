@@ -204,7 +204,7 @@ class _ExecPageState extends State<ExecPage> {
       }
       List<String> args = nfeCommand.arguments;
       // Add the target to the list of arguments
-      if (!isTargetEnabled && target!=null) {
+      if (!isTargetEnabled && target != null) {
         args.add(target);
       }
       // commandToList(cmd: optionsCtrl.value.text, ipAddress: ipAddress);
@@ -249,221 +249,249 @@ class _ExecPageState extends State<ExecPage> {
           child: Text('nmap'),
         ),
       ),*/
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(
-                  width: 100,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Target Address(es):'),
-                  ),
-                ),
-                Expanded(
-                  flex: 4,
-                  child: SizedBox(
-                      width: 120,
-                      child: TextField(
-                        enabled: isTargetEnabled,
-                        controller: ipAddressCtrl,
-                        decoration: InputDecoration(
-                          filled: _ipFieldFilled,
-                          fillColor: _ipIsValid ? kValidColor : kInvalidColor,
-                          border: const OutlineInputBorder(),
-                          hintText: 'Enter an IP address, IP range or network',
-                        ),
-                        onChanged: ((value) {
-                          setState(() {
-                            if (value.isNotEmpty) {
-                              _ipIsValid = isValidIPAddress(value);
-                              _ipFieldFilled = true;
-                            } else {
-                              _ipFieldFilled = false;
-                            }
-                          });
-                        }),
-                      )),
-                ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: SizedBox(width: 80, child: Text('Quick Options:')),
-                ),
-                QuickScanDropDown(
-                  key: Key('QSDropDown - ${qsController.choiceMap.length}'),
-                  width: 260,
-                  controller: qsController,
-                  onChanged: (option) {
-                    trace.debug(
-                        'QuickScanDropDown - onChanged: Quick Options changed to "$option"');
-                    setState(() {
-                      optionsCtrl.text = qsController.choiceMap[option]!;
-                    });
-                  },
-                ),
-                const Spacer(flex: 2),
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Padding(
+      body: DefaultTextStyle(
+        style: mode.themeData.textTheme.bodyMedium!,
+        child: Column(
+          children: [
+            Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Command Line Options:'),
+                  const SizedBox(
+                    width: 100,
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text('Target Address(es):'),
+                    ),
                   ),
                   Expanded(
-                    flex: 5,
+                    flex: 4,
                     child: SizedBox(
                         width: 120,
                         child: TextField(
-                          controller: optionsCtrl,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Enter Command Line Options',
+                          enabled: isTargetEnabled,
+                          style: mode.themeData.textTheme.displayMedium,
+                          controller: ipAddressCtrl,
+                          decoration: InputDecoration(
+                            filled: _ipFieldFilled,
+                            fillColor: _ipIsValid ? kValidColor : kInvalidColor,
+                            border: const OutlineInputBorder(),
+                            hintText:
+                                'Enter an IP address, IP range or network',
                           ),
-                          onChanged: (cmd) {
+                          onChanged: ((value) {
                             setState(() {
-                              log.debug(
-                                  'TextField - onChanged: text=$cmd dropdown = ${qsController.key}');
-/*                              optionsCtrl.value = TextEditingValue(
-                                  text: cmd, selection: TextSelection());*/
-                              if (qsController.key != 'Custom') {
-                                qsController.map = {'Custom': ''};
+                              if (value.isNotEmpty) {
+                                _ipIsValid = isValidIPAddress(value);
+                                _ipFieldFilled = true;
+                              } else {
+                                _ipFieldFilled = false;
                               }
                             });
-                          },
+                          }),
                         )),
                   ),
-                  const Spacer(flex: 1),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: SizedBox(width: 80, child: Text('Quick Options:')),
+                  ),
+                  QuickScanDropDown(
+                    key: Key('QSDropDown - ${qsController.choiceMap.length}'),
+                    width: 260,
+                    controller: qsController,
+                    onChanged: (option) {
+                      trace.debug(
+                          'QuickScanDropDown - onChanged: Quick Options changed to "$option"');
+                      setState(() {
+                        optionsCtrl.text = qsController.choiceMap[option]!;
+                      });
+                    },
+                  ),
+                  const Spacer(flex: 2),
                 ],
               ),
             ),
-          ),
-          TabBar(
-            labelColor: darkColor,
-            tabs: const [
-              Tab(text: 'Raw Output', icon: Icon(Icons.wysiwyg)),
-              Tab(text: 'Tabular Output', icon: Icon(Icons.grid_on)),
-              Tab(text: 'Device Details', icon: Icon(Icons.computer_outlined)),
-              Tab(
-                  text: 'Ports View',
-                  icon: Icon(Icons.space_dashboard_outlined)),
-              Tab(text: 'Service View', icon: Icon(Icons.view_quilt_outlined)),
-            ],
-          ),
-          Expanded(
-            flex: 5,
-            child: Builder(
-              builder: (context) {
-                return MouseRegion(
-                  cursor: inProgress
-                      ? SystemMouseCursors.wait
-                      : SystemMouseCursors.basic,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        flex: 10,
-                        child: TabBarView(children: [
-                          NMapRawOutputWidget(
-                            key: const Key('Output Widget'),
-                            outputCtrl: _outputCtrl,
-                            result: result,
-                            initialPosition: _outputPosition,
-                          ),
-                          const NMapTabularWidget(
-                            placeholder: Icon(Icons.do_not_disturb_sharp),
-                            implementation: NMAPTabImplementation.plutoGrid,
-                          ),
-                          NMapDeviceView(
-                            placeholder: const Icon(Icons.do_not_disturb),
-                            viewFunction: (
-                                {required NMapHostRecord selectedHost}) {
-                              return NMapDeviceDetails(
-                                  hostRecord: selectedHost);
-                            },
-                            controller: _hostViewController,
-                          ),
-                          NMapDeviceView(
-                            placeholder: const Icon(Icons.do_not_disturb),
-                            viewFunction: (
-                                {required NMapHostRecord selectedHost}) {
-                              return NMapPortGrid(hostRecord: selectedHost);
-                            },
-                            controller: _hostViewController,
-                          ),
-                          NMapServiceView(
-                            placeholder: const Icon(Icons.do_not_disturb),
-                            controller: _serviceViewController,
-                          ),
-                        ]),
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Command Line Options:',
+                        style: mode.themeData.textTheme.bodyMedium,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            MaterialButton(
-                                color: defaultColor,
-                                hoverColor: kAccentColor,
-                                disabledColor: kDisabledColor,
-                                textColor: kLightTextColor,
-                                onPressed: !inProgress
-                                    ? null
-                                    : () {
-                                        _aborted = true;
-                                        nMapCommand.stop();
-                                      },
-                                child: const Text('ABORT')),
-                            MaterialButton(
-                                color: defaultColor, //color: backgroundColor,
-                                hoverColor: kAccentColor,
-                                disabledColor: kDisabledColor,
-                                textColor: kLightTextColor,
-                                onPressed: inProgress
-                                    ? null
-                                    : () {
-                                        _aborted = false;
-                                        _outputPosition.offset = 0.0;
-                                        nMapCommand.clear();
-                                        nMapXML.clear();
-                                      },
-                                child: const Text('CLEAR')),
-                            MaterialButton(
-                                color: defaultColor,
-                                hoverColor: kAccentColor,
-                                disabledColor: kDisabledColor,
-                                textColor: kLightTextColor,
-                                onPressed: inProgress || !_ipIsValid
-                                    ? null
-                                    : () {
-                                        initCommand();
-                                        _outputPosition.offset = 0.0;
-                                        nMapCommand.clear();
-                                        nMapXML.clear();
-                                        _hostViewController.clear();
-                                        _serviceViewController.clear();
-                                        saveFName = null;
-                                        nMapCommand.start(context);
-                                      },
-                                child: const Text('SCAN'))
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: SizedBox(
+                          width: 120,
+                          child: TextField(
+                            controller: optionsCtrl,
+                            style: mode.themeData.textTheme.displayMedium,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: 'Enter Command Line Options',
+                            ),
+                            onChanged: (cmd) {
+                              setState(() {
+                                log.debug(
+                                    'TextField - onChanged: text=$cmd dropdown = ${qsController.key}');
+/*                              optionsCtrl.value = TextEditingValue(
+                                    text: cmd, selection: TextSelection());*/
+                                if (qsController.key != 'Custom') {
+                                  qsController.map = {'Custom': ''};
+                                }
+                              });
+                            },
+                          )),
+                    ),
+                    const Spacer(flex: 1),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+            TabBar(
+              labelColor: darkColor,
+              tabs: const [
+                Tab(text: 'Raw Output', icon: Icon(Icons.wysiwyg)),
+                Tab(text: 'Tabular Output', icon: Icon(Icons.grid_on)),
+                Tab(
+                    text: 'Device Details',
+                    icon: Icon(Icons.computer_outlined)),
+                Tab(
+                    text: 'Ports View',
+                    icon: Icon(Icons.space_dashboard_outlined)),
+                Tab(
+                    text: 'Service View',
+                    icon: Icon(Icons.view_quilt_outlined)),
+              ],
+            ),
+            Expanded(
+              flex: 5,
+              child: Builder(
+                builder: (context) {
+                  return MouseRegion(
+                    cursor: inProgress
+                        ? SystemMouseCursors.wait
+                        : SystemMouseCursors.basic,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          flex: 10,
+                          child: TabBarView(children: [
+                            NMapRawOutputWidget(
+                              key: const Key('Output Widget'),
+                              outputCtrl: _outputCtrl,
+                              result: result,
+                              initialPosition: _outputPosition,
+                            ),
+                            const NMapTabularWidget(
+                              placeholder: Icon(Icons.do_not_disturb_sharp),
+                              implementation: NMAPTabImplementation.plutoGrid,
+                            ),
+                            NMapDeviceView(
+                              placeholder: const Icon(Icons.do_not_disturb),
+                              viewFunction: (
+                                  {required NMapHostRecord selectedHost}) {
+                                return NMapDeviceDetails(
+                                    hostRecord: selectedHost);
+                              },
+                              controller: _hostViewController,
+                            ),
+                            NMapDeviceView(
+                              placeholder: const Icon(Icons.do_not_disturb),
+                              viewFunction: (
+                                  {required NMapHostRecord selectedHost}) {
+                                return NMapPortGrid(hostRecord: selectedHost);
+                              },
+                              controller: _hostViewController,
+                            ),
+                            NMapServiceView(
+                              placeholder: const Icon(Icons.do_not_disturb),
+                              controller: _serviceViewController,
+                            ),
+                          ]),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              MaterialButton(
+                                  color: mode.themeData.primaryColor,
+                                  hoverColor: mode.themeData.hoverColor,
+                                  disabledColor: mode.themeData.disabledColor,
+                                  textColor:
+                                      mode.themeData.textTheme.displayMedium ==
+                                              null
+                                          ? null
+                                          : mode.themeData.textTheme
+                                              .displayMedium!.color,
+                                  onPressed: !inProgress
+                                      ? null
+                                      : () {
+                                          _aborted = true;
+                                          nMapCommand.stop();
+                                        },
+                                  child: const Text('ABORT')),
+                              MaterialButton(
+                                  color: mode.themeData.primaryColor,
+                                  hoverColor: mode.themeData.hoverColor,
+                                  disabledColor: mode.themeData.disabledColor,
+                                  textColor:
+                                      mode.themeData.textTheme.displayMedium ==
+                                              null
+                                          ? null
+                                          : mode.themeData.textTheme
+                                              .displayMedium!.color,
+                                  onPressed: inProgress
+                                      ? null
+                                      : () {
+                                          _aborted = false;
+                                          _outputPosition.offset = 0.0;
+                                          nMapCommand.clear();
+                                          nMapXML.clear();
+                                        },
+                                  child: const Text('CLEAR')),
+                              MaterialButton(
+                                  color: mode.themeData.primaryColor,
+                                  hoverColor: mode.themeData.hoverColor,
+                                  disabledColor: mode.themeData.disabledColor,
+                                  textColor:
+                                      mode.themeData.textTheme.displayMedium ==
+                                              null
+                                          ? null
+                                          : mode.themeData.textTheme
+                                              .displayMedium!.color,
+                                  onPressed: inProgress || !_ipIsValid
+                                      ? null
+                                      : () {
+                                          initCommand();
+                                          _outputPosition.offset = 0.0;
+                                          nMapCommand.clear();
+                                          nMapXML.clear();
+                                          _hostViewController.clear();
+                                          _serviceViewController.clear();
+                                          saveFName = null;
+                                          nMapCommand.start(context);
+                                        },
+                                  child: const Text('SCAN'))
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
     Widget w;
@@ -484,8 +512,11 @@ class _ExecPageState extends State<ExecPage> {
             submenu: SubMenu(
               menuItems: [
                 MenuButton(
-                  text: const Text('Save Scan',
-                      style: TextStyle(fontSize: kDefaultMenuFontSize)),
+                  text: Text(
+                    'Save Scan',
+                    // style: TextStyle(fontSize: kDefaultMenuFontSize)),
+                    style: mode.themeData.textTheme.labelMedium,
+                  ),
                   // Disable onTap if scan is in progress or there is no XML scan result
                   onTap: inProgress || !nMapXML.xmlDocumentExists
                       ? null
@@ -541,8 +572,11 @@ class _ExecPageState extends State<ExecPage> {
                       control: true),
                 ),
                 MenuButton(
-                  text: const Text('Save Scan As',
-                      style: TextStyle(fontSize: kDefaultMenuFontSize)),
+                  text: Text(
+                    'Save Scan As',
+                    style: mode.themeData.textTheme.labelMedium,
+                  ),
+                  // style: TextStyle(fontSize: kDefaultMenuFontSize)),
                   // Disable onTap if scan is in progress or there is no XML scan result
                   onTap: inProgress || !nMapXML.xmlDocumentExists
                       ? null
@@ -577,7 +611,8 @@ class _ExecPageState extends State<ExecPage> {
                                 log.warning(
                                     'OnTap<Save Scan>: XML document is null');
                               } else {
-                                log.debug('OnTap<Save Scan>: XML document found');
+                                log.debug(
+                                    'OnTap<Save Scan>: XML document found');
                                 File file = File(saveFName!);
                                 file.writeAsString(document.toXmlString(
                                     pretty: true, indent: '  '));
@@ -597,8 +632,11 @@ class _ExecPageState extends State<ExecPage> {
                       control: true, alt: true),
                 ),
                 MenuButton(
-                  text: const Text('Load Scan',
-                      style: TextStyle(fontSize: kDefaultMenuFontSize)),
+                  text: Text(
+                    'Load Scan',
+                    // style: TextStyle(fontSize: kDefaultMenuFontSize)),
+                    style: mode.themeData.textTheme.labelMedium,
+                  ),
                   // Disable on tap if a scan is in progress
                   onTap: inProgress
                       ? null
@@ -662,11 +700,13 @@ class _ExecPageState extends State<ExecPage> {
                   shortcut: const SingleActivator(LogicalKeyboardKey.keyL,
                       control: true),
                 ),
-                const MenuDivider(),
+                const MenuDivider(height: 2),
                 MenuButton(
-                  text: const Text('Quit',
-                      style: TextStyle(fontSize: kDefaultMenuFontSize)),
-
+                  text: Text(
+                    'Quit',
+                    // style: TextStyle(fontSize: kDefaultMenuFontSize)),
+                    style: mode.themeData.textTheme.labelMedium,
+                  ),
                   onTap: () async {
                     // SystemNavigator.pop(animated: true);
                     log.debug('Quit: exiting app');
@@ -695,8 +735,10 @@ class _ExecPageState extends State<ExecPage> {
             submenu: SubMenu(
               menuItems: [
                 MenuButton(
-                  text: const Text('New Profile',
-                      style: TextStyle(fontSize: kDefaultMenuFontSize)),
+                  text: Text(
+                    'New Profile',
+                    style: mode.themeData.textTheme.labelMedium,
+                  ),
                   onTap: inProgress
                       ? null
                       : () {
@@ -719,9 +761,10 @@ class _ExecPageState extends State<ExecPage> {
                       size: kDefaultIconSize), //const Icon(Icons.copyright),
                 ),
                 MenuButton(
-                  text: const Text(
+                  text: Text(
                     'Edit Selected Profile',
-                    style: TextStyle(fontSize: kDefaultMenuFontSize),
+                    //style: TextStyle(fontSize: kDefaultMenuFontSize),
+                    style: mode.themeData.textTheme.labelMedium,
                   ),
                   onTap: inProgress
                       ? null
@@ -745,9 +788,10 @@ class _ExecPageState extends State<ExecPage> {
                       size: kDefaultIconSize), // const Icon(Icons.info),
                 ),
                 MenuButton(
-                  text: const Text(
+                  text: Text(
                     'Delete Selected Profile',
-                    style: TextStyle(fontSize: kDefaultMenuFontSize),
+                    // style: TextStyle(fontSize: kDefaultMenuFontSize),
+                    style: mode.themeData.textTheme.labelMedium,
                   ),
                   onTap: inProgress
                       ? null
@@ -764,9 +808,10 @@ class _ExecPageState extends State<ExecPage> {
                       size: kDefaultIconSize), // const Icon(Icons.info),
                 ),
                 MenuButton(
-                  text: const Text(
+                  text: Text(
                     'Toggle Dark Mode',
-                    style: TextStyle(fontSize: kDefaultMenuFontSize),
+                    // style: TextStyle(fontSize: kDefaultMenuFontSize),
+                    style: mode.themeData.textTheme.labelMedium,
                   ),
                   onTap: () {
                     Provider.of<NMapDarkMode>(context, listen: false)
@@ -786,8 +831,11 @@ class _ExecPageState extends State<ExecPage> {
             submenu: SubMenu(
               menuItems: [
                 MenuButton(
-                  text: const Text('About',
-                      style: TextStyle(fontSize: kDefaultMenuFontSize)),
+                  text: Text(
+                    'About',
+                    // style: TextStyle(fontSize: kDefaultMenuFontSize)),
+                    style: mode.themeData.textTheme.labelMedium,
+                  ),
                   onTap: () {
                     showAbout(context, packageInfo: _packageInfo);
                   },

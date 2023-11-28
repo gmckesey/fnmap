@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fnmap/constants.dart';
 import 'package:fnmap/utilities/logger.dart';
 
 enum NMapThemeMode {
@@ -18,11 +19,9 @@ class NMapDarkMode with ChangeNotifier {
   NLog log = NLog('NMapDarkMode');
 
   NMapDarkMode({bool isDark = false}) {
-
     _mode = NMapThemeMode.unknown;
     initialized = false;
   }
-
 
   NMapThemeMode get mode => _mode;
 
@@ -49,14 +48,15 @@ class NMapDarkMode with ChangeNotifier {
         initialize(rootContext: rootContext!);
       }
     }
-    _mode = _mode == NMapThemeMode.light ? NMapThemeMode.dark : NMapThemeMode.light;
+    _mode =
+        _mode == NMapThemeMode.light ? NMapThemeMode.dark : NMapThemeMode.light;
     log.debug('mode after toggle is $_mode');
     notifyListeners();
   }
 
   ThemeData get themeData {
     ThemeData rc;
-    switch(_mode) {
+    switch (_mode) {
       case NMapThemeMode.light:
         rc = _themeLight!;
         break;
@@ -79,6 +79,65 @@ class NMapDarkMode with ChangeNotifier {
     );
 
     _themeLight = ThemeData.light(useMaterial3: true).copyWith(
+      disabledColor: Colors.indigo.shade100,  // Confirmed Menu disabled color
+      focusColor: Colors.red,  // Confirmed dropdown focus color
+      hoverColor: Colors.indigo[200], // Confirmed menu hover color
+      secondaryHeaderColor: Colors.indigo[900], // Confirmed - table title
+      //focusColor: Colors.indigo[100],
+
+
+      scaffoldBackgroundColor: Colors.indigo.shade50,
+      primaryColor: Colors.indigo,
+      splashColor: Colors.purple,
+      highlightColor: Colors.indigo[900], // Confirmed (quick option background)
+      primaryColorLight: Colors.indigo[200], // Confirmed (menu color)
+      primaryColorDark: Colors.indigo[500], // Confirmed Selected Tab Menu foreground
+
+      // canvasColor: Colors.indigo[100],
+      dividerTheme: DividerThemeData(color: Colors.indigoAccent.shade700),
+      textTheme: TextTheme(
+        bodyMedium: TextStyle(color: Colors.indigoAccent.shade700),
+        displayMedium: TextStyle(color: Colors.indigo.shade900),
+        labelMedium: TextStyle(
+            color: Colors.indigo.shade900, fontSize: kDefaultMenuFontSize),
+      ),
+      colorScheme: ColorScheme.fromSeed(
+        primary: Colors.indigo,
+        seedColor: Colors.indigo,
+        brightness: Brightness.light,
+      ),
+      iconTheme: const IconThemeData(color: Colors.white, opacity: 1.0),
+    );
+
+    _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
+      hoverColor: kAccentColor,
+      scaffoldBackgroundColor: Colors.indigo[900],
+      primaryColor: Colors.indigo,
+      disabledColor: Colors.indigo.shade100,
+      primaryColorLight: Colors.indigo.shade900,
+      primaryColorDark: Colors.indigo[300],
+      // canvasColor: Colors.white,
+      dividerTheme: const DividerThemeData(color: Colors.indigoAccent),
+      textTheme: TextTheme(
+        bodyMedium: const TextStyle(color: Colors.indigoAccent),
+        displayMedium: TextStyle(color: Colors.indigoAccent.shade100),
+        labelMedium: TextStyle(
+            color: Colors.indigoAccent.shade100,
+            fontSize: kDefaultMenuFontSize),
+      ),
+      colorScheme: ColorScheme.fromSeed(
+        primary: Colors.indigo,
+        seedColor: Colors.indigo,
+        brightness: Brightness.dark,
+      ),
+      tabBarTheme: TabBarTheme(
+        unselectedLabelColor: Colors.indigo.shade600,
+        labelColor: Colors.indigoAccent,
+      ),
+      iconTheme: const IconThemeData(color: Colors.black, opacity: 1.0),
+    );
+
+    ThemeData light = ThemeData.light(useMaterial3: true).copyWith(
       scaffoldBackgroundColor: Colors.indigo.shade50,
       secondaryHeaderColor: Colors.black54,
       splashColor: Colors.purple,
@@ -89,11 +148,12 @@ class NMapDarkMode with ChangeNotifier {
       canvasColor: Colors.indigo[100],
       iconTheme: const IconThemeData(color: Colors.white, opacity: 1.0),
     );
-    _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
+
+    ThemeData dark = ThemeData.dark(useMaterial3: true).copyWith(
       primaryColor: Colors.indigo.shade200,
       primaryColorLight: Colors.indigo.shade400,
       primaryColorDark: Colors.indigo.shade200,
-      secondaryHeaderColor: Colors.white54,// Colors.black54,
+      secondaryHeaderColor: Colors.white54, // Colors.black54,
       // canvasColor: Colors.indigo.shade800,
       // hintColor: Colors.grey.shade500,
       dividerColor: Colors.red,
