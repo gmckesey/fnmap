@@ -1,14 +1,14 @@
 import 'dart:io';
-import 'package:fnmap/utilities/nmap_fe.dart';
 import 'package:intl/intl.dart';
 import 'package:xml/xml.dart';
+import 'package:provider/provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:menu_bar/menu_bar.dart';
+import 'package:fnmap/utilities/nmap_fe.dart';
 import 'package:fnmap/models/host_record.dart';
 import 'package:fnmap/widgets/device_details.dart';
 import 'package:fnmap/widgets/service_view.dart';
@@ -24,6 +24,7 @@ import 'package:fnmap/models/dark_mode.dart';
 import 'package:fnmap/widgets/raw_output_widget.dart';
 import 'package:fnmap/widgets/nmap_tabular.dart';
 import 'package:fnmap/dialogs/show_about.dart';
+import 'package:fnmap/dialogs/report_error.dart';
 
 class ExecPage extends StatefulWidget {
   const ExecPage({Key? key}) : super(key: key);
@@ -277,6 +278,7 @@ class _ExecPageState extends State<ExecPage> {
                             filled: _ipFieldFilled,
                             fillColor: _ipIsValid ? kValidColor : kInvalidColor,
                             border: const OutlineInputBorder(),
+                            hintStyle: mode.themeData.inputDecorationTheme.hintStyle,
                             hintText:
                                 'Enter an IP address, IP range or network',
                           ),
@@ -478,7 +480,12 @@ class _ExecPageState extends State<ExecPage> {
                                           _hostViewController.clear();
                                           _serviceViewController.clear();
                                           saveFName = null;
-                                          nMapCommand.start(context);
+                                          nMapCommand.start(context,
+                                              onError: (msg) {
+                                            reportError(context,
+                                                errorMsg: msg,
+                                                themeData: mode.themeData);
+                                          });
                                         },
                                   child: const Text('SCAN'))
                             ],

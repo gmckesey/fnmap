@@ -64,7 +64,8 @@ TextStyle kDetailsKeyStyle = kDefaultTextStyle.copyWith(color: kAccentColor);
 
 const List<String> kDefaultConfigs = [
   '[hostname_highlight]',
-  'regex = ([-a-zA-Z]{2,}://)?\\b([-a-zA-Z0-9_]+\\.)+[a-zA-Z]{2,}\\b',
+//  'regex = ([-a-zA-Z]{2,}://)?\\b([-a-zA-Z0-9_]+\\.)+[a-zA-Z]{2,}\\b',
+  'regex = (https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})',
   'bold = 0',
   'text = [0, 111, 65535]',
   'italic = 0',

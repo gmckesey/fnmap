@@ -20,7 +20,6 @@ enum CommandState {
   complete,
 }
 
-
 class CmdBool with ChangeNotifier {
   late bool _isSet;
 
@@ -28,8 +27,7 @@ class CmdBool with ChangeNotifier {
     _isSet = value;
   }
 
-  bool
-  get isSet => _isSet;
+  bool get isSet => _isSet;
 
   set isSet(bool value) {
     _isSet = value;
@@ -39,7 +37,6 @@ class CmdBool with ChangeNotifier {
   void call(bool value) {
     isSet = value;
   }
-
 }
 
 class CmdInt with ChangeNotifier {
@@ -62,17 +59,14 @@ class CmdInt with ChangeNotifier {
     }
   }
 
-  bool
-  get hasController => _controller != null;
+  bool get hasController => _controller != null;
 
-  int
-  get value => _intValue;
+  int get value => _intValue;
 
   set value(int intValue) {
     _intValue = intValue;
     notifyListeners();
   }
-
 
   set controller(TextEditingController? controller) {
     _controller = controller;
@@ -88,8 +82,6 @@ class CmdInt with ChangeNotifier {
 
 class CmdEnabledInt extends CmdInt {
   CmdEnabledInt(super.value);
-
-
 }
 
 class CmdString with ChangeNotifier {
@@ -108,11 +100,9 @@ class CmdString with ChangeNotifier {
     }
   }
 
-  bool
-  get hasController => _controller != null;
+  bool get hasController => _controller != null;
 
-  String?
-  get text => _text;
+  String? get text => _text;
 
   set text(String? value) {
     _text = value;
@@ -129,7 +119,6 @@ class CmdString with ChangeNotifier {
   void call(String? value) {
     text = value;
   }
-
 }
 
 // A kind of controller to store the scroll position
@@ -143,7 +132,6 @@ class NMapScrollOffset {
   @override
   String toString() => offset.toString();
 }
-
 
 class ProfileCommand with ChangeNotifier {
   late EditProfileControllers controllers;
@@ -190,7 +178,8 @@ class NMapCommand with ChangeNotifier {
       }
     }
     if (target == null) {
-      List<String> value = _command.results != null ? _command.results!.rest : [];
+      List<String> value =
+          _command.results != null ? _command.results!.rest : [];
       if (value.isNotEmpty) {
         target = value.join(" ");
       }
@@ -199,7 +188,8 @@ class NMapCommand with ChangeNotifier {
       throw NotAValidIPAddressException('invalid target address '
           '$target');
     }
-    _target = target ?? ''; //If there is no target in command or passed thru set it to a blank string
+    _target = target ??
+        ''; //If there is no target in command or passed thru set it to a blank string
   }
 
   bool get inProgress => state == CommandState.inProgress;
@@ -235,7 +225,8 @@ class NMapCommand with ChangeNotifier {
     return tempFn;
   }
 
-  void start(BuildContext context) async {
+  void start(BuildContext context,
+      {required Function(String msg) onError}) async {
     _consoleOutput = '';
     state = CommandState.inProgress;
     // notifyListeners();
@@ -247,7 +238,21 @@ class NMapCommand with ChangeNotifier {
     tmpFile = await genTempFile(prefix: 'nmap-gui', postfix: '.xml');
     cmdLine.add('-oX');
     cmdLine.add(tmpFile!);
-    _process = await Process.start(_program, cmdLine);
+    try {
+      _process = await Process.start(_program, cmdLine);
+    } catch (e) {
+      String msg =
+          'Error trying to start $_program, make sure $_program is installed.\n'
+      'Got to https://nmap.org/download.html for downloads and installation instructions '
+      'for your platform';
+      log.error(msg);
+      onError(msg);
+      processLine(msg);
+      state = CommandState.complete;
+      _process = null;
+      notifyListeners();
+      return;
+    }
 
     _process!.stdout
         .transform(utf8.decoder)
@@ -322,7 +327,7 @@ class NMapCommand with ChangeNotifier {
     setProgram(value);
   }
 
-  void setProgram(String value, {bool notify=true}) {
+  void setProgram(String value, {bool notify = true}) {
     _program = value;
     if (notify) {
       notifyListeners();

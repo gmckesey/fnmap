@@ -111,6 +111,7 @@ class _MyAppState extends State<MyApp> {
         title: 'fnmap',
         theme: mode.light,
         darkTheme: mode.dark,
+        // darkTheme: ThemeData.dark(useMaterial3: true),
         initialRoute: '/',
         routes: {
           '/': (context) =>

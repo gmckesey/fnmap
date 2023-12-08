@@ -47,12 +47,13 @@ class FormattedText extends StatelessWidget {
       },
     ),
     MatchText(
-        type: ParsedType.URL,
+        // type: ParsedType.URL,
+        pattern: '(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})',
         style: const TextStyle(
           color: Colors.blue,
           fontSize: kDefaultTextSize,
         ),
-        onTap: (url) async {
+        onTap: (String url) async {
           Uri uri = Uri.parse(url);
           try {
             await launchUrl(uri);

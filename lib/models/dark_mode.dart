@@ -79,25 +79,33 @@ class NMapDarkMode with ChangeNotifier {
     );
 
     _themeLight = ThemeData.light(useMaterial3: true).copyWith(
-      disabledColor: Colors.indigo.shade100,  // Confirmed Menu disabled color
-      focusColor: Colors.red,  // Confirmed dropdown focus color
-      hoverColor: Colors.indigo[200], // Confirmed menu hover color
-      secondaryHeaderColor: Colors.indigo[900], // Confirmed - table title
-      //focusColor: Colors.indigo[100],
-
-
-      scaffoldBackgroundColor: Colors.indigo.shade50,
       primaryColor: Colors.indigo,
+      primaryColorLight: Colors.indigo[200], // Confirmed (menu color)
+      primaryColorDark:
+          Colors.indigo[500], // Confirmed Selected Tab Menu foreground
+      scaffoldBackgroundColor: Colors.indigo.shade50,
       splashColor: Colors.purple,
       highlightColor: Colors.indigo[900], // Confirmed (quick option background)
-      primaryColorLight: Colors.indigo[200], // Confirmed (menu color)
-      primaryColorDark: Colors.indigo[500], // Confirmed Selected Tab Menu foreground
+      disabledColor: Colors.indigo.shade100, // Confirmed Menu disabled color
+      focusColor: Colors.red, // Confirmed dropdown focus color
+      hoverColor: Colors.indigo[200], // Confirmed menu hover color
+      // hoverColor: Colors.red,
+      secondaryHeaderColor: Colors.indigo[900], // Confirmed - table title
+      //focusColor: Colors.indigo[100],
+      dialogTheme: DialogTheme(
+        contentTextStyle: TextStyle(color: Colors.indigo.shade800),
+        titleTextStyle: TextStyle(fontSize: 18, color: Colors.indigo.shade900),
+        shape: const BeveledRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(2.0))),
+      ),
 
       // canvasColor: Colors.indigo[100],
       dividerTheme: DividerThemeData(color: Colors.indigoAccent.shade700),
       textTheme: TextTheme(
         bodyMedium: TextStyle(color: Colors.indigoAccent.shade700),
+        bodySmall: TextStyle(color: Colors.indigo.shade800),
         displayMedium: TextStyle(color: Colors.indigo.shade900),
+        headlineSmall: TextStyle(color: Colors.indigo.shade800),
         labelMedium: TextStyle(
             color: Colors.indigo.shade900, fontSize: kDefaultMenuFontSize),
       ),
@@ -110,32 +118,53 @@ class NMapDarkMode with ChangeNotifier {
     );
 
     _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
-      hoverColor: kAccentColor,
-      scaffoldBackgroundColor: Colors.indigo[900],
-      primaryColor: Colors.indigo,
-      disabledColor: Colors.indigo.shade100,
-      primaryColorLight: Colors.indigo.shade900,
-      primaryColorDark: Colors.indigo[300],
-      // canvasColor: Colors.white,
-      dividerTheme: const DividerThemeData(color: Colors.indigoAccent),
-      textTheme: TextTheme(
-        bodyMedium: const TextStyle(color: Colors.indigoAccent),
-        displayMedium: TextStyle(color: Colors.indigoAccent.shade100),
-        labelMedium: TextStyle(
-            color: Colors.indigoAccent.shade100,
-            fontSize: kDefaultMenuFontSize),
-      ),
-      colorScheme: ColorScheme.fromSeed(
-        primary: Colors.indigo,
-        seedColor: Colors.indigo,
-        brightness: Brightness.dark,
-      ),
-      tabBarTheme: TabBarTheme(
-        unselectedLabelColor: Colors.indigo.shade600,
-        labelColor: Colors.indigoAccent,
-      ),
-      iconTheme: const IconThemeData(color: Colors.black, opacity: 1.0),
-    );
+        primaryColor: Colors.indigo,
+        primaryColorLight: Colors.indigo.shade900, // Main menu text color
+        primaryColorDark: Colors.indigo[500],
+        scaffoldBackgroundColor: Colors.indigo[900],
+        splashColor: Colors.yellow,
+        highlightColor: Colors.green,
+        disabledColor: Colors.indigo.shade100,
+        dialogBackgroundColor: Colors.indigo.shade800,
+        focusColor: Colors.indigoAccent.shade700,
+        hoverColor: Colors.indigo.shade700,
+        dialogTheme: DialogTheme(
+          contentTextStyle: TextStyle(color: Colors.indigo.shade200),
+          titleTextStyle: TextStyle(fontSize: 18, color: Colors.indigo.shade50),
+          shape: const BeveledRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(2.0))),
+        ),
+
+        // canvasColor: Colors.white,
+        dividerTheme: const DividerThemeData(color: Colors.indigoAccent),
+        textTheme: TextTheme(
+          bodyMedium: TextStyle(color: Colors.indigoAccent.shade200),
+          bodySmall: TextStyle(color: Colors.indigo.shade100),
+          displayMedium: TextStyle(color: Colors.indigoAccent.shade100),
+          headlineSmall: TextStyle(color: Colors.indigo.shade200),
+          labelMedium: TextStyle(
+              color: Colors.indigoAccent.shade100,
+              fontSize: kDefaultMenuFontSize),
+        ),
+        colorScheme: ColorScheme.fromSeed(
+          primary: Colors.indigo,
+          seedColor: Colors.indigo,
+          brightness: Brightness.dark,
+        ),
+        tabBarTheme: TabBarTheme(
+          unselectedLabelColor: Colors.indigo.shade600,
+          labelColor: Colors.indigoAccent,
+          // unselectedLabelStyle: TextStyle(color: Colors.red)
+        ),
+        iconTheme: const IconThemeData(color: Colors.black, opacity: 1.0),
+        textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(
+          // Dialog buttons background and foreground colors
+          backgroundColor:
+              MaterialStateProperty.all<Color>(Colors.indigo.shade800),
+          foregroundColor:
+              MaterialStateProperty.all<Color>(Colors.indigo.shade400),
+        )));
 
     ThemeData light = ThemeData.light(useMaterial3: true).copyWith(
       scaffoldBackgroundColor: Colors.indigo.shade50,
@@ -165,6 +194,16 @@ class NMapDarkMode with ChangeNotifier {
       canvasColor: Colors.indigo.shade600,
       iconTheme: const IconThemeData(color: Colors.black, opacity: 1.0),
     );
+
+    _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
+        inputDecorationTheme: InputDecorationTheme(
+            hintStyle: TextStyle(
+                color: Colors.grey.shade500, fontStyle: FontStyle.italic)));
+    _themeLight = ThemeData.light(useMaterial3: true).copyWith(
+        inputDecorationTheme: const InputDecorationTheme(
+        hintStyle: TextStyle(
+            fontStyle: FontStyle.italic)));
+
 
 /*    _themeLight = ThemeData.light(useMaterial3: true).copyWith(
       primaryColor: kDefaultColor,
