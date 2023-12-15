@@ -51,8 +51,9 @@ class _KriolCheckNumericFieldState extends State<KriolCheckNumericField> {
   Widget build(BuildContext context) {
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
     Color textColor = mode.themeData.primaryColorLight;
-    Color disabledColor = mode.themeData.disabledColor;
+    Color disabledColor = Colors.red; //mode.themeData.disabledColor;
     Color darkColor = mode.themeData.primaryColorDark;
+    Color labelColor = Colors.green; //mode.themeData.secondaryHeaderColor;
 
     Widget checkField = Container(
       decoration: BoxDecoration(
@@ -90,7 +91,7 @@ class _KriolCheckNumericFieldState extends State<KriolCheckNumericField> {
                 decoration: InputDecoration(
                     labelText: widget.title,
                     labelStyle: enabled
-                        ? TextStyle(color: textColor)
+                        ? TextStyle(color: labelColor)
                         : TextStyle(
                             color: disabledColor, fontStyle: FontStyle.italic)),
                 onChanged: (value) {

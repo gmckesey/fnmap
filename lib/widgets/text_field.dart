@@ -32,7 +32,6 @@ class KriolTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
-    Color textColor = mode.themeData.primaryColorLight;
     Color disabledColor = mode.themeData.disabledColor;
     Color labelColor = mode.themeData.secondaryHeaderColor;
     NLog log = NLog('KriolTextField:', package: kriolWidgets);
@@ -47,7 +46,7 @@ class KriolTextField extends StatelessWidget {
           validator: validatorP,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           onFieldSubmitted: onSubmittedP,
-          style: TextStyle(color: textColor),
+          style: mode.themeData.textTheme.displayMedium,
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
             icon: iconP != null ? Icon(iconP) : null,
@@ -55,17 +54,22 @@ class KriolTextField extends StatelessWidget {
             hintStyle:
                 TextStyle(color: disabledColor, fontStyle: FontStyle.italic),
             labelText: labelP,
-            labelStyle: TextStyle(color: labelColor),
+            labelStyle:
+                TextStyle(color: labelColor, fontStyle: FontStyle.italic,
+                fontSize: 12.0,
+                ),
           ),
           onChanged: (value) {
             // Unfortunately I have to run the validator twice to get the behaviour that I want
             // Which is to validate before call onChanged.
             if (validatorP == null || validatorP?.call(value) == null) {
-              log.debug('build(onChanged): notifying listeners of value changed to ${controllerP.text}');
+              log.debug(
+                  'build(onChanged): notifying listeners of value changed to ${controllerP.text}');
               controllerP.notify();
               onChangedP?.call(value);
             } else {
-              log.debug('build(onChanged): ${controllerP.text} not valid, do not notify listeners');
+              log.debug(
+                  'build(onChanged): ${controllerP.text} not valid, do not notify listeners');
             }
           },
         ),

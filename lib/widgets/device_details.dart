@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_json_view/flutter_json_view.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/models/host_record.dart';
+import 'package:fnmap/models/dark_mode.dart';
 
 class NMapDeviceDetails extends StatelessWidget {
   const NMapDeviceDetails({Key? key, required this.hostRecord})
@@ -12,15 +14,16 @@ class NMapDeviceDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> map = hostRecord.map;
-    ThemeData mode = Theme.of(context);
-    Color backgroundColor = mode.scaffoldBackgroundColor;
+    ThemeData mode = Provider.of<NMapDarkMode>(context, listen: true).themeData;
+    // ThemeData mode = Theme.of(context);
+    Color backgroundColor = mode.dialogBackgroundColor; //mode.scaffoldBackgroundColor;
     TextStyle textStyle = kDetailsTextStyle.copyWith(
         //color: Theme.of(context).primaryColor
-      color: mode.dividerColor,
+      color: mode.primaryColor,
     );
     TextStyle stringStyle = kDetailsTextStyle.copyWith(
         // color: Theme.of(context).focusColor
-      color: mode.highlightColor,
+      color: mode.secondaryHeaderColor.withOpacity(0.75),
     );
 
     TextStyle keyStyle = kDetailsTextStyle.copyWith(

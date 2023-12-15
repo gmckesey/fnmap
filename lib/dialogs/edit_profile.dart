@@ -109,7 +109,8 @@ class _EditProfileState extends State<EditProfile> {
         length: 6,
         child: Column(children: [
           TabBar(
-            labelColor: darkColor,
+            labelColor: mode.themeData.highlightColor, //darkColor,
+            unselectedLabelColor: mode.themeData.disabledColor,
             tabs: const [
               Tab(text: 'Scan', icon: Icon(Icons.account_tree_outlined)),
               Tab(text: 'Ping', icon: Icon(Icons.network_ping_outlined)),
@@ -189,7 +190,7 @@ class _EditProfileState extends State<EditProfile> {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: TextFormField(
             controller: controllers.descController,
-            style: TextStyle(color: textColor),
+            style: mode.themeData.textTheme.displayMedium,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
               icon: const Icon(Icons.edit),
@@ -509,7 +510,6 @@ class _CommandFieldState extends State<CommandField> {
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
     EditProfileControllers profileControllers =
         Provider.of<EditProfileControllers>(context, listen: true);
-    Color textColor = mode.themeData.primaryColorLight;
     Color disabledColor = mode.themeData.disabledColor;
     Color labelColor = mode.themeData.secondaryHeaderColor;
 
@@ -519,7 +519,8 @@ class _CommandFieldState extends State<CommandField> {
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: TextFormField(
           controller: widget.cmdLineController,
-          style: TextStyle(color: textColor),
+          style: mode
+              .themeData.textTheme.displayMedium, //TextStyle(color: textColor),
           autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: InputDecoration(
             border: const OutlineInputBorder(),

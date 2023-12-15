@@ -68,7 +68,7 @@ class NMapPortGrid extends StatelessWidget {
 
     // List<PlutoRow> rows = _generateRows();
     Color colorCallback(PlutoRowColorContext colorContext) {
-      return Theme.of(context).primaryColorLight;
+      return mode.themeData.primaryColorLight;
     }
 
     return Padding(
@@ -125,7 +125,7 @@ class NMapPortGrid extends StatelessWidget {
         color = Colors.red;
         break;
       case 'open':
-        color = Colors.green;
+        color = Colors.green.shade700;
         break;
       default:
         color = kDefaultTextColor;

@@ -170,18 +170,12 @@ class _ExecPageState extends State<ExecPage> {
     NMapXML nMapXML = Provider.of<NMapXML>(context, listen: true);
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
     Color backgroundColor = mode.themeData.scaffoldBackgroundColor;
-    // Color foregroundColor = Theme.of(context).secondaryHeaderColor;
     Color defaultColor = mode.themeData.primaryColor;
     Color textColor = mode.themeData.primaryColorLight;
-    Color darkColor = mode.themeData.primaryColorDark;
     bool isTargetEnabled = true;
 
     // If the drop down has a value then set the commandLine to that value
     String commandLine = optionsCtrl.text;
-
-    /*commandLine = qsController.key == null ?
-        qsController.choiceMap.values.first :
-        qsController.choiceMap[qsController.key]!;*/
 
     void initCommand({bool notify = true}) {
       // Get Command Line from Controller
@@ -357,7 +351,8 @@ class _ExecPageState extends State<ExecPage> {
               ),
             ),
             TabBar(
-              labelColor: darkColor,
+              labelColor: mode.themeData.highlightColor,//darkColor,
+              unselectedLabelColor: mode.themeData.disabledColor,
               tabs: const [
                 Tab(text: 'Raw Output', icon: Icon(Icons.wysiwyg)),
                 Tab(text: 'Tabular Output', icon: Icon(Icons.grid_on)),
@@ -571,7 +566,7 @@ class _ExecPageState extends State<ExecPage> {
                         },
                   icon: Icon(FontAwesomeIcons.solidFloppyDisk,
                       color: inProgress || !nMapXML.xmlDocumentExists
-                          ? kDisabledColor
+                          ? mode.themeData.disabledColor
                           : null,
                       size: kDefaultIconSize), //const Icon(Icons.save),
                   shortcutText: 'Ctrl+S',
@@ -631,7 +626,7 @@ class _ExecPageState extends State<ExecPage> {
                         },
                   icon: Icon(FontAwesomeIcons.floppyDisk,
                       color: inProgress || !nMapXML.xmlDocumentExists
-                          ? kDisabledColor
+                          ? mode.themeData.disabledColor
                           : null,
                       size: kDefaultIconSize), //const Icon(Icons.save),
                   shortcutText: 'Ctrl+Alt+S',
@@ -701,7 +696,7 @@ class _ExecPageState extends State<ExecPage> {
                           }
                         },
                   icon: Icon(FontAwesomeIcons.solidFolderOpen,
-                      color: inProgress ? kDisabledColor : null,
+                      color: inProgress ? mode.themeData.disabledColor : null,
                       size: kDefaultIconSize), //const Icon(Icons.save),
                   shortcutText: 'Ctrl+L',
                   shortcut: const SingleActivator(LogicalKeyboardKey.keyL,

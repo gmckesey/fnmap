@@ -26,7 +26,7 @@ Future setWindowParams() async {
   WindowOptions windowOptions = const WindowOptions(
     title: 'fnmap',
     size: Size(1200, 900),
-    minimumSize: Size(900, 880),
+    minimumSize: Size(920, 900),
     center: true,
     backgroundColor: kDefaultColor,
     skipTaskbar: false,

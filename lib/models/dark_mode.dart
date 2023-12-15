@@ -79,27 +79,29 @@ class NMapDarkMode with ChangeNotifier {
     );
 
     _themeLight = ThemeData.light(useMaterial3: true).copyWith(
-      primaryColor: Colors.indigo,
+      primaryColor: Colors.indigo.shade400,
       primaryColorLight: Colors.indigo[200], // Confirmed (menu color)
       primaryColorDark:
           Colors.indigo[500], // Confirmed Selected Tab Menu foreground
-      scaffoldBackgroundColor: Colors.indigo.shade50,
+      scaffoldBackgroundColor: Colors.indigo.shade100,
       splashColor: Colors.purple,
       highlightColor: Colors.indigo[900], // Confirmed (quick option background)
-      disabledColor: Colors.indigo.shade100, // Confirmed Menu disabled color
-      focusColor: Colors.red, // Confirmed dropdown focus color
-      hoverColor: Colors.indigo[200], // Confirmed menu hover color
-      // hoverColor: Colors.red,
-      secondaryHeaderColor: Colors.indigo[900], // Confirmed - table title
-      //focusColor: Colors.indigo[100],
+      disabledColor: Colors.indigo.shade300, // Confirmed Menu disabled color
+      focusColor: Colors.indigo.shade300, // Confirmed dropdown focus color
+      hoverColor: Colors.indigo[400], // Confirmed menu hover color
+      secondaryHeaderColor: Colors.indigo[300], // Confirmed - table title
+      canvasColor: Colors.indigo.shade100, // Confirmed - table out of bounds background
       dialogTheme: DialogTheme(
         contentTextStyle: TextStyle(color: Colors.indigo.shade800),
         titleTextStyle: TextStyle(fontSize: 18, color: Colors.indigo.shade900),
         shape: const BeveledRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(2.0))),
       ),
-
-      // canvasColor: Colors.indigo[100],
+      inputDecorationTheme: InputDecorationTheme(
+          hintStyle: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade500,
+              fontStyle: FontStyle.italic)),
       dividerTheme: DividerThemeData(color: Colors.indigoAccent.shade700),
       textTheme: TextTheme(
         bodyMedium: TextStyle(color: Colors.indigoAccent.shade700),
@@ -114,20 +116,28 @@ class NMapDarkMode with ChangeNotifier {
         seedColor: Colors.indigo,
         brightness: Brightness.light,
       ),
+
       iconTheme: const IconThemeData(color: Colors.white, opacity: 1.0),
     );
 
     _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
         primaryColor: Colors.indigo,
-        primaryColorLight: Colors.indigo.shade900, // Main menu text color
-        primaryColorDark: Colors.indigo[500],
+        primaryColorLight: Colors.indigo.shade200, // Main menu text color
+        primaryColorDark: Colors.indigo[800],
+        secondaryHeaderColor: Colors.white38,
         scaffoldBackgroundColor: Colors.indigo[900],
         splashColor: Colors.yellow,
-        highlightColor: Colors.green,
-        disabledColor: Colors.indigo.shade100,
+        highlightColor: Colors.indigoAccent,
+        disabledColor: Colors.indigo.shade700,
         dialogBackgroundColor: Colors.indigo.shade800,
         focusColor: Colors.indigoAccent.shade700,
         hoverColor: Colors.indigo.shade700,
+        canvasColor: Colors.indigo.shade800,
+        inputDecorationTheme: InputDecorationTheme(
+            hintStyle: TextStyle(
+                fontSize: 12,
+                color: Colors.grey.shade500,
+                fontStyle: FontStyle.italic)),
         dialogTheme: DialogTheme(
           contentTextStyle: TextStyle(color: Colors.indigo.shade200),
           titleTextStyle: TextStyle(fontSize: 18, color: Colors.indigo.shade50),
@@ -156,7 +166,7 @@ class NMapDarkMode with ChangeNotifier {
           labelColor: Colors.indigoAccent,
           // unselectedLabelStyle: TextStyle(color: Colors.red)
         ),
-        iconTheme: const IconThemeData(color: Colors.black, opacity: 1.0),
+        iconTheme: const IconThemeData(color: Colors.red, opacity: 1.0),
         textButtonTheme: TextButtonThemeData(
             style: ButtonStyle(
           // Dialog buttons background and foreground colors
@@ -195,38 +205,6 @@ class NMapDarkMode with ChangeNotifier {
       iconTheme: const IconThemeData(color: Colors.black, opacity: 1.0),
     );
 
-    _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
-        inputDecorationTheme: InputDecorationTheme(
-            hintStyle: TextStyle(
-                color: Colors.grey.shade500, fontStyle: FontStyle.italic)));
-    _themeLight = ThemeData.light(useMaterial3: true).copyWith(
-        inputDecorationTheme: const InputDecorationTheme(
-        hintStyle: TextStyle(
-            fontStyle: FontStyle.italic)));
-
-
-/*    _themeLight = ThemeData.light(useMaterial3: true).copyWith(
-      primaryColor: kDefaultColor,
-      secondaryHeaderColor: Colors.black,
-      primaryColorLight: Colors.indigo.shade100,
-      primaryColorDark: Colors.indigo.shade800,
-      focusColor: Colors.indigoAccent.shade400,
-      canvasColor: Colors.indigo.shade400,
-      disabledColor: Colors.red,
-      scaffoldBackgroundColor: Colors.white70,
-      // textTheme: defaultMenuTheme,
-    );
-    _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
-      primaryColor: Colors.indigo.shade200,
-      primaryColorLight: Colors.indigo.shade400,
-      primaryColorDark: Colors.indigo.shade200,
-      focusColor: Colors.indigoAccent.shade100,
-      secondaryHeaderColor: Colors.black,
-      canvasColor: Colors.indigo.shade800,
-      hintColor: Colors.grey.shade500,
-      disabledColor: Colors.grey,
-      scaffoldBackgroundColor: Colors.black87,
-    );*/
     initialized = true;
     _mode = NMapThemeMode.dark;
   }

@@ -30,7 +30,7 @@ class _KriolCheckBoxState extends State<KriolCheckBox> {
   @override
   Widget build(BuildContext context) {
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: false);
-    Color textColor = mode.themeData.primaryColorLight;
+    Color textColor = mode.themeData.primaryColor;
     Color labelColor = mode.themeData.secondaryHeaderColor;
 
     Widget checkbox = Padding(

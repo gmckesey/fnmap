@@ -1,12 +1,12 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-// import 'package:google_fonts/google_fonts.dart';
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:split_view/split_view.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:provider/provider.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/models/nmap_xml.dart';
 import 'package:fnmap/models/host_record.dart';
+import 'package:fnmap/models/dark_mode.dart';
 import 'package:fnmap/constants.dart';
 
 class NMapViewController with ChangeNotifier {
@@ -191,6 +191,8 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
   @override
   Widget build(BuildContext context) {
     // log.debug('rebuild with selected = ${_controller.selected}', color: LogColor.magenta);
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
+
     List<NMapHostRecord> activeHosts =
         NMapHostRecord.getActiveHosts(widget.hostRecords);
     return SplitView(
@@ -214,7 +216,7 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
         _selectedHostController.selected != -1
             ? Container(
                 // flex: 9,
-                color: Theme.of(context).scaffoldBackgroundColor,
+                color: mode.themeData.scaffoldBackgroundColor,
                 child: widget.viewFunction(
                     selectedHost:
                         activeHosts[_selectedHostController.selected]))
@@ -241,7 +243,7 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
             // selectedColor: const Color(0xF8C465FF),
             // tileColor: kTileBackgroundColor,
             textColor: Theme.of(context).secondaryHeaderColor,
-            selectedColor: Theme.of(context).highlightColor,
+            selectedColor: Theme.of(context).splashColor,
             dense: true,
             contentPadding: const EdgeInsets.only(left: 8.0),
             onTap: () {
