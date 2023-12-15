@@ -1,13 +1,14 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:fnmap/widgets/nmap_tabular.dart';
 import 'package:split_view/split_view.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:provider/provider.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/models/nmap_xml.dart';
 import 'package:fnmap/models/service_record.dart';
+import 'package:fnmap/models/dark_mode.dart';
 import 'package:fnmap/constants.dart';
 
 class NMapServiceViewController with ChangeNotifier {
@@ -188,6 +189,7 @@ class _SelectedServiceWidgetState extends State<SelectedServiceWidget> {
 
   ReorderableListView buildReorderableListView(
       List<NMapServiceRecord> serviceRecords) {
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: false);
     return ReorderableListView.builder(
         //padding: const EdgeInsets.all(8.0),
         itemBuilder: (context, index) {
@@ -202,8 +204,8 @@ class _SelectedServiceWidgetState extends State<SelectedServiceWidget> {
             selected: _selectedServiceController.selected == index,
             // selectedColor: const Color(0xF8C465FF),
             // tileColor: kTileBackgroundColor,
-            textColor: Theme.of(context).secondaryHeaderColor,
-            selectedColor: Theme.of(context).focusColor,
+            textColor: mode.themeData.secondaryHeaderColor,
+            selectedColor: mode.themeData.splashColor,
             dense: true,
             contentPadding: const EdgeInsets.only(left: 8.0),
             onTap: () {

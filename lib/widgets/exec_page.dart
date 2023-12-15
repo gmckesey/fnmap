@@ -272,7 +272,8 @@ class _ExecPageState extends State<ExecPage> {
                             filled: _ipFieldFilled,
                             fillColor: _ipIsValid ? kValidColor : kInvalidColor,
                             border: const OutlineInputBorder(),
-                            hintStyle: mode.themeData.inputDecorationTheme.hintStyle,
+                            hintStyle:
+                                mode.themeData.inputDecorationTheme.hintStyle,
                             hintText:
                                 'Enter an IP address, IP range or network',
                           ),
@@ -351,7 +352,7 @@ class _ExecPageState extends State<ExecPage> {
               ),
             ),
             TabBar(
-              labelColor: mode.themeData.highlightColor,//darkColor,
+              labelColor: mode.themeData.highlightColor, //darkColor,
               unselectedLabelColor: mode.themeData.disabledColor,
               tabs: const [
                 Tab(text: 'Raw Output', icon: Icon(Icons.wysiwyg)),
@@ -567,7 +568,7 @@ class _ExecPageState extends State<ExecPage> {
                   icon: Icon(FontAwesomeIcons.solidFloppyDisk,
                       color: inProgress || !nMapXML.xmlDocumentExists
                           ? mode.themeData.disabledColor
-                          : null,
+                          : mode.themeData.primaryColor,
                       size: kDefaultIconSize), //const Icon(Icons.save),
                   shortcutText: 'Ctrl+S',
                   shortcut: const SingleActivator(LogicalKeyboardKey.keyS,
@@ -627,7 +628,7 @@ class _ExecPageState extends State<ExecPage> {
                   icon: Icon(FontAwesomeIcons.floppyDisk,
                       color: inProgress || !nMapXML.xmlDocumentExists
                           ? mode.themeData.disabledColor
-                          : null,
+                          : mode.themeData.primaryColor,
                       size: kDefaultIconSize), //const Icon(Icons.save),
                   shortcutText: 'Ctrl+Alt+S',
                   shortcut: const SingleActivator(LogicalKeyboardKey.keyS,
@@ -696,7 +697,9 @@ class _ExecPageState extends State<ExecPage> {
                           }
                         },
                   icon: Icon(FontAwesomeIcons.solidFolderOpen,
-                      color: inProgress ? mode.themeData.disabledColor : null,
+                      color: inProgress
+                          ? mode.themeData.disabledColor
+                          : mode.themeData.primaryColor,
                       size: kDefaultIconSize), //const Icon(Icons.save),
                   shortcutText: 'Ctrl+L',
                   shortcut: const SingleActivator(LogicalKeyboardKey.keyL,
@@ -720,7 +723,8 @@ class _ExecPageState extends State<ExecPage> {
                       exit(0);
                     }
                   },
-                  icon: const Icon(FontAwesomeIcons.rightFromBracket,
+                  icon: Icon(FontAwesomeIcons.rightFromBracket,
+                      color: mode.themeData.primaryColor,
                       size: kDefaultIconSize), //const Icon(Icons.exit_to_app),
                   shortcutText: 'Ctrl+Q',
                   shortcut: const SingleActivator(LogicalKeyboardKey.keyQ,
@@ -759,36 +763,39 @@ class _ExecPageState extends State<ExecPage> {
                           });
                           // editProfile(context, edit: false, controller: optionsCtrl);
                         },
-                  icon: const Icon(FontAwesomeIcons.arrowUpRightFromSquare,
-                      size: kDefaultIconSize), //const Icon(Icons.copyright),
+                  icon: Icon(
+                    FontAwesomeIcons.arrowUpRightFromSquare,
+                    size: kDefaultIconSize,
+                    color: mode.themeData.primaryColor,
+                  ), //const Icon(Icons.copyright),
                 ),
                 MenuButton(
-                  text: Text(
-                    'Edit Selected Profile',
-                    //style: TextStyle(fontSize: kDefaultMenuFontSize),
-                    style: mode.themeData.textTheme.labelMedium,
-                  ),
-                  onTap: inProgress
-                      ? null
-                      : () {
-                          Navigator.pushNamed(
-                            context,
-                            '/editProfile',
-                            arguments: qsController,
-                          ).then((value) {
-                            setState(() {
-                              // Make sure that the updated Command Line gets
-                              // updated with the edited value, which is now already
-                              // saved on file and in qsController
-                              optionsCtrl.text =
-                                  qsController.choiceMap[qsController.key!]!;
+                    text: Text(
+                      'Edit Selected Profile',
+                      //style: TextStyle(fontSize: kDefaultMenuFontSize),
+                      style: mode.themeData.textTheme.labelMedium,
+                    ),
+                    onTap: inProgress
+                        ? null
+                        : () {
+                            Navigator.pushNamed(
+                              context,
+                              '/editProfile',
+                              arguments: qsController,
+                            ).then((value) {
+                              setState(() {
+                                // Make sure that the updated Command Line gets
+                                // updated with the edited value, which is now already
+                                // saved on file and in qsController
+                                optionsCtrl.text =
+                                    qsController.choiceMap[qsController.key!]!;
+                              });
                             });
-                          });
-                          //editProfile(context, edit: true, controller: optionsCtrl);
-                        },
-                  icon: const Icon(FontAwesomeIcons.solidPenToSquare,
-                      size: kDefaultIconSize), // const Icon(Icons.info),
-                ),
+                            //editProfile(context, edit: true, controller: optionsCtrl);
+                          },
+                    icon: Icon(FontAwesomeIcons.solidPenToSquare,
+                        size: kDefaultIconSize,
+                        color: mode.themeData.primaryColor)),
                 MenuButton(
                   text: Text(
                     'Delete Selected Profile',
@@ -806,8 +813,11 @@ class _ExecPageState extends State<ExecPage> {
                           // editProfile(context,
                           //    edit: false, delete: true, controller: optionsCtrl);
                         },
-                  icon: const Icon(FontAwesomeIcons.solidPenToSquare,
-                      size: kDefaultIconSize), // const Icon(Icons.info),
+                  icon: Icon(
+                    FontAwesomeIcons.solidPenToSquare,
+                    size: kDefaultIconSize,
+                    color: mode.themeData.primaryColor,
+                  ), // const Icon(Icons.info),
                 ),
                 MenuButton(
                   text: Text(
@@ -819,7 +829,8 @@ class _ExecPageState extends State<ExecPage> {
                     Provider.of<NMapDarkMode>(context, listen: false)
                         .toggleMode();
                   },
-                  icon: const Icon(FontAwesomeIcons.yinYang,
+                  icon: Icon(FontAwesomeIcons.yinYang,
+                      color: mode.themeData.primaryColor,
                       size: kDefaultIconSize), // const Icon(Icons.info),
                 ),
               ],
@@ -841,7 +852,8 @@ class _ExecPageState extends State<ExecPage> {
                   onTap: () {
                     showAbout(context, packageInfo: _packageInfo);
                   },
-                  icon: const Icon(FontAwesomeIcons.circleInfo,
+                  icon: Icon(FontAwesomeIcons.circleInfo,
+                      color: mode.themeData.primaryColor,
                       size: kDefaultIconSize),
                   /*const FaIcon(
                       FontAwesomeIcons.circleInfo, size: kDefaultIconSize), */ // const Icon(Icons.info),

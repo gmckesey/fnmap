@@ -86,9 +86,9 @@ class NMapDarkMode with ChangeNotifier {
       scaffoldBackgroundColor: Colors.indigo.shade100,
       splashColor: Colors.purple,
       highlightColor: Colors.indigo[900], // Confirmed (quick option background)
-      disabledColor: Colors.indigo.shade300, // Confirmed Menu disabled color
+      disabledColor: Colors.indigo.shade200, // Confirmed Menu disabled color
       focusColor: Colors.indigo.shade300, // Confirmed dropdown focus color
-      hoverColor: Colors.indigo[400], // Confirmed menu hover color
+      hoverColor: Colors.indigo[500], // Confirmed menu hover color
       secondaryHeaderColor: Colors.indigo[300], // Confirmed - table title
       canvasColor: Colors.indigo.shade100, // Confirmed - table out of bounds background
       dialogTheme: DialogTheme(
@@ -116,8 +116,8 @@ class NMapDarkMode with ChangeNotifier {
         seedColor: Colors.indigo,
         brightness: Brightness.light,
       ),
-
-      iconTheme: const IconThemeData(color: Colors.white, opacity: 1.0),
+      iconTheme: const IconThemeData(color: Colors.indigo, opacity: 1.0),
+      primaryIconTheme: const IconThemeData(color: Colors.red),
     );
 
     _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
@@ -126,7 +126,7 @@ class NMapDarkMode with ChangeNotifier {
         primaryColorDark: Colors.indigo[800],
         secondaryHeaderColor: Colors.white38,
         scaffoldBackgroundColor: Colors.indigo[900],
-        splashColor: Colors.yellow,
+        splashColor: Colors.indigoAccent,
         highlightColor: Colors.indigoAccent,
         disabledColor: Colors.indigo.shade700,
         dialogBackgroundColor: Colors.indigo.shade800,
@@ -166,7 +166,7 @@ class NMapDarkMode with ChangeNotifier {
           labelColor: Colors.indigoAccent,
           // unselectedLabelStyle: TextStyle(color: Colors.red)
         ),
-        iconTheme: const IconThemeData(color: Colors.red, opacity: 1.0),
+        iconTheme: const IconThemeData(color: Colors.indigo, opacity: 1.0),
         textButtonTheme: TextButtonThemeData(
             style: ButtonStyle(
           // Dialog buttons background and foreground colors

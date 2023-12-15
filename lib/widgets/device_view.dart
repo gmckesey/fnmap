@@ -226,7 +226,9 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
   }
 
   ReorderableListView buildReorderableListView(
-      List<NMapHostRecord> activeHosts) {
+
+  List<NMapHostRecord> activeHosts) {
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: false);
     return ReorderableListView.builder(
         //padding: const EdgeInsets.all(8.0),
         itemBuilder: (context, index) {
@@ -242,8 +244,8 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
             selected: _selectedHostController.selected == index,
             // selectedColor: const Color(0xF8C465FF),
             // tileColor: kTileBackgroundColor,
-            textColor: Theme.of(context).secondaryHeaderColor,
-            selectedColor: Theme.of(context).splashColor,
+            textColor: mode.themeData.secondaryHeaderColor,
+            selectedColor: mode.themeData.splashColor,
             dense: true,
             contentPadding: const EdgeInsets.only(left: 8.0),
             onTap: () {
