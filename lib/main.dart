@@ -52,8 +52,8 @@ void main() async {
   NLog.setPackage(packageName: 'TARGET_DEBUG', enabled: false);
   NLog.setLogFlag(flag: nLogDEFAULT);
   NLog.setLogFlag(flag: nLogTRACE);
-  NLog('fnmap<main>:', type: NLogType.simple, package: kPackageName)
-      .debug('fnmap started');
+  NLog log = NLog('fnmap<main>:', type: NLogType.simple, package: kPackageName);
+  log.debug('fnmap started');
 
   ScanProfile profile = ScanProfile(fileName: kProfileFilename);
   await profile.parse();
@@ -73,6 +73,10 @@ void main() async {
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowParams().then((_) {
+      windowManager.getSize().then((size) {
+        log.debug('size = $size');
+      });
+
       runApp(MultiProvider(providers: [
         ChangeNotifierProvider.value(value: nMapCommand),
         ChangeNotifierProvider.value(value: qsController),
