@@ -2,7 +2,7 @@ name: fnmap
 description: A new Flutter project.
 
 publish_to: 'none'
-version: 1.2.0
+version: 1.2.1
 environment:
   sdk: '>=3.0.2 <4.0.0'
 
@@ -13,7 +13,7 @@ dependencies:
   cupertino_icons: ^1.0.5
   intl: ^0.18.1
   provider: ^6.0.5
-  window_manager: ^0.3.7
+  window_manager: ^0.3.5
   menu_bar: ^0.5.3
   flutter_parsed_text: ^2.2.1
   url_launcher: ^6.1.12
