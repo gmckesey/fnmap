@@ -106,6 +106,20 @@ AddressType addressType(String address) {
   }
   return type;
 }
+bool isValidIPAddressList(String addressList) {
+  final pattern = RegExp(r"\s+");
+  List<String> list = addressList.split(pattern);
+
+  for (String element in list) {
+    if (!isValidIPAddress(element) && !isHostname(element)) {
+      if (element.isEmpty) {
+        continue;
+      }
+      return false;
+    }
+  }
+  return true;
+}
 
 bool isValidIPAddress(String address) {
   // GLog log = GLog('isValidIPAddress:', properties: gLogPropALL);

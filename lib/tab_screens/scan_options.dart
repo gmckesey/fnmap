@@ -22,16 +22,21 @@ class ScanOptions extends StatefulWidget {
 }
 
 class _ScanOptionsState extends State<ScanOptions> {
-
-
   @override
   Widget build(BuildContext context) {
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
     // Color textColor = theme.textTheme.labelMedium != null ? mode.themeData.textTheme.labelMedium!.color! : theme.primaryColorLight;
-    Color textColor = mode.themeData.primaryColor;
+    TextStyle? value =  mode.themeData.textTheme.labelMedium;
+    Color textColor;
+
+    if (value != null) {
+      textColor = value.color!;
+    } else {
+      textColor = Colors.white70;
+    }
     Color focusColor = mode.themeData.focusColor;
     Color dropDownColor = mode.themeData.primaryColorLight;
-    Color darkColor = mode.themeData.primaryColorDark;
+    Color darkColor =  mode.themeData.primaryColorDark;
     EditScanControllers scanControllers = widget.scanControllers;
 
     NLog log = NLog('ScanOptions:');
@@ -43,7 +48,7 @@ class _ScanOptionsState extends State<ScanOptions> {
             helpP: 'The target IP addresses or host to scan',
             iconP: Icons.edit,
             validatorP: (value) {
-              if (!isValidIPAddress(value!)) {
+              if (!isValidIPAddressList(value!)) {
                 scanControllers.target.isValid = false;
                 return ('Target field not valid IP or FQDN');
               }
@@ -76,6 +81,7 @@ class _ScanOptionsState extends State<ScanOptions> {
               ),
               const SizedBox(width: 8),
               KriolDropdownStringField(
+                  width: 160,
                   controller: scanControllers.tcpScanController,
                   textStyle: TextStyle(color: darkColor),
                   dropDownColor: dropDownColor,
@@ -97,7 +103,7 @@ class _ScanOptionsState extends State<ScanOptions> {
                 ),
                 const SizedBox(width: 8),
                 KriolDropdownStringField(
-                    width: 160,
+                    width: 200,
                     controller: scanControllers.otherScanController,
                     textStyle: TextStyle(color: darkColor),
                     dropDownColor: dropDownColor,
@@ -122,9 +128,9 @@ class _ScanOptionsState extends State<ScanOptions> {
                   'Timing Templates:',
                   style: TextStyle(color: textColor),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 15),
                 KriolDropdownStringField(
-                    width: 180,
+                    width: 200,
                     controller: scanControllers.timingTemplateController,
                     textStyle: TextStyle(color: darkColor),
                     dropDownColor: dropDownColor,
@@ -242,7 +248,8 @@ class _ScanOptionsState extends State<ScanOptions> {
           KriolCheckBox(
               initialValue: scanControllers.disableDNSDetection!.isSet,
               title: 'Disable DNS Resolution',
-              help: 'Disable reverse DNS resolution which improves performance (-n)',
+              help:
+                  'Disable reverse DNS resolution which improves performance (-n)',
               onChanged: (bool? value) {
                 setState(() {
                   scanControllers.disableDNSDetection!(value!);

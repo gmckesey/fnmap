@@ -2,44 +2,44 @@ name: fnmap
 description: A new Flutter project.
 
 publish_to: 'none'
-version: 1.2.1
+version: 1.3.1
 environment:
-  sdk: '>=3.0.2 <4.0.0'
+  sdk: '>=3.1.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.5
-  intl: ^0.18.1
-  provider: ^6.0.5
-  window_manager: ^0.3.5
+  cupertino_icons: ^1.0.8
+  intl: ^0.19.0
+  provider: ^6.1.2
+  window_manager: ^0.4.3
   menu_bar: ^0.5.3
   flutter_parsed_text: ^2.2.1
-  url_launcher: ^6.1.12
-  font_awesome_flutter: ^10.5.0
+  url_launcher: ^6.3.1
+  font_awesome_flutter: ^10.8.0
   ini: ^2.1.0
-  path_provider: ^2.1.0
+  path_provider: ^2.1.5
   path: ^1.8.3
   validators: ^3.0.0
-  dropdown_button2: ^2.3.8
+  dropdown_button2: ^2.3.9
   dropdown_plus: ^0.0.9
-  uuid: ^3.0.7
-  xml: ^6.3.0
-  google_fonts: ^5.1.0
-  pluto_grid: ^7.0.2
-  loading_animation_widget: ^1.2.0+4
-  file_picker: ^5.3.3
+  uuid: ^4.5.1
+  xml: ^6.5.0
+  google_fonts: ^6.2.1
+  pluto_grid: ^8.0.0
+  loading_animation_widget: ^1.3.0
+  file_picker: ^8.1.4
   flutter_tree: ^2.0.3
-  xml2json: ^6.2.0
-  flutter_json_view: ^1.1.2
+  xml2json: ^6.2.5
+  flutter_json_view: ^1.1.5
   split_view: ^3.2.1
-  adwaita: ^1.0.1
-  logger: ^2.0.1
-  flutter_markdown: ^0.6.17+1
-  package_info_plus: ^4.1.0
+  adwaita: ^1.1.0
+  logger: ^2.4.0
+  flutter_markdown: ^0.7.4+1
+  package_info_plus: ^8.1.1
   desktop_multi_window: ^0.2.0
-  args: ^2.4.2
+  args: ^2.5.0
   numberpicker: ^2.1.2
   flutter_spinbox: ^0.13.1
 
@@ -49,8 +49,8 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.2
-  msix: ^3.16.1
+  flutter_lints: ^4.0.0
+  msix: ^3.16.8
 
 flutter:
   uses-material-design: true
@@ -61,10 +61,11 @@ msix_config:
   display_name: fnmap
   install_certificate: true
   publisher_display_name: Kriol Technologies
-  publisher: CN=Krioltech, O=Kriol Technologies
-  identity_name: Krioltech.fnmap
-  capabilities: internetClient,privateNetworkClientServer
-  msix_version: 1.2.0.1
+  #publisher: CN=Krioltech, O=Kriol Technologies
+  publisher: CN=051565E1-186F-4E82-973C-354B0358A29F
+  identity_name: KriolTechnologies.fnmap
+  capabilities: internetClient,documentsLibrary,confirmAppClose
+  msix_version: 1.2.0.0
   logo_path: .\assets\fnmap.png
   languages: en-us
   sign_msix: true

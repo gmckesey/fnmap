@@ -231,7 +231,7 @@ class NFECommand {
       String? ip = target;
       if (ip == null) {
         _isValid = true;
-      } else if (isValidIPAddress(ip)) {
+      } else if (isValidIPAddressList(ip)) {
         _isValid = true;
       } else {
         _isValid = false;
@@ -504,7 +504,9 @@ class NFECommand {
               if (modernOption.argument != null) {
                 modernOptions.add(modernOption.argument!);
               } else {
-                modernOptions.add(legacyOptions[optIndex]);
+                if (optIndex < legacyOptions.length) {
+                  modernOptions.add(legacyOptions[optIndex]);
+                }
               }
 /*              if (optIndex + 1 <= legacyOptions.length) {
                 modernOptions.add(legacyOptions[optIndex + 1]);

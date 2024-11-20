@@ -78,6 +78,16 @@ class NMapDarkMode with ChangeNotifier {
       primarySwatch: Colors.indigo, //getMaterialColor(kDefaultColor),
     );
 
+    _themeLight = ThemeData.light(useMaterial3: true).copyWith(secondaryHeaderColor: Colors.black);
+    _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
+      primaryColor: const Color(0xffdbb9eb), // Colors.white60,
+      primaryColorLight: Colors.black,
+      primaryColorDark: const Color(0xffb8cbeb), //Colors.indigo, //Colors.white70,
+      secondaryHeaderColor: Colors.white70,
+      focusColor: Colors.white12,
+    );
+
+/*
     _themeLight = ThemeData.light(useMaterial3: true).copyWith(
       primaryColor: Colors.indigo.shade400,
       primaryColorLight: Colors.indigo[200], // Confirmed (menu color)
@@ -119,7 +129,8 @@ class NMapDarkMode with ChangeNotifier {
       iconTheme: const IconThemeData(color: Colors.indigo, opacity: 1.0),
       primaryIconTheme: const IconThemeData(color: Colors.red),
     );
-
+*/
+/*
     _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
         primaryColor: Colors.indigo,
         primaryColorLight: Colors.indigo.shade200, // Main menu text color
@@ -175,6 +186,7 @@ class NMapDarkMode with ChangeNotifier {
           foregroundColor:
               MaterialStateProperty.all<Color>(Colors.indigo.shade400),
         )));
+*/
 
     ThemeData light = ThemeData.light(useMaterial3: true).copyWith(
       scaffoldBackgroundColor: Colors.indigo.shade50,

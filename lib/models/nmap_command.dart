@@ -184,7 +184,7 @@ class NMapCommand with ChangeNotifier {
         target = value.join(" ");
       }
     }
-    if (target != null && !isValidIPAddress(target)) {
+    if (target != null && !isValidIPAddressList(target)) {
       throw NotAValidIPAddressException('invalid target address '
           '$target');
     }
@@ -232,7 +232,14 @@ class NMapCommand with ChangeNotifier {
     // notifyListeners();
 
     List<String> cmdLine = List.from(_command.arguments);
-    cmdLine.add(_target);
+    final pattern = RegExp(r"\s+");
+    List<String> targetList = _target.split(pattern);
+    for (String element in targetList) {
+      if (element.isEmpty) {
+        continue;
+      }
+      cmdLine.add(element);
+    }
     trace.debug('start: starting $_program with arguments $cmdLine');
     // Create a unique file in the tmp directory
     tmpFile = await genTempFile(prefix: 'nmap-gui', postfix: '.xml');
@@ -339,7 +346,7 @@ class NMapCommand with ChangeNotifier {
   }
 
   void setTarget(String value, {bool notify = true}) {
-    if (!isValidIPAddress(value)) {
+    if (!isValidIPAddressList(value)) {
       // throw NotAValidIPAddressException('invalid target address '
       //    '$value');
       return;

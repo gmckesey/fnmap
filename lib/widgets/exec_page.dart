@@ -76,7 +76,7 @@ class _ExecPageState extends State<ExecPage> {
     ipAddressCtrl = TextEditingController(text: nMapCommand.target);
     if (nMapCommand.target != '') {
       _ipFieldFilled = true;
-      _ipIsValid = isValidIPAddress(nMapCommand.target);
+      _ipIsValid = isValidIPAddressList(nMapCommand.target);
     }
 
     // Reconstruct initial command line from the arguments list
@@ -187,7 +187,7 @@ class _ExecPageState extends State<ExecPage> {
         // Disable target field if the target is in the profile
         isTargetEnabled = false;
         // Fill the target field with the value from the profile
-        if (isValidIPAddress(target)) {
+        if (isValidIPAddressList(target)) {
           ipAddressCtrl.text = target;
         }
         ipAddress = ipAddressCtrl.text;
@@ -210,7 +210,7 @@ class _ExecPageState extends State<ExecPage> {
             '$ipAddress');
         if (ipAddress.isNotEmpty) {
           nMapCommand.setTarget(ipAddress, notify: notify);
-          _ipIsValid = isValidIPAddress(ipAddress);
+          _ipIsValid = isValidIPAddressList(ipAddress);
         } else {
           _ipIsValid = false;
         }
@@ -280,7 +280,7 @@ class _ExecPageState extends State<ExecPage> {
                           onChanged: ((value) {
                             setState(() {
                               if (value.isNotEmpty) {
-                                _ipIsValid = isValidIPAddress(value);
+                                _ipIsValid = isValidIPAddressList(value);
                                 _ipFieldFilled = true;
                               } else {
                                 _ipFieldFilled = false;
@@ -504,11 +504,11 @@ class _ExecPageState extends State<ExecPage> {
       w = MenuBarWidget(
         barStyle: MenuStyle(
             backgroundColor:
-                MaterialStatePropertyAll(defaultColor)), //kDefaultColor),
+                WidgetStatePropertyAll(defaultColor)), //kDefaultColor),
         barButtonStyle: ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(defaultColor)),
+            backgroundColor: WidgetStatePropertyAll(defaultColor)),
         menuButtonStyle: ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(backgroundColor)),
+            backgroundColor: WidgetStatePropertyAll(backgroundColor)),
         barButtons: [
           BarButton(
             text: Text('Scan', style: TextStyle(color: textColor)),
