@@ -78,13 +78,17 @@ class NMapDarkMode with ChangeNotifier {
       primarySwatch: Colors.indigo, //getMaterialColor(kDefaultColor),
     );
 
-    _themeLight = ThemeData.light(useMaterial3: true).copyWith(secondaryHeaderColor: Colors.black);
+    _themeLight = ThemeData.light(useMaterial3: true).copyWith(
+      secondaryHeaderColor: Colors.black87,
+      splashColor: const Color(0xff412791),
+    );
     _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
       primaryColor: const Color(0xffdbb9eb), // Colors.white60,
       primaryColorLight: Colors.black,
       primaryColorDark: const Color(0xffb8cbeb), //Colors.indigo, //Colors.white70,
       secondaryHeaderColor: Colors.white70,
       focusColor: Colors.white12,
+      splashColor: const Color(0xffcbb6ec),
     );
 
 /*

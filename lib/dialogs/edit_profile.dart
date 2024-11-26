@@ -150,35 +150,38 @@ class _EditProfileState extends State<EditProfile> {
     }
 
     Widget nameField() {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: TextFormField(
-          controller: controllers.nameController,
-          style: TextStyle(color: textColor),
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            icon: const Icon(Icons.edit),
-            hintText: 'Name of this profile',
-            hintStyle:
-                TextStyle(color: disabledColor, fontStyle: FontStyle.italic),
-            labelText: 'Name:',
-            labelStyle: TextStyle(color: labelColor),
+      return KriolHelp (
+        help: 'The name of the profile',
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: TextFormField(
+            controller: controllers.nameController,
+            style: mode.themeData.textTheme.displayMedium,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              icon: const Icon(Icons.edit),
+              hintText: 'Name of this profile',
+              hintStyle:
+                  TextStyle(color: disabledColor, fontStyle: FontStyle.italic),
+              labelText: 'Name:',
+              labelStyle: TextStyle(color: labelColor),
+            ),
+            onSaved: (String? value) {
+              log.debug('onSaved - saving value $value');
+            },
+            validator: (String? value) {
+              log.debug('validator - validating value [$value]');
+              if (value == null || value.isEmpty) {
+                nameFieldValid = false;
+                return 'Please enter a name';
+              }
+              nameFieldValid = true;
+              return null;
+            },
+            onFieldSubmitted: (String? value) {
+              log.debug('onFieldSubmitted - value is $value');
+            },
           ),
-          onSaved: (String? value) {
-            log.debug('onSaved - saving value $value');
-          },
-          validator: (String? value) {
-            log.debug('validator - validating value [$value]');
-            if (value == null || value.isEmpty) {
-              nameFieldValid = false;
-              return 'Please enter a name';
-            }
-            nameFieldValid = true;
-            return null;
-          },
-          onFieldSubmitted: (String? value) {
-            log.debug('onFieldSubmitted - value is $value');
-          },
         ),
       );
     }
