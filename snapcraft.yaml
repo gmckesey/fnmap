@@ -1,6 +1,6 @@
 name: fnmap # you probably want to 'snapcraft register <name>'
 title:  Flutter NMap GUI
-base: core18 # the base snap is the execution environment for this snap
+base: core22 # the base snap is the execution environment for this snap
 version: 1.3.1.1
 summary: A GUI for nmap
 license: GPL-2.0
@@ -26,6 +26,10 @@ plugs:
     interface: content
     target: $SNAP/share/icons
     default-provider: gtk-common-themes
+  nmap:
+    interface: content
+    target: $SNAP/usr
+    default-provider: nmap
     
 slots:
   dbus-fnmap:
@@ -37,13 +41,14 @@ apps:
   fnmap:
     command: fnmap
     common-id: com.krioltech.fnmap
-    extensions: [flutter-stable]
+    extensions: [gnome]
     plugs:
       - network
     slots:
       - dbus-fnmap
     environment:
       DBUS_SESSION_BUS_ADDRESS: $DBUS_SESSION_BUS_ADDRESS
+      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/blas
 
 parts:
   fnmap:
@@ -56,10 +61,10 @@ parts:
     stage-snaps:
       - zenity-integration
       
-  nmap:
-    stage-packages:
-    - nmap
-    plugin: nil
+#  nmap:
+#    stage-packages:
+#    - nmap
+#    plugin: nil
 
 
 
