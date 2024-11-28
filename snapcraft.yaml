@@ -61,10 +61,10 @@ parts:
     stage-snaps:
       - zenity-integration
       
-#  nmap:
-#    stage-packages:
-#    - nmap
-#    plugin: nil
+  nmap:
+    stage-packages:
+    - nmap
+    plugin: nil
 
 
 
