@@ -19,7 +19,7 @@ showAbout(BuildContext context, {PackageInfo? packageInfo}) async {
                   packageInfo != null ? packageInfo.appName : kProgramName,
               applicationVersion:
                   packageInfo != null ? packageInfo.version : kAppVersion,
-              applicationLegalese: 'Copyright © 2023 - Kriol Technologies',
+              applicationLegalese: 'Copyright © 2024 - Kriol Technologies',
               applicationIcon: image,
               children: const [
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
