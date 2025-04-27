@@ -25,6 +25,7 @@ import 'package:fnmap/widgets/raw_output_widget.dart';
 import 'package:fnmap/widgets/nmap_tabular.dart';
 import 'package:fnmap/dialogs/show_about.dart';
 import 'package:fnmap/dialogs/report_error.dart';
+import 'package:fnmap/utilities/fnmap_config.dart';
 
 class ExecPage extends StatefulWidget {
   const ExecPage({Key? key}) : super(key: key);
@@ -238,12 +239,6 @@ class _ExecPageState extends State<ExecPage> {
 
     Widget scaffold = Scaffold(
       backgroundColor: backgroundColor,
-/*      appBar: AppBar(
-        title: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text('nmap'),
-        ),
-      ),*/
       body: DefaultTextStyle(
         style: mode.themeData.textTheme.bodyMedium!,
         child: Column(
@@ -337,8 +332,7 @@ class _ExecPageState extends State<ExecPage> {
                               setState(() {
                                 log.debug(
                                     'TextField - onChanged: text=$cmd dropdown = ${qsController.key}');
-/*                              optionsCtrl.value = TextEditingValue(
-                                    text: cmd, selection: TextSelection());*/
+
                                 if (qsController.key != 'Custom') {
                                   qsController.map = {'Custom': ''};
                                 }
@@ -424,12 +418,9 @@ class _ExecPageState extends State<ExecPage> {
                                   color: mode.themeData.primaryColor,
                                   hoverColor: mode.themeData.hoverColor,
                                   disabledColor: mode.themeData.disabledColor,
-                                  textColor:
-                                      mode.themeData.textTheme.displayMedium ==
-                                              null
-                                          ? null
-                                          : mode.themeData.textTheme
-                                              .displayMedium!.color,
+                                  textColor: mode.themeData.primaryColorLight,
+                                  disabledTextColor:
+                                      mode.themeData.primaryColorDark,
                                   onPressed: !inProgress
                                       ? null
                                       : () {
@@ -441,12 +432,9 @@ class _ExecPageState extends State<ExecPage> {
                                   color: mode.themeData.primaryColor,
                                   hoverColor: mode.themeData.hoverColor,
                                   disabledColor: mode.themeData.disabledColor,
-                                  textColor:
-                                      mode.themeData.textTheme.displayMedium ==
-                                              null
-                                          ? null
-                                          : mode.themeData.textTheme
-                                              .displayMedium!.color,
+                                  disabledTextColor:
+                                      mode.themeData.primaryColorDark,
+                                  textColor: mode.themeData.primaryColorLight,
                                   onPressed: inProgress
                                       ? null
                                       : () {
@@ -460,12 +448,9 @@ class _ExecPageState extends State<ExecPage> {
                                   color: mode.themeData.primaryColor,
                                   hoverColor: mode.themeData.hoverColor,
                                   disabledColor: mode.themeData.disabledColor,
-                                  textColor:
-                                      mode.themeData.textTheme.displayMedium ==
-                                              null
-                                          ? null
-                                          : mode.themeData.textTheme
-                                              .displayMedium!.color,
+                                  textColor: mode.themeData.primaryColorLight,
+                                  disabledTextColor:
+                                      mode.themeData.primaryColorDark,
                                   onPressed: inProgress || !_ipIsValid
                                       ? null
                                       : () {
@@ -505,8 +490,8 @@ class _ExecPageState extends State<ExecPage> {
         barStyle: MenuStyle(
             backgroundColor:
                 WidgetStatePropertyAll(defaultColor)), //kDefaultColor),
-        barButtonStyle: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(defaultColor)),
+        barButtonStyle:
+            ButtonStyle(backgroundColor: WidgetStatePropertyAll(defaultColor)),
         menuButtonStyle: ButtonStyle(
             backgroundColor: WidgetStatePropertyAll(backgroundColor)),
         barButtons: [
@@ -826,8 +811,11 @@ class _ExecPageState extends State<ExecPage> {
                     style: mode.themeData.textTheme.labelMedium,
                   ),
                   onTap: () {
-                    Provider.of<NMapDarkMode>(context, listen: false)
-                        .toggleMode();
+                    NMapDarkMode mode =
+                        Provider.of<NMapDarkMode>(context, listen: false);
+                    mode.toggleMode();
+                    Provider.of<FnMapConfig>(context, listen: false)
+                        .setMode(mode.mode);
                   },
                   icon: Icon(FontAwesomeIcons.yinYang,
                       color: mode.themeData.primaryColor,

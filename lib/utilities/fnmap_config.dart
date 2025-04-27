@@ -6,6 +6,8 @@ import 'package:fnmap/constants.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:fnmap/utilities/logger.dart';
+import 'package:fnmap/utilities/contrast.dart';
+import 'package:fnmap/models/dark_mode.dart';
 
 String regexOption = 'regex';
 String boldOption = 'bold';
@@ -41,14 +43,14 @@ class HighLightConfig {
 
   TextStyle get textStyle {
     // Convert 16 bit color from config file to 8 bit flutter color
-    Color color = Color.fromRGBO(textColorArray[0] ~/ 8, textColorArray[1] ~/ 8,
-        textColorArray[2] ~/ 8, 1.0);
-    Color hiliteColor = Color.fromRGBO(highlightArray[0] ~/ 8,
-        highlightArray[1] ~/ 8, highlightArray[2] ~/ 8, 1.0);
+    Color color = Color.fromRGBO(textColorArray[0] ~/ 256,
+        textColorArray[1] ~/ 256, textColorArray[2] ~/ 256, 1.0);
+    Color highlightColor = Color.fromRGBO(highlightArray[0] ~/ 256,
+        highlightArray[1] ~/ 256, highlightArray[2] ~/ 256, 1.0);
 
     return TextStyle(
       color: color,
-      background: Paint()..color = hiliteColor,
+      background: Paint()..color = highlightColor,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       fontStyle: italic ? FontStyle.italic : FontStyle.normal,
       decoration: underline ? TextDecoration.underline : TextDecoration.none,
@@ -60,12 +62,54 @@ class FnMapConfig with ChangeNotifier {
   late String fileName;
   late Directory? _appSupportDirectory;
   late Config _config;
-  NLog log =
-      NLog('FnMapConfig', flag: nLogTRACE, package: kPackageName);
+  NLog log = NLog('FnMapConfig', flag: nLogTRACE, package: kPackageName);
+  NMapThemeMode darkMode;
 
-  FnMapConfig({this.fileName = kConfigFilename});
+  FnMapConfig(
+      {this.fileName = kConfigFilename, this.darkMode = NMapThemeMode.unknown});
 
-  Future<void> parse() async {
+  void processConfig() {
+    for (String section in _config.sections()) {
+      log.debug('parse: section is [$section].');
+      if (section == 'window') {
+        Iterable<String> options = _config.options(section)!;
+        for (String option in options) {
+          String? value = _config.get(section, option);
+          log.debug('parse: option is $option = $value');
+          if (option == 'theme') {
+            if (value == 'dark') {
+              darkMode = NMapThemeMode.dark;
+            } else {
+              darkMode = NMapThemeMode.light;
+            }
+          }
+        }
+      }
+      if (_config.options(section) != null) {
+        Iterable<String> options = _config.options(section)!;
+        for (String option in options) {
+          String? value = _config.get(section, option);
+          log.debug('parse: option is $option = $value');
+        }
+      }
+    }
+  }
+
+  Future<void> defaultOverwrite() async {
+    String configFile = path.join(_appSupportDirectory!.path, fileName);
+    try {
+      File(configFile)
+          .writeAsString(Config.fromStrings(kDefaultConfigs).toString());
+    } catch (e) {
+      log.error('Error $e writing to profile file $e');
+      return;
+    }
+    processConfig();
+    notifyListeners();
+  }
+
+  Future<void> parse(
+      {void Function(int version, bool overwrite)? overwriteCallback}) async {
     String configFile;
     String zenMapFile;
 
@@ -95,15 +139,30 @@ class FnMapConfig with ChangeNotifier {
     }
 
     _config = Config.fromStrings(lines);
-    for (String section in _config.sections()) {
-      log.debug('parse: section is [$section].');
-      if (_config.options(section) != null) {
-        Iterable<String> options = _config.options(section)!;
-        for (String option in options) {
-          String? value = _config.get(section, option);
-          log.debug('parse: option is $option = $value');
-        }
-      }
+
+    int major = 0;
+    int minor = 0;
+    int patch = 0;
+    int build = 0;
+
+    try {
+      major = int.parse(_config.get('version', 'major') ?? '0');
+      minor = int.parse(_config.get('version', 'minor') ?? '0');
+      patch = int.parse(_config.get('version', 'patch') ?? '0');
+      build = int.parse(_config.get('version', 'build') ?? '0');
+    } catch (e) {
+      log.warning('Error $e parsing version information, defaulting to 0.0.0');
+    }
+
+    int configVersion = major * 10000 + minor * 1000 + patch * 100 + build;
+    bool overwrite = configVersion < kConfigVersion;
+
+    log.info('Configuration Version = $configVersion');
+    if (overwriteCallback != null) {
+      overwriteCallback(configVersion, overwrite);
+    }
+    if (!overwrite) {
+      processConfig();
     }
   }
 
@@ -111,6 +170,16 @@ class FnMapConfig with ChangeNotifier {
 
   bool get highlightsEnabled =>
       _strToBool(_config.get(outputHighlightSection, 'enable_highlight'));
+
+  NMapThemeMode get mode => darkMode;
+
+  bool isDark() {
+    return darkMode == NMapThemeMode.dark;
+  }
+
+  void setMode(NMapThemeMode mode) {
+    darkMode = mode;
+  }
 
   bool _strToBool(String? value) {
     bool response = false;
@@ -135,6 +204,7 @@ class FnMapConfig with ChangeNotifier {
     List<int> list = [];
     String? value = _config.get(section, option);
     String text;
+
     Map<String, dynamic> color = {};
     if (value != null) {
       text = '{ "$option": $value }';
@@ -143,12 +213,15 @@ class FnMapConfig with ChangeNotifier {
         return element as int;
       }).toList();
     }
+
     return list;
   }
 
   List<HighLightConfig> highlights() {
     List<HighLightConfig> values = [];
     RegExp reHighlight = RegExp(r'highlight$');
+    NMapThemeMode themeMode = darkMode;
+
     for (String section in _config.sections()) {
       if (reHighlight.hasMatch(section)) {
         String label;
@@ -156,8 +229,8 @@ class FnMapConfig with ChangeNotifier {
         bool bold = false;
         bool italic = false;
         bool underline = false;
-        List<int> textColor = [0xffff, 0xffff, 0xffff];
-        List<int> highlightColor = [0, 0, 0];
+        List<int> highlightColor = [0xffff, 0xffff, 0xffff];
+        List<int> textColor = [0, 0, 0];
 
         rex = _config.get(section, regexOption);
         // The outputHighlightSection is a special section that
@@ -171,22 +244,48 @@ class FnMapConfig with ChangeNotifier {
         bold = _strToBool(_config.get(section, boldOption));
         italic = _strToBool(_config.get(section, italicOption));
         underline = _strToBool(_config.get(section, underlineOption));
-        String? value = _config.get(section, textColorOption);
+        String? textValue = _config.get(section, textColorOption);
+        String? highlightValue = _config.get(section, highlightOption);
+        FnColor background = FnColor.fromIntList(highlightColor);
+        try {
+          textColor = _strToIntList(textValue,
+              section: section, option: textColorOption);
+        } catch (e) {
+          log.warning('highlights: error $e parsing section $section, '
+              '$textColorOption = $textValue');
+        }
+        try {
+          highlightColor = _strToIntList(highlightValue,
+              section: section, option: highlightOption);
+        } catch (e) {
+          log.warning('highlights: error $e parsing section $section, '
+              'highlightOption = $highlightValue');
+        }
+        // Use colors as is for light mode, but reverse the rgb background color
+        // if in dark mode
+        if (themeMode == NMapThemeMode.dark) {
+          FnColor foreground = FnColor.fromIntList(textColor);
+          background = FnColor.fromIntList(highlightColor).reverse();
+          highlightColor = background.toIntList();
 
-        try {
-          textColor =
-              _strToIntList(value, section: section, option: textColorOption);
-        } catch (e) {
-          log.warning('highlights: error $e parsing section $section, '
-              '$textColorOption = $value');
+          //FnColor reverseFg = foreground.reverse();
+          FnColor tintedFg = foreground.tint(0.8);
+          // If the reverse foreground is more contrast than the foreground
+          double fgRatio = background.getContrastRatio(foreground);
+          double tintedRatio = background.getContrastRatio(tintedFg);
+          if (fgRatio != 1.0 && fgRatio < tintedRatio) {
+            if (tintedRatio < 4.5) {
+              foreground = tintedFg.reverse();
+            } else {
+              foreground = tintedFg;
+            }
+            textColor = foreground.toIntList();
+          } else if (fgRatio < 4.5) {
+            foreground = foreground.reverse();
+            textColor = foreground.toIntList();
+          }
         }
-        try {
-          highlightColor =
-              _strToIntList(value, section: section, option: highlightOption);
-        } catch (e) {
-          log.warning('highlights: error $e parsing section $section, '
-              'highlightOption = $value');
-        }
+
         HighLightConfig hc = HighLightConfig(
           label: label,
           regex: rex,

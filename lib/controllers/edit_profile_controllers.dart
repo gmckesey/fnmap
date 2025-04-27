@@ -3,7 +3,6 @@ import 'package:args/args.dart';
 import 'package:fnmap/models/nmap_command.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/utilities/nmap_fe.dart';
-import 'package:fnmap/utilities/ip_address_validator.dart';
 import 'package:fnmap/widgets/dropdown_string.dart';
 import 'package:fnmap/controllers/textfield_controller.dart';
 

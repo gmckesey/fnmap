@@ -50,7 +50,7 @@ class _KriolCheckNumericFieldState extends State<KriolCheckNumericField> {
   @override
   Widget build(BuildContext context) {
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
-    Color textColor = mode.themeData.primaryColorLight;
+    Color textColor = mode.themeData.primaryColor;
     Color disabledColor = Colors.red; //mode.themeData.disabledColor;
     Color darkColor = mode.themeData.primaryColorDark;
     Color labelColor = Colors.green; //mode.themeData.secondaryHeaderColor;
@@ -81,6 +81,12 @@ class _KriolCheckNumericFieldState extends State<KriolCheckNumericField> {
             child: SizedBox(
               width: 150,
               child: SpinBox(
+                iconColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                  if (states.contains(WidgetState.disabled)) {
+                    return disabledColor;
+                  }
+                  return textColor;
+                }),
                 min: widget.min.toDouble(),
                 max: widget.max.toDouble(),
                 value: picked.toDouble(),
@@ -89,6 +95,8 @@ class _KriolCheckNumericFieldState extends State<KriolCheckNumericField> {
                     ? TextStyle(color: textColor)
                     : TextStyle(color: disabledColor, fontStyle: FontStyle.italic),
                 decoration: InputDecoration(
+                  counterStyle: TextStyle(
+                      color: enabled ? textColor : disabledColor),
                     labelText: widget.title,
                     labelStyle: enabled
                         ? TextStyle(color: labelColor)

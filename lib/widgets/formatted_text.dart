@@ -9,95 +9,42 @@ import 'package:validators/validators.dart' as valid;
 
 class FormattedText extends StatelessWidget {
   final String text;
-  final TextStyle? style;
-  final TextAlign? textAlign;
-  final TextDirection? textDirection;
-  final TextOverflow? overflow;
-  final int? maxLines;
-  final NLog log =
+  final TextStyle? _style;
+  final TextAlign? _textAlign;
+  final TextDirection? _textDirection;
+  final TextOverflow? _overflow;
+  final int? _maxLines;
+  final NLog _log =
       NLog('FormattedText:', flag: nLogTRACE, package: kPackageName);
 
-  final parse = <MatchText>[
-    MatchText(
-      pattern: r"MAC Address:",
-      renderWidget: ({required pattern, required text}) => Text(
-        text,
-        textDirection: TextDirection.ltr,
-        style: const TextStyle(
-          decoration: TextDecoration.underline,
-        ),
-      ),
-      onTap: (String username) {
-        NLog('FormattedText:', flag: nLogTRACE, package: kPackageName)
-            .debug(username.substring(1));
-      },
-    ),
-    MatchText(
-      pattern: r"@([a-z][a-z0-9_]{4,31})",
-      renderWidget: ({required pattern, required text}) => Text(
-        text,
-        textDirection: TextDirection.ltr,
-        style: const TextStyle(
-          decoration: TextDecoration.underline,
-        ),
-      ),
-      onTap: (String username) {
-        NLog('FormattedText:', flag: nLogTRACE, package: kPackageName)
-            .debug(username.substring(1));
-      },
-    ),
-    MatchText(
-        // type: ParsedType.URL,
-        pattern: '(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})',
-        style: const TextStyle(
-          color: Colors.blue,
-          fontSize: kDefaultTextSize,
-        ),
-        onTap: (String url) async {
-          Uri uri = Uri.parse(url);
-          try {
-            await launchUrl(uri);
-          } catch (e) {
-            NLog('FormattedText',
-                    flag: nLogTRACE, package: kPackageName)
-                .error('MatchText error $e launching $url');
-            return;
-          }
 
-/*          if (a) {
-            launchUrl(uri);
-          }*/
-        }),
-  ];
 
   FormattedText(
     this.text, {
     Key? key,
-    this.style,
-    this.textAlign,
-    this.textDirection,
-    this.overflow,
-    this.maxLines,
-  }) : super(key: key);
+    TextStyle? style,
+    TextAlign? textAlign,
+    TextDirection? textDirection,
+    TextOverflow? overflow,
+    int? maxLines,
+  }) : _maxLines = maxLines, _overflow = overflow, _textDirection = textDirection, _textAlign = textAlign, _style = style, super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final defaultTextStyle = DefaultTextStyle.of(context);
 
     FnMapConfig nmapConfig = Provider.of<FnMapConfig>(context, listen: true);
-
-    /*List<HighLightConfig> hConfigs =
-        nmapConfig.highlightsEnabled ? nmapConfig.highlights() : [];*/
     List<MatchText> matches = generateMatches(nmapConfig);
 
     return ParsedText(
       text: text,
-      style: style ?? defaultTextStyle.style,
-      alignment: textAlign ?? defaultTextStyle.textAlign ?? TextAlign.start,
-      textDirection: textDirection ?? Directionality.of(context),
-      overflow: TextOverflow.clip,
-      maxLines: maxLines ?? defaultTextStyle.maxLines,
+      style: _style ?? defaultTextStyle.style,
+      alignment: _textAlign ?? defaultTextStyle.textAlign ?? TextAlign.start,
+      textDirection: _textDirection ?? Directionality.of(context),
+      overflow: _overflow ?? TextOverflow.clip,
+      maxLines: _maxLines ?? defaultTextStyle.maxLines,
       parse: matches, //parse, // matches,
+      selectable: false,
       regexOptions: const RegexOptions(multiLine: true),
     );
   }
@@ -111,15 +58,15 @@ class FormattedText extends StatelessWidget {
           text,
           textDirection: TextDirection.ltr,
           style: h.textStyle,
+          selectionColor: Colors.grey,
         ),
         onTap: (String value) async {
-          if (valid.isURL(value)) {
+          if (valid.isURL(value, protocols: ['http', 'https'], requireProtocol: true)) {
             Uri uri = Uri.parse(value);
             try {
               await launchUrl(uri);
             } catch (e) {
-              NLog('FormattedText',
-                      flag: nLogTRACE, package: kPackageName)
+              NLog('FormattedText', flag: nLogTRACE, package: kPackageName)
                   .error('MatchText error $e launching $value');
               return;
             }

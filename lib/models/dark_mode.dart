@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fnmap/constants.dart';
 import 'package:fnmap/utilities/logger.dart';
 
 enum NMapThemeMode {
@@ -19,7 +18,11 @@ class NMapDarkMode with ChangeNotifier {
   NLog log = NLog('NMapDarkMode');
 
   NMapDarkMode({bool isDark = false}) {
-    _mode = NMapThemeMode.unknown;
+    if (isDark) {
+      _mode = NMapThemeMode.dark;
+    } else {
+      _mode = NMapThemeMode.light;
+    }
     initialized = false;
   }
 
@@ -80,6 +83,8 @@ class NMapDarkMode with ChangeNotifier {
 
     _themeLight = ThemeData.light(useMaterial3: true).copyWith(
       secondaryHeaderColor: Colors.black87,
+      primaryColorDark: Colors.black, //Colors.indigo, //Colors.white70,
+      primaryColorLight: Colors.white,
       splashColor: const Color(0xff412791),
     );
     _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
@@ -222,6 +227,6 @@ class NMapDarkMode with ChangeNotifier {
     );
 
     initialized = true;
-    _mode = NMapThemeMode.dark;
+    //_mode = NMapThemeMode.dark;
   }
 }

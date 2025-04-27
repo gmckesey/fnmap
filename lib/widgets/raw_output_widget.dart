@@ -1,8 +1,10 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/widgets/formatted_text.dart';
 import 'package:fnmap/utilities/logger.dart';
 import 'package:fnmap/models/nmap_command.dart';
+import 'package:fnmap/models/dark_mode.dart';
 
 class NMapRawOutputWidget extends StatefulWidget {
   const NMapRawOutputWidget({
@@ -51,6 +53,8 @@ class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
     // If the current result length has changed, scroll to the end
     // TODO:  will have to see if we really want this or need a
     ///       a more complicated decision process for scrolling
+
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
     int length = widget.result != null ? widget.result!.length : 0;
     if (length != lastLength) {
       lastLength = length;
@@ -63,7 +67,7 @@ class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
- /*     child: Neumorphic(
+      /*     child: Neumorphic(
         style: const NeumorphicStyle(
           border: NeumorphicBorder(width: 3, color: Colors.black12),
           shape: NeumorphicShape.convex,
@@ -71,16 +75,20 @@ class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
           lightSource: LightSource.topRight,
           color: Colors.white38,
         ),*/
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-              key: const Key('OutputScrollView'),
-              controller: widget.outputCtrl,
-              child: FormattedText(
-                widget.result ?? '',
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+            key: const Key('OutputScrollView'),
+            controller: widget.outputCtrl,
+            child: FormattedText(widget.result ?? '',
                 overflow: TextOverflow.visible,
-              )),
-        ),
+                style: TextStyle(
+                  fontSize: 16,
+                  decoration: TextDecoration.none,
+                  color: mode.themeData.primaryColorDark,
+                  backgroundColor: mode.themeData.primaryColorLight,
+                ))),
+      ),
 //      ),
     );
   }

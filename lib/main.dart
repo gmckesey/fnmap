@@ -17,6 +17,7 @@ import 'package:fnmap/utilities/scan_profile.dart';
 import 'package:fnmap/utilities/fnmap_config.dart';
 import 'package:fnmap/models/dark_mode.dart';
 import 'package:fnmap/dialogs/edit_profile.dart';
+import 'package:fnmap/widgets/splash_screen.dart';
 
 Future setWindowParams() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -84,13 +85,28 @@ void main() async {
         ChangeNotifierProvider.value(value: config),
         ChangeNotifierProvider.value(value: profileControllers),
         ChangeNotifierProvider(create: (_) => NMapXML()),
-        ChangeNotifierProvider(create: (_) => NMapDarkMode()),
+        ChangeNotifierProvider(create: (_) => NMapDarkMode(isDark: config.isDark())),
         ChangeNotifierProvider(create: (_) => HelpText()),
         ChangeNotifierProvider(create: (_) => ValidityNotifier()),
       ], child: const MyApp()));
     });
   }
 }
+
+class FnMapApp extends StatefulWidget {
+  const FnMapApp({super.key});
+
+  @override
+  State<FnMapApp> createState() => _FnMapAppState();
+}
+
+class _FnMapAppState extends State<FnMapApp> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -109,23 +125,44 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
+    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: false);
 
     return MaterialApp(
-        title: 'fnmap',
-        theme: mode.light,
-        darkTheme: mode.dark,
-        // darkTheme: ThemeData.dark(useMaterial3: true),
-        initialRoute: '/',
-        routes: {
-          '/': (context) =>
-              const DefaultTabController(length: 5, child: ExecPage()),
-          '/newProfile': (context) =>
-              const EditProfile(edit: false, delete: false),
-          '/editProfile': (context) =>
-              const EditProfile(edit: true, delete: false),
-          '/deleteProfile': (context) =>
-              const EditProfile(edit: false, delete: true),
-        });
+      title: 'fnmap',
+      theme: mode.light,
+      darkTheme: mode.dark,
+      // darkTheme: ThemeData.dark(useMaterial3: true),
+      // initialRoute: '/splashScreen',
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case "/":
+          case "root":
+          case "/splashScreen":
+            return MaterialPageRoute(
+              builder: (BuildContext context) {
+                return const SplashScreen();
+              },
+            );
+          case '/home':
+            return MaterialPageRoute(
+                builder: (context) => const DefaultTabController(
+                    length: 5, child: ExecPage()));
+          case '/newProfile':
+            return MaterialPageRoute(
+                builder: (context) =>
+                    const EditProfile(edit: false, delete: false));
+          case '/editProfile':
+            return MaterialPageRoute(
+                builder: (context) =>
+                    const EditProfile(edit: true, delete: false));
+          case '/deleteProfile':
+            return MaterialPageRoute(
+                builder: (context) =>
+                    const EditProfile(edit: false, delete: true));
+          default:
+            return null;
+        }
+      },
+    );
   }
 }

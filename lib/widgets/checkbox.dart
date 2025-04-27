@@ -43,7 +43,7 @@ class _KriolCheckBoxState extends State<KriolCheckBox> {
           Checkbox(
             value: widget.initialValue,
             checkColor: Colors.white,
-            fillColor: MaterialStateProperty.resolveWith(_getColor),
+            fillColor: WidgetStateProperty.resolveWith(_getColor),
             onChanged: widget.onChanged,
           ),
           Padding(
@@ -64,11 +64,11 @@ class _KriolCheckBoxState extends State<KriolCheckBox> {
     }
   }
 
-  Color _getColor(Set<MaterialState> states) {
-    const Set<MaterialState> interactiveStates = <MaterialState>{
-      MaterialState.pressed,
-      MaterialState.hovered,
-      MaterialState.focused,
+  Color _getColor(Set<WidgetState> states) {
+    const Set<WidgetState> interactiveStates = <WidgetState>{
+      WidgetState.pressed,
+      WidgetState.hovered,
+      WidgetState.focused,
     };
     if (states.any(interactiveStates.contains)) {
       return Colors.blue;

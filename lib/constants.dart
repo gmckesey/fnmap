@@ -9,7 +9,7 @@ const double kDefaultIconSize = 16;
 // const double kDefaultMenuFont =
 const double kDefaultMenuFontSize = 12;
 const String kProgramName = 'fnmap';
-const String kAppVersion = '1.3-2-1';
+const String kAppVersion = '1.3.4-1';
 const String kPackageName = 'com.krioltech.fnmap';
 const String kProfileFilename = 'scan_profile.usp';
 const String kConfigFilename = 'fnmap.conf';
@@ -62,17 +62,87 @@ TextStyle kDetailsTextStyle = kDefaultTextStyle.copyWith(fontSize: 14.0);
 TextStyle kDetailsStringStyle = kDetailsTextStyle.copyWith(color: Colors.black);
 TextStyle kDetailsKeyStyle = kDefaultTextStyle.copyWith(color: kAccentColor);
 
+int kConfigVersionMajor = 1;
+int kConfigVersionMinor = 1;
+int kConfigVersionPatch = 0;
+int kConfigVersionBuild = 0;
+int kConfigVersionBuildType = 0; // 0 = release, 1 = debug
+int kConfigVersion = (kConfigVersionMajor * 10000) +
+    (kConfigVersionMinor * 1000) +
+    (kConfigVersionPatch * 100) +
+    kConfigVersionBuild;
 
 const List<String> kDefaultConfigs = [
+  '[version]',
+  'major = 1',
+  'minor = 1',
+  'patch = 0',
+  'build = 0',
+  'build_type = release',
+  '[window]',
+  'theme = dark',
+  '[closed_port_highlight]',
+  'regex = \\d{1,5}/.{1,5}\\s+closed\\s+.*',
+  'bold = 0',
+  'text = [65535, 0, 0]',
+  'italic = 0',
+  'highlight = [65535, 65535, 65535]',
+  'underline = 0',
+  '[date_highlight]',
+  'regex = \\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}\\s+.*',
+  'bold = 1',
+  'text = [0, 0, 0]',
+  'italic = 0',
+  'highlight = [65535, 65535, 65535]',
+  'underline = 0',
+  '[details_highlight]',
+  'regex = ^[A-Za-z]+(\\s[A-Za-z]*){0,8}:',
+  'bold = 1',
+  'text = [0, 0, 0]',
+  'italic = 0',
+  'highlight = [65535, 65535, 65535]',
+  'underline = 0',
+  '[filtered_port_highlight]',
+  'regex = \\d{1,5}/.{1,5}\\s+filtered\\s+.*',
+  'bold = 0',
+  'text = [38502, 39119, 0]',
+  'italic = 0',
+  'highlight = [65535, 65535, 65535]',
+  'underline = 0',
   '[hostname_highlight]',
-//  'regex = ([-a-zA-Z]{2,}://)?\\b([-a-zA-Z0-9_]+\\.)+[a-zA-Z]{2,}\\b',
-  'regex = (https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})',
+  'regex = ([-a-zA-Z]{2,}://)?\\b([-a-zA-Z0-9_]+\\.)+[a-zA-Z]{2,}\\b',
   'bold = 0',
   'text = [0, 111, 65535]',
   'italic = 0',
   'highlight = [65535, 65535, 65535]',
   'underline = 0',
-];
+  '[ip_highlight]',
+  'regex = \\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}',
+  'bold = 1',
+  'text = [0, 0, 0]',
+  'italic = 0',
+  'highlight = [65535, 65535, 65535]',
+  'underline = 0',
+  '[open_port_highlight]',
+  'regex = \\d{1,5}/.{1,5}\\s+open\\s+.*',
+  'bold = 1',
+  'text = [0, 41036, 2396]',
+  'italic = 0',
+  'highlight = [65535, 65535, 65535]',
+  'underline = 0',
+  '[output_highlight]',
+  'enable_highlight = True',
+  '[paths]',
+  'nmap_command_path = nmap',
+  'ndiff_command_path = ndiff',
+  '[port_list_highlight]',
+  'regex = ^PORT\\s+STATE\\s+SERVICE(\\s+VERSION)?.*',
+  'bold = 1',
+  'text = [0, 1272, 28362]',
+  'italic = 0',
+  'highlight = [65535, 65535, 65535]'
+  ];
+
 const List<String> kDefaultProfiles = [
   '[Intense scan]',
   'command = nmap -T4 -A -v',

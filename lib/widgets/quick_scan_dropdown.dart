@@ -149,6 +149,7 @@ class _QuickScanDropDownState extends State<QuickScanDropDown> {
         value: dropdownValue,
         // dropdownColor: Colors.white,
         // icon: const Icon(Icons.arrow_downward),
+        iconEnabledColor: mode.themeData.secondaryHeaderColor,
         iconSize: 24,
         elevation: 2,
         style: TextStyle(color: mode.themeData.primaryColorDark),

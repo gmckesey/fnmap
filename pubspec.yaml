@@ -2,7 +2,7 @@ name: fnmap
 description: A new Flutter project.
 
 publish_to: 'none'
-version: 1.3.2
+version: 1.3.4
 environment:
   sdk: '>=3.0.2 <4.0.0'
 
@@ -43,6 +43,7 @@ dependencies:
   args: ^2.4.2
   numberpicker: ^2.1.2
   flutter_spinbox: ^0.13.1
+  another_flutter_splash_screen: ^1.2.1
 
 dev_dependencies:
   flutter_test:
@@ -51,27 +52,30 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^2.0.2
+  msix: ^3.16.8
   #msix: ^3.16.1
 
 flutter:
   uses-material-design: true
   assets:
-  - assets/fnmap.png
+  - assets/
 
-#msix_config:
-#  display_name: fnmap
-#  install_certificate: true
-#  publisher_display_name: Kriol Technologies
-#  publisher: CN=Krioltech, O=Kriol Technologies
-#  identity_name: Krioltech.fnmap
-#  capabilities: internetClient,privateNetworkClientServer
-#  msix_version: 1.2.0.1
-#  logo_path: .\assets\fnmap.png
-#  languages: en-us
-#  sign_msix: true
-#  output_name: fnmap-1.2.0
+msix_config:
+  display_name: fnmap
+  install_certificate: false
+  #store: true
+  publisher_display_name: Kriol Technologies
+  publisher: CN=Krioltech, O=Kriol Technologies
+  #publisher: CN=051565E1-186F-4E82-973C-354B0358A29F
+  identity_name: KriolTechnologies.fnmap
+  capabilities: internetClient,privateNetworkClientServer
+  msix_version: 1.3.3.0
+  logo_path: .\assets\fnmap.png
+  languages: en-us
+  sign_msix: true
+  output_name: fnmap-1.3.3
 #  #output_name: fnmap-${FNMAP_STABILITY}-${FNMAP_SUBVERSION}
-#  architecture: x64
+  architecture: x64
 
 
   
