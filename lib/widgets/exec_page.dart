@@ -249,7 +249,7 @@ class _ExecPageState extends State<ExecPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(
-                    width: 100,
+                    width: 150,
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text('Target Address(es):'),

@@ -13,7 +13,7 @@ dependencies:
   cupertino_icons: ^1.0.5
   intl: ^0.19.0
   provider: ^6.0.5
-  window_manager: ^0.3.5
+  window_manager: ^0.4.3
   menu_bar: ^0.5.3
   flutter_parsed_text: ^2.2.1
   url_launcher: ^6.1.12
@@ -24,21 +24,21 @@ dependencies:
   validators: ^3.0.0
   dropdown_button2: ^2.3.8
   dropdown_plus: ^0.0.9
-  uuid: ^3.0.7
+  uuid: ^4.5.1
   xml: ^6.3.0
-  google_fonts: ^5.1.0
+  google_fonts: ^6.2.1
   pluto_grid: ^8.0.0
   loading_animation_widget: ^1.2.0+4
   #file_picker: ^5.3.3
-  file_picker: ^8.1.4
+  file_picker: ^10.1.5
   flutter_tree: ^2.0.3
   xml2json: ^6.2.0
   flutter_json_view: ^1.1.2
   split_view: ^3.2.1
   adwaita: ^1.0.1
   logger: ^2.0.1
-  flutter_markdown: ^0.6.17+1
-  package_info_plus: ^4.1.0
+  flutter_markdown: ^0.7.7+1
+  package_info_plus: ^8.3.0
   desktop_multi_window: ^0.2.0
   args: ^2.4.2
   numberpicker: ^2.1.2
@@ -51,31 +51,29 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.2
-  msix: ^3.16.8
-  #msix: ^3.16.1
+  flutter_lints: ^5.0.0
+  #msix: ^3.16.8
 
 flutter:
   uses-material-design: true
   assets:
   - assets/
 
-msix_config:
-  display_name: fnmap
-  install_certificate: false
-  #store: true
-  publisher_display_name: Kriol Technologies
-  publisher: CN=Krioltech, O=Kriol Technologies
-  #publisher: CN=051565E1-186F-4E82-973C-354B0358A29F
-  identity_name: KriolTechnologies.fnmap
-  capabilities: internetClient,privateNetworkClientServer
-  msix_version: 1.3.3.0
-  logo_path: .\assets\fnmap.png
-  languages: en-us
-  sign_msix: true
-  output_name: fnmap-1.3.3
-#  #output_name: fnmap-${FNMAP_STABILITY}-${FNMAP_SUBVERSION}
-  architecture: x64
+#msix_config:
+#  display_name: fnmap
+#  install_certificate: false
+#  #store: true
+#  publisher_display_name: Kriol Technologies
+#  publisher: CN=Krioltech, O=Kriol Technologies
+#  identity_name: KriolTechnologies.fnmap
+#  capabilities: internetClient,privateNetworkClientServer
+#  msix_version: 1.3.3.0
+#  logo_path: .\assets\fnmap.png
+#  languages: en-us
+#  sign_msix: true
+#  output_name: fnmap-1.3.3
+##  #output_name: fnmap-${FNMAP_STABILITY}-${FNMAP_SUBVERSION}
+#  architecture: x64
 
 
   
