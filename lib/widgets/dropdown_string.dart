@@ -85,7 +85,7 @@ class _KriolDropdownStringFieldState
         style: widget.textStyle,
         dropdownColor: widget.dropDownColor,
         focusColor: widget.focusColor,
-        value: widget.controller.currentValue,
+        initialValue: widget.controller.currentValue,
 /*      textStyle: widget.textStyle,
         menuStyle: widget.menuStyle,*/
         items: choices.map<DropdownMenuItem<String>>((String value) {

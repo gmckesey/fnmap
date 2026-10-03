@@ -417,8 +417,7 @@ class DialogButton extends StatelessWidget {
   final void Function()? onPressed;
 
   const DialogButton(
-      {Key? key, required this.buttonName, required this.onPressed})
-      : super(key: key);
+      {super.key, required this.buttonName, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

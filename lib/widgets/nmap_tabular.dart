@@ -21,10 +21,10 @@ class NMapTabularWidget extends StatelessWidget {
   final NMAPTabImplementation implementation;
 
   const NMapTabularWidget({
-    Key? key,
+    super.key,
     required this.placeholder,
     this.implementation = NMAPTabImplementation.gridView,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

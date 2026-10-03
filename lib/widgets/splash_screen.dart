@@ -1,7 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:fnmap/utilities/scan_profile.dart';
 import 'package:fnmap/utilities/fnmap_config.dart';
 import 'package:fnmap/models/dark_mode.dart';
 import 'package:fnmap/utilities/logger.dart';

@@ -21,13 +21,13 @@ class FormattedText extends StatelessWidget {
 
   FormattedText(
     this.text, {
-    Key? key,
+    super.key,
     TextStyle? style,
     TextAlign? textAlign,
     TextDirection? textDirection,
     TextOverflow? overflow,
     int? maxLines,
-  }) : _maxLines = maxLines, _overflow = overflow, _textDirection = textDirection, _textAlign = textAlign, _style = style, super(key: key);
+  }) : _maxLines = maxLines, _overflow = overflow, _textDirection = textDirection, _textAlign = textAlign, _style = style;
 
   @override
   Widget build(BuildContext context) {

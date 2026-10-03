@@ -7,7 +7,7 @@ import 'package:fnmap/models/host_record.dart';
 import 'package:fnmap/constants.dart';
 
 class NMapPortGrid extends StatelessWidget {
-  const NMapPortGrid({Key? key, required this.hostRecord}) : super(key: key);
+  const NMapPortGrid({super.key, required this.hostRecord});
   final NMapHostRecord hostRecord;
 
   @override

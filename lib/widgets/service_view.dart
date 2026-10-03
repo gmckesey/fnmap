@@ -49,8 +49,7 @@ class NMapServiceViewController with ChangeNotifier {
 }
 
 class NMapServiceView extends StatelessWidget {
-  const NMapServiceView({Key? key, required this.placeholder, this.controller})
-      : super(key: key);
+  const NMapServiceView({super.key, required this.placeholder, this.controller});
   final Widget placeholder;
   final NMapServiceViewController? controller;
 
@@ -103,11 +102,10 @@ class NMapServiceView extends StatelessWidget {
 
 class SelectedServiceWidget extends StatefulWidget {
   const SelectedServiceWidget(
-      {Key? key,
+      {super.key,
       required this.serviceRecords,
       this.serviceViewController,
-      this.splitViewController})
-      : super(key: key);
+      this.splitViewController});
 
   final List<NMapServiceRecord> serviceRecords;
   final NMapServiceViewController? serviceViewController;

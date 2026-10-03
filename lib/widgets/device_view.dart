@@ -65,11 +65,10 @@ class NMapViewController with ChangeNotifier {
 
 class NMapDeviceView extends StatelessWidget {
   const NMapDeviceView(
-      {Key? key,
+      {super.key,
       required this.placeholder,
       required this.viewFunction,
-      this.controller})
-      : super(key: key);
+      this.controller});
 
   final Widget placeholder;
   final Widget Function({required NMapHostRecord selectedHost}) viewFunction;
@@ -134,12 +133,11 @@ class NMapDeviceView extends StatelessWidget {
 
 class SelectedDeviceWidget extends StatefulWidget {
   const SelectedDeviceWidget(
-      {Key? key,
+      {super.key,
       required this.hostRecords,
       this.hostViewController,
       required this.viewFunction,
-      this.splitViewController})
-      : super(key: key);
+      this.splitViewController});
   final List<NMapHostRecord> hostRecords;
   final NMapViewController? hostViewController;
   final SplitViewController? splitViewController;

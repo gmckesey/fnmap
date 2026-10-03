@@ -25,10 +25,11 @@ import 'package:fnmap/widgets/raw_output_widget.dart';
 import 'package:fnmap/widgets/nmap_tabular.dart';
 import 'package:fnmap/dialogs/show_about.dart';
 import 'package:fnmap/dialogs/report_error.dart';
+import 'package:fnmap/dialogs/password_dialog.dart';
 import 'package:fnmap/utilities/fnmap_config.dart';
 
 class ExecPage extends StatefulWidget {
-  const ExecPage({Key? key}) : super(key: key);
+  const ExecPage({super.key});
 
   @override
   State<ExecPage> createState() => _ExecPageState();
@@ -59,6 +60,7 @@ class _ExecPageState extends State<ExecPage> {
   late NMapViewController _hostViewController;
   late NMapServiceViewController _serviceViewController;
   String? saveFName;
+  bool _runAsRoot = false;
   // late bool _darkMode;
 
   @override
@@ -248,6 +250,28 @@ class _ExecPageState extends State<ExecPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Run as Root:',
+                          style: mode.themeData.textTheme.bodyMedium,
+                        ),
+                        Checkbox(
+                          value: _runAsRoot,
+                          onChanged: inProgress
+                              ? null
+                              : (bool? value) {
+                                  setState(() {
+                                    _runAsRoot = value ?? false;
+                                  });
+                                },
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(
                     width: 150,
                     child: Padding(
@@ -453,7 +477,7 @@ class _ExecPageState extends State<ExecPage> {
                                       mode.themeData.primaryColorDark,
                                   onPressed: inProgress || !_ipIsValid
                                       ? null
-                                      : () {
+                                      : () async {
                                           initCommand();
                                           _outputPosition.offset = 0.0;
                                           nMapCommand.clear();
@@ -461,7 +485,32 @@ class _ExecPageState extends State<ExecPage> {
                                           _hostViewController.clear();
                                           _serviceViewController.clear();
                                           saveFName = null;
+
+                                          String? rootPassword;
+                                          if (_runAsRoot &&
+                                              (Platform.isLinux ||
+                                                  Platform.isMacOS)) {
+                                            bool needPassword =
+                                                await isSudoPasswordRequired();
+                                            if (needPassword) {
+                                              if (!context.mounted) return;
+                                              rootPassword =
+                                                  await showRootPasswordDialog(
+                                                context,
+                                                themeData: mode.themeData,
+                                              );
+                                              if (rootPassword == null) {
+                                                // User cancelled password prompt
+                                                return;
+                                              }
+                                            }
+                                          }
+
+                                          if (!context.mounted) return;
+
                                           nMapCommand.start(context,
+                                              runAsRoot: _runAsRoot,
+                                              rootPassword: rootPassword,
                                               onError: (msg) {
                                             reportError(context,
                                                 errorMsg: msg,

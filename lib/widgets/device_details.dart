@@ -7,8 +7,7 @@ import 'package:fnmap/models/host_record.dart';
 import 'package:fnmap/models/dark_mode.dart';
 
 class NMapDeviceDetails extends StatelessWidget {
-  const NMapDeviceDetails({Key? key, required this.hostRecord})
-      : super(key: key);
+  const NMapDeviceDetails({super.key, required this.hostRecord});
   final NMapHostRecord hostRecord;
 
   @override

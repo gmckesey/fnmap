@@ -226,7 +226,9 @@ class NMapCommand with ChangeNotifier {
   }
 
   void start(BuildContext context,
-      {required Function(String msg) onError}) async {
+      {required Function(String msg) onError,
+      bool runAsRoot = false,
+      String? rootPassword}) async {
     _consoleOutput = '';
     state = CommandState.inProgress;
     // notifyListeners();
@@ -240,13 +242,31 @@ class NMapCommand with ChangeNotifier {
       }
       cmdLine.add(element);
     }
-    trace.debug('start: starting $_program with arguments $cmdLine');
-    // Create a unique file in the tmp directory
+    trace.debug('start: starting $_program with arguments $cmdLine (runAsRoot: $runAsRoot)');
+    // Create a unique file path in the tmp directory (do not pre-create it, so nmap creates it)
     tmpFile = await genTempFile(prefix: 'nmap-gui', postfix: '.xml');
+    File existingFile = File(tmpFile!);
+    if (await existingFile.exists()) {
+      await existingFile.delete();
+    }
     cmdLine.add('-oX');
     cmdLine.add(tmpFile!);
     try {
-      _process = await Process.start(_program, cmdLine);
+      if (runAsRoot && (Platform.isLinux || Platform.isMacOS)) {
+        List<String> sudoArgs;
+        if (rootPassword != null && rootPassword.isNotEmpty) {
+          sudoArgs = ['-S', '-p', '', _program, ...cmdLine];
+        } else {
+          sudoArgs = [_program, ...cmdLine];
+        }
+        _process = await Process.start('sudo', sudoArgs);
+        if (rootPassword != null && rootPassword.isNotEmpty) {
+          _process!.stdin.writeln(rootPassword);
+          await _process!.stdin.flush();
+        }
+      } else {
+        _process = await Process.start(_program, cmdLine);
+      }
     } catch (e) {
       String msg =
           'Error trying to start $_program, make sure $_program is installed.\n'
@@ -270,10 +290,16 @@ class NMapCommand with ChangeNotifier {
       _process = null;
       notifyListeners();
 
+      if (!context.mounted) return;
       try {
-        NMapXML nMapXML = Provider.of<NMapXML>(context, listen: false);
-        nMapXML.clear(notify: false);
-        nMapXML.open(tmpFile!);
+        File xmlFile = File(tmpFile!);
+        if (xmlFile.existsSync() && xmlFile.lengthSync() > 0) {
+          NMapXML nMapXML = Provider.of<NMapXML>(context, listen: false);
+          nMapXML.clear(notify: false);
+          nMapXML.open(tmpFile!);
+        } else {
+          log.warning('start: output file ${tmpFile!} does not exist or is empty');
+        }
       } catch (e) {
         log.warning('start: failed opening ${tmpFile!}');
       }
