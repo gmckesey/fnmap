@@ -66,13 +66,11 @@ class FormattedText extends StatelessWidget {
             try {
               await launchUrl(uri);
             } catch (e) {
-              NLog('FormattedText', flag: nLogTRACE, package: kPackageName)
-                  .error('MatchText error $e launching $value');
+              _log.error('MatchText error $e launching $value');
               return;
             }
           } else {
-            NLog('MatchText:', package: kPackageName)
-                .debug('onTap: selected $value');
+            _log.debug('onTap: selected $value');
           }
         },
       );
