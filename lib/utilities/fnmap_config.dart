@@ -64,6 +64,8 @@ class FnMapConfig with ChangeNotifier {
   late Config _config;
   NLog log = NLog('FnMapConfig', flag: nLogTRACE, package: kPackageName);
   NMapThemeMode darkMode;
+  ThemeMode themeMode = ThemeMode.dark;
+  FlexScheme themeScheme = FlexScheme.indigo;
 
   FnMapConfig(
       {this.fileName = kConfigFilename, this.darkMode = NMapThemeMode.unknown});
@@ -76,11 +78,35 @@ class FnMapConfig with ChangeNotifier {
         for (String option in options) {
           String? value = _config.get(section, option);
           log.debug('parse: option is $option = $value');
-          if (option == 'theme') {
+          if (option == 'theme_mode') {
+            switch (value) {
+              case 'light':
+                themeMode = ThemeMode.light;
+                darkMode = NMapThemeMode.light;
+                break;
+              case 'dark':
+                themeMode = ThemeMode.dark;
+                darkMode = NMapThemeMode.dark;
+                break;
+              case 'system':
+                themeMode = ThemeMode.system;
+                darkMode = NMapThemeMode.unknown;
+                break;
+            }
+          }
+          if (option == 'theme_scheme') {
+            themeScheme = FlexScheme.values.firstWhere(
+              (e) => e.name == value,
+              orElse: () => FlexScheme.indigo,
+            );
+          }
+          if (option == 'theme' && _config.get(section, 'theme_mode') == null) {
             if (value == 'dark') {
               darkMode = NMapThemeMode.dark;
-            } else {
+              themeMode = ThemeMode.dark;
+            } else if (value == 'light') {
               darkMode = NMapThemeMode.light;
+              themeMode = ThemeMode.light;
             }
           }
         }
@@ -174,11 +200,57 @@ class FnMapConfig with ChangeNotifier {
   NMapThemeMode get mode => darkMode;
 
   bool isDark() {
+    if (themeMode == ThemeMode.dark) return true;
+    if (themeMode == ThemeMode.light) return false;
     return darkMode == NMapThemeMode.dark;
   }
 
   void setMode(NMapThemeMode mode) {
     darkMode = mode;
+    if (mode == NMapThemeMode.dark) {
+      themeMode = ThemeMode.dark;
+    } else if (mode == NMapThemeMode.light) {
+      themeMode = ThemeMode.light;
+    } else {
+      themeMode = ThemeMode.system;
+    }
+    updateTheme(themeMode: themeMode);
+  }
+
+  Future<void> saveConfig() async {
+    if (_appSupportDirectory == null) return;
+    String configFile = path.join(_appSupportDirectory!.path, fileName);
+    try {
+      await File(configFile).writeAsString(_config.toString());
+    } catch (e) {
+      log.error('Error $e saving configuration to $configFile');
+    }
+  }
+
+  Future<void> updateTheme({ThemeMode? themeMode, FlexScheme? scheme}) async {
+    if (!_config.hasSection('window')) {
+      _config.addSection('window');
+    }
+    if (themeMode != null) {
+      this.themeMode = themeMode;
+      _config.set('window', 'theme_mode', themeMode.name);
+      if (themeMode == ThemeMode.dark) {
+        _config.set('window', 'theme', 'dark');
+        darkMode = NMapThemeMode.dark;
+      } else if (themeMode == ThemeMode.light) {
+        _config.set('window', 'theme', 'light');
+        darkMode = NMapThemeMode.light;
+      } else {
+        _config.set('window', 'theme', 'system');
+        darkMode = NMapThemeMode.unknown;
+      }
+    }
+    if (scheme != null) {
+      themeScheme = scheme;
+      _config.set('window', 'theme_scheme', scheme.name);
+    }
+    await saveConfig();
+    notifyListeners();
   }
 
   bool _strToBool(String? value) {

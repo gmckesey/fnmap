@@ -84,14 +84,19 @@ class NMapPlutoGrid extends StatelessWidget {
     NLog log = NLog('NMapPlutoGrid:', package: kPackageName);
     trace.debug('rebuild');
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
-    Color backgroundColor = mode.themeData.canvasColor;
-    Color textColor = mode.themeData.primaryColorDark;
-    Color gridHeaderTextColor = mode.themeData.secondaryHeaderColor;
+    final bool isDark = mode.isDarkMode;
+    final ColorScheme colorScheme = mode.themeData.colorScheme;
+
+    final Color headerBgColor = isDark
+        ? colorScheme.surfaceContainerHigh
+        : colorScheme.surfaceContainer;
+    final Color headerTextColor = colorScheme.primary;
+    final Color cellTextColor = colorScheme.onSurface;
 
     Widget renderFunction(PlutoColumnRendererContext renderContext) {
       return Text(
         renderContext.cell.value as String,
-        style: TextStyle(color: textColor),
+        style: TextStyle(color: cellTextColor, fontSize: 14),
       );
     }
 
@@ -100,38 +105,79 @@ class NMapPlutoGrid extends StatelessWidget {
           title: 'Host',
           field: 'hostname',
           type: PlutoColumnType.text(),
-          backgroundColor: backgroundColor,
+          backgroundColor: headerBgColor,
           renderer: renderFunction,
           readOnly: true),
       PlutoColumn(
           title: 'IP Address',
           field: 'ip_address',
           type: PlutoColumnType.text(),
-          backgroundColor: backgroundColor,
+          backgroundColor: headerBgColor,
           renderer: renderFunction,
           readOnly: true),
       PlutoColumn(
           title: 'Mac Address',
           field: 'mac_address',
           type: PlutoColumnType.text(),
-          backgroundColor: backgroundColor,
+          backgroundColor: headerBgColor,
           renderer: renderFunction,
           readOnly: true),
       PlutoColumn(
           title: 'Vendor',
           field: 'vendor',
           type: PlutoColumnType.text(),
-          backgroundColor: backgroundColor,
+          backgroundColor: headerBgColor,
           renderer: renderFunction,
           readOnly: true),
     ];
 
     List<PlutoRow> rows = _generateRows();
 
-    Color colorCallback(PlutoRowColorContext colorContext) {
-      return mode.themeData.primaryColorLight;
-      //return kDefaultBackgroundColor;
-    }
+    final PlutoGridStyleConfig styleConfig = isDark
+        ? PlutoGridStyleConfig.dark(
+            gridBackgroundColor: colorScheme.surface,
+            rowColor: colorScheme.surface,
+            evenRowColor: colorScheme.surfaceContainerLow,
+            oddRowColor: colorScheme.surface,
+            gridBorderColor: colorScheme.outlineVariant.withValues(alpha: 0.5),
+            borderColor: colorScheme.outlineVariant.withValues(alpha: 0.3),
+            iconColor: headerTextColor,
+            columnTextStyle: TextStyle(
+              color: headerTextColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+            cellTextStyle: TextStyle(
+              color: cellTextColor,
+              fontSize: 14,
+            ),
+            menuBackgroundColor: colorScheme.surfaceContainerHigh,
+            activatedColor: colorScheme.primary.withValues(alpha: 0.25),
+            activatedBorderColor: colorScheme.primary,
+            inactivatedBorderColor: colorScheme.outlineVariant,
+          )
+        : PlutoGridStyleConfig(
+            gridBackgroundColor: colorScheme.surface,
+            rowColor: colorScheme.surface,
+            evenRowColor: colorScheme.surfaceContainerLowest,
+            oddRowColor: colorScheme.surface,
+            gridBorderColor: colorScheme.outlineVariant.withValues(alpha: 0.5),
+            borderColor: colorScheme.outlineVariant.withValues(alpha: 0.3),
+            iconColor: headerTextColor,
+            columnTextStyle: TextStyle(
+              color: headerTextColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+            cellTextStyle: TextStyle(
+              color: cellTextColor,
+              fontSize: 14,
+            ),
+            menuBackgroundColor: colorScheme.surfaceContainerHigh,
+            activatedColor: colorScheme.primary.withValues(alpha: 0.2),
+            activatedBorderColor: colorScheme.primary,
+            inactivatedBorderColor: colorScheme.outlineVariant,
+          );
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -145,13 +191,9 @@ class NMapPlutoGrid extends StatelessWidget {
         onSorted: (event) {
           log.debug('PlutoGrid<onSorted>: event is $event');
         },
-        rowColorCallback: colorCallback,
-        configuration: PlutoGridConfiguration(
-            style: PlutoGridStyleConfig(
-                gridBackgroundColor: backgroundColor,
-                iconColor: gridHeaderTextColor,
-                columnTextStyle:
-                TextStyle(color: gridHeaderTextColor))),
+        configuration: isDark
+            ? PlutoGridConfiguration.dark(style: styleConfig)
+            : PlutoGridConfiguration(style: styleConfig),
       ),
     );
   }

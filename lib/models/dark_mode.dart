@@ -1,6 +1,10 @@
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:fnmap/utilities/logger.dart';
+
+export 'package:flex_color_scheme/flex_color_scheme.dart' show FlexScheme;
 
 enum NMapThemeMode {
   light,
@@ -8,225 +12,225 @@ enum NMapThemeMode {
   unknown,
 }
 
+class ThemeOption {
+  final FlexScheme scheme;
+  final String label;
+  final String description;
+  final Color primaryColor;
+
+  const ThemeOption({
+    required this.scheme,
+    required this.label,
+    required this.description,
+    required this.primaryColor,
+  });
+}
+
 class NMapDarkMode with ChangeNotifier {
   BuildContext? rootContext;
-  ThemeData? _themeDark;
-  ThemeData? _themeLight;
-  ThemeData? _theme;
-  late NMapThemeMode _mode;
+  late ThemeMode _themeMode;
+  late FlexScheme _scheme;
   late bool initialized;
   NLog log = NLog('NMapDarkMode');
 
-  NMapDarkMode({bool isDark = false}) {
-    if (isDark) {
-      _mode = NMapThemeMode.dark;
+  static final List<ThemeOption> curatedSchemes = [
+    ThemeOption(
+      scheme: FlexScheme.indigo,
+      label: 'Indigo (Brand)',
+      description: 'Classic fnmap purple/indigo palette',
+      primaryColor: FlexScheme.indigo.data.light.primary,
+    ),
+    ThemeOption(
+      scheme: FlexScheme.deepBlue,
+      label: 'Deep Blue',
+      description: 'Professional high-contrast tech blue',
+      primaryColor: FlexScheme.deepBlue.data.light.primary,
+    ),
+    ThemeOption(
+      scheme: FlexScheme.aquaBlue,
+      label: 'Aqua Blue',
+      description: 'Fresh cyan & ocean blue',
+      primaryColor: FlexScheme.aquaBlue.data.light.primary,
+    ),
+    ThemeOption(
+      scheme: FlexScheme.brandBlue,
+      label: 'Brand Blue',
+      description: 'Clean modern blue',
+      primaryColor: FlexScheme.brandBlue.data.light.primary,
+    ),
+    ThemeOption(
+      scheme: FlexScheme.money,
+      label: 'Emerald (Matrix)',
+      description: 'Cyber hacker green aesthetic',
+      primaryColor: FlexScheme.money.data.light.primary,
+    ),
+    ThemeOption(
+      scheme: FlexScheme.green,
+      label: 'Forest Green',
+      description: 'Lush natural green',
+      primaryColor: FlexScheme.green.data.light.primary,
+    ),
+    ThemeOption(
+      scheme: FlexScheme.amber,
+      label: 'Amber Sunset',
+      description: 'Warm energetic amber/orange',
+      primaryColor: FlexScheme.amber.data.light.primary,
+    ),
+    ThemeOption(
+      scheme: FlexScheme.espresso,
+      label: 'Espresso',
+      description: 'Warm earthy neutral palette',
+      primaryColor: FlexScheme.espresso.data.light.primary,
+    ),
+    ThemeOption(
+      scheme: FlexScheme.shark,
+      label: 'Shark Grey',
+      description: 'Stealth dark slate & cool grey',
+      primaryColor: FlexScheme.shark.data.light.primary,
+    ),
+    ThemeOption(
+      scheme: FlexScheme.shadViolet,
+      label: 'Vibrant Violet',
+      description: 'Modern deep violet/purple',
+      primaryColor: FlexScheme.shadViolet.data.light.primary,
+    ),
+    ThemeOption(
+      scheme: FlexScheme.materialBaseline,
+      label: 'Material 3 Default',
+      description: 'Google Material 3 baseline',
+      primaryColor: FlexScheme.materialBaseline.data.light.primary,
+    ),
+  ];
+
+  NMapDarkMode({
+    bool isDark = false,
+    ThemeMode? themeMode,
+    FlexScheme? scheme,
+  }) {
+    if (themeMode != null) {
+      _themeMode = themeMode;
     } else {
-      _mode = NMapThemeMode.light;
+      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
     }
-    initialized = false;
+    _scheme = scheme ?? FlexScheme.indigo;
+    initialized = true;
   }
 
-  NMapThemeMode get mode => _mode;
+  ThemeMode get themeMode => _themeMode;
+  FlexScheme get scheme => _scheme;
 
-  @override
-  String toString() {
-    if (_mode == NMapThemeMode.dark) {
-      return 'dark';
-    } else {
-      return 'light';
+  NMapThemeMode get mode {
+    switch (_themeMode) {
+      case ThemeMode.light:
+        return NMapThemeMode.light;
+      case ThemeMode.dark:
+        return NMapThemeMode.dark;
+      case ThemeMode.system:
+        return NMapThemeMode.unknown;
     }
+  }
+
+  bool get isDarkMode {
+    if (_themeMode == ThemeMode.dark) return true;
+    if (_themeMode == ThemeMode.light) return false;
+    return PlatformDispatcher.instance.platformBrightness == Brightness.dark;
   }
 
   set mode(NMapThemeMode value) {
-    _mode = value;
+    switch (value) {
+      case NMapThemeMode.light:
+        _themeMode = ThemeMode.light;
+        break;
+      case NMapThemeMode.dark:
+        _themeMode = ThemeMode.dark;
+        break;
+      case NMapThemeMode.unknown:
+        _themeMode = ThemeMode.system;
+        break;
+    }
+    notifyListeners();
+  }
+
+  void setThemeMode(ThemeMode mode) {
+    _themeMode = mode;
+    log.debug('ThemeMode set to $_themeMode');
+    notifyListeners();
+  }
+
+  void setScheme(FlexScheme scheme) {
+    _scheme = scheme;
+    log.debug('Scheme set to ${_scheme.name}');
     notifyListeners();
   }
 
   void toggleMode() {
-    log.debug('mode before toggle is $_mode');
-    if (kDebugMode) {
-      // Makes debugging themes easier by allowing for the change of
-      // initialize function while the App is being debugged
-      if (rootContext != null) {
-        initialize(rootContext: rootContext!);
-      }
-    }
-    _mode =
-        _mode == NMapThemeMode.light ? NMapThemeMode.dark : NMapThemeMode.light;
-    log.debug('mode after toggle is $_mode');
+    _themeMode =
+        _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    log.debug('toggleMode: mode is now $_themeMode');
     notifyListeners();
   }
 
-  ThemeData get themeData {
-    ThemeData rc;
-    switch (_mode) {
-      case NMapThemeMode.light:
-        rc = _themeLight!;
-        break;
-      case NMapThemeMode.dark:
-        rc = _themeDark!;
-        break;
-      default:
-        rc = _theme!;
-        break;
-    }
-    return rc;
+  ThemeData get themeData => isDarkMode ? dark : light;
+
+  ThemeData get light {
+    final theme = FlexThemeData.light(
+      scheme: _scheme,
+      useMaterial3: true,
+      subThemesData: const FlexSubThemesData(
+        interactionEffects: true,
+        tintedDisabledControls: true,
+        useM2StyleDividerInM3: true,
+        inputDecoratorIsFilled: true,
+        inputDecoratorBorderType: FlexInputBorderType.outline,
+        inputDecoratorUnfocusedBorderIsColored: false,
+        alignedDropdown: true,
+        tabBarItemSchemeColor: SchemeColor.primary,
+        tabBarIndicatorSchemeColor: SchemeColor.primary,
+        tabBarIndicatorSize: TabBarIndicatorSize.tab,
+        tabBarIndicatorWeight: 3.0,
+        tabBarUnselectedItemSchemeColor: SchemeColor.onSurface,
+        tabBarUnselectedItemOpacity: 0.7,
+      ),
+    );
+    return theme.copyWith(
+      primaryColorLight: Colors.white,
+      secondaryHeaderColor: theme.colorScheme.onSurfaceVariant,
+    );
   }
 
-  ThemeData get dark => _themeDark!;
-  ThemeData get light => _themeLight!;
+  ThemeData get dark {
+    final theme = FlexThemeData.dark(
+      scheme: _scheme,
+      useMaterial3: true,
+      subThemesData: const FlexSubThemesData(
+        interactionEffects: true,
+        tintedDisabledControls: true,
+        useM2StyleDividerInM3: true,
+        inputDecoratorIsFilled: true,
+        inputDecoratorBorderType: FlexInputBorderType.outline,
+        inputDecoratorUnfocusedBorderIsColored: false,
+        alignedDropdown: true,
+        tabBarItemSchemeColor: SchemeColor.primary,
+        tabBarIndicatorSchemeColor: SchemeColor.primary,
+        tabBarIndicatorSize: TabBarIndicatorSize.tab,
+        tabBarIndicatorWeight: 3.0,
+        tabBarUnselectedItemSchemeColor: SchemeColor.onSurface,
+        tabBarUnselectedItemOpacity: 0.7,
+      ),
+    );
+    return theme.copyWith(
+      primaryColorLight: Colors.white,
+      secondaryHeaderColor: theme.colorScheme.onSurfaceVariant,
+    );
+  }
 
   void initialize({required BuildContext rootContext}) {
-    _theme = ThemeData(
-      primarySwatch: Colors.indigo, //getMaterialColor(kDefaultColor),
-    );
-
-    _themeLight = ThemeData.light(useMaterial3: true).copyWith(
-      secondaryHeaderColor: Colors.black87,
-      primaryColorDark: Colors.black, //Colors.indigo, //Colors.white70,
-      primaryColorLight: Colors.white,
-      splashColor: const Color(0xff412791),
-    );
-    _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
-      primaryColor: const Color(0xffdbb9eb), // Colors.white60,
-      primaryColorLight: Colors.black,
-      primaryColorDark: const Color(0xffb8cbeb), //Colors.indigo, //Colors.white70,
-      secondaryHeaderColor: Colors.white70,
-      focusColor: Colors.white12,
-      splashColor: const Color(0xffcbb6ec),
-    );
-
-/*
-    _themeLight = ThemeData.light(useMaterial3: true).copyWith(
-      primaryColor: Colors.indigo.shade400,
-      primaryColorLight: Colors.indigo[200], // Confirmed (menu color)
-      primaryColorDark:
-          Colors.indigo[500], // Confirmed Selected Tab Menu foreground
-      scaffoldBackgroundColor: Colors.indigo.shade100,
-      splashColor: Colors.purple,
-      highlightColor: Colors.indigo[900], // Confirmed (quick option background)
-      disabledColor: Colors.indigo.shade200, // Confirmed Menu disabled color
-      focusColor: Colors.indigo.shade300, // Confirmed dropdown focus color
-      hoverColor: Colors.indigo[500], // Confirmed menu hover color
-      secondaryHeaderColor: Colors.indigo[300], // Confirmed - table title
-      canvasColor: Colors.indigo.shade100, // Confirmed - table out of bounds background
-      dialogTheme: DialogTheme(
-        contentTextStyle: TextStyle(color: Colors.indigo.shade800),
-        titleTextStyle: TextStyle(fontSize: 18, color: Colors.indigo.shade900),
-        shape: const BeveledRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(2.0))),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-          hintStyle: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade500,
-              fontStyle: FontStyle.italic)),
-      dividerTheme: DividerThemeData(color: Colors.indigoAccent.shade700),
-      textTheme: TextTheme(
-        bodyMedium: TextStyle(color: Colors.indigoAccent.shade700),
-        bodySmall: TextStyle(color: Colors.indigo.shade800),
-        displayMedium: TextStyle(color: Colors.indigo.shade900),
-        headlineSmall: TextStyle(color: Colors.indigo.shade800),
-        labelMedium: TextStyle(
-            color: Colors.indigo.shade900, fontSize: kDefaultMenuFontSize),
-      ),
-      colorScheme: ColorScheme.fromSeed(
-        primary: Colors.indigo,
-        seedColor: Colors.indigo,
-        brightness: Brightness.light,
-      ),
-      iconTheme: const IconThemeData(color: Colors.indigo, opacity: 1.0),
-      primaryIconTheme: const IconThemeData(color: Colors.red),
-    );
-*/
-/*
-    _themeDark = ThemeData.dark(useMaterial3: true).copyWith(
-        primaryColor: Colors.indigo,
-        primaryColorLight: Colors.indigo.shade200, // Main menu text color
-        primaryColorDark: Colors.indigo[800],
-        secondaryHeaderColor: Colors.white38,
-        scaffoldBackgroundColor: Colors.indigo[900],
-        splashColor: Colors.indigoAccent,
-        highlightColor: Colors.indigoAccent,
-        disabledColor: Colors.indigo.shade700,
-        dialogBackgroundColor: Colors.indigo.shade800,
-        focusColor: Colors.indigoAccent.shade700,
-        hoverColor: Colors.indigo.shade700,
-        canvasColor: Colors.indigo.shade800,
-        inputDecorationTheme: InputDecorationTheme(
-            hintStyle: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade500,
-                fontStyle: FontStyle.italic)),
-        dialogTheme: DialogTheme(
-          contentTextStyle: TextStyle(color: Colors.indigo.shade200),
-          titleTextStyle: TextStyle(fontSize: 18, color: Colors.indigo.shade50),
-          shape: const BeveledRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(2.0))),
-        ),
-
-        // canvasColor: Colors.white,
-        dividerTheme: const DividerThemeData(color: Colors.indigoAccent),
-        textTheme: TextTheme(
-          bodyMedium: TextStyle(color: Colors.indigoAccent.shade200),
-          bodySmall: TextStyle(color: Colors.indigo.shade100),
-          displayMedium: TextStyle(color: Colors.indigoAccent.shade100),
-          headlineSmall: TextStyle(color: Colors.indigo.shade200),
-          labelMedium: TextStyle(
-              color: Colors.indigoAccent.shade100,
-              fontSize: kDefaultMenuFontSize),
-        ),
-        colorScheme: ColorScheme.fromSeed(
-          primary: Colors.indigo,
-          seedColor: Colors.indigo,
-          brightness: Brightness.dark,
-        ),
-        tabBarTheme: TabBarTheme(
-          unselectedLabelColor: Colors.indigo.shade600,
-          labelColor: Colors.indigoAccent,
-          // unselectedLabelStyle: TextStyle(color: Colors.red)
-        ),
-        iconTheme: const IconThemeData(color: Colors.indigo, opacity: 1.0),
-        textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-          // Dialog buttons background and foreground colors
-          backgroundColor:
-              MaterialStateProperty.all<Color>(Colors.indigo.shade800),
-          foregroundColor:
-              MaterialStateProperty.all<Color>(Colors.indigo.shade400),
-        )));
-*/
-
-    ThemeData light = ThemeData.light(useMaterial3: true).copyWith(
-      scaffoldBackgroundColor: Colors.indigo.shade50,
-      secondaryHeaderColor: Colors.black54,
-      splashColor: Colors.purple,
-      dividerColor: Colors.red,
-      highlightColor: Colors.indigo[900],
-      primaryColorLight: Colors.indigo[200],
-      focusColor: Colors.indigo[100],
-      canvasColor: Colors.indigo[100],
-      iconTheme: const IconThemeData(color: Colors.white, opacity: 1.0),
-    );
-
-    ThemeData dark = ThemeData.dark(useMaterial3: true).copyWith(
-      primaryColor: Colors.indigo.shade200,
-      primaryColorLight: Colors.indigo.shade400,
-      primaryColorDark: Colors.indigo.shade200,
-      secondaryHeaderColor: Colors.white54, // Colors.black54,
-      // canvasColor: Colors.indigo.shade800,
-      // hintColor: Colors.grey.shade500,
-      dividerColor: Colors.red,
-      highlightColor: Colors.indigo[100],
-      disabledColor: Colors.grey,
-      splashColor: Colors.purple,
-      scaffoldBackgroundColor: Colors.indigo.shade900,
-      focusColor: Colors.indigo[800],
-      canvasColor: Colors.indigo.shade600,
-      iconTheme: const IconThemeData(color: Colors.black, opacity: 1.0),
-    );
-
+    this.rootContext = rootContext;
     initialized = true;
-    //_mode = NMapThemeMode.dark;
+  }
+
+  @override
+  String toString() {
+    return _themeMode.name;
   }
 }

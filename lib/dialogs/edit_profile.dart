@@ -109,8 +109,14 @@ class _EditProfileState extends State<EditProfile> {
         length: 6,
         child: Column(children: [
           TabBar(
-            labelColor: mode.themeData.highlightColor, //darkColor,
-            unselectedLabelColor: mode.themeData.disabledColor,
+            labelColor: mode.themeData.colorScheme.primary,
+            unselectedLabelColor:
+                mode.themeData.colorScheme.onSurface.withValues(alpha: 0.7),
+            indicatorColor: mode.themeData.colorScheme.primary,
+            indicatorWeight: 3.0,
+            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+            unselectedLabelStyle:
+                const TextStyle(fontWeight: FontWeight.normal),
             tabs: const [
               Tab(text: 'Scan', icon: Icon(Icons.account_tree_outlined)),
               Tab(text: 'Ping', icon: Icon(Icons.network_ping_outlined)),

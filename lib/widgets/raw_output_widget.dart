@@ -85,8 +85,8 @@ class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
                 style: TextStyle(
                   fontSize: 16,
                   decoration: TextDecoration.none,
-                  color: mode.themeData.primaryColorDark,
-                  backgroundColor: mode.themeData.primaryColorLight,
+                  color: mode.themeData.colorScheme.onSurface,
+                  backgroundColor: mode.themeData.scaffoldBackgroundColor,
                 ))),
       ),
 //      ),

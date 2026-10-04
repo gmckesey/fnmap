@@ -242,8 +242,8 @@ class _SelectedDeviceWidgetState extends State<SelectedDeviceWidget> {
             selected: _selectedHostController.selected == index,
             // selectedColor: const Color(0xF8C465FF),
             // tileColor: kTileBackgroundColor,
-            textColor: mode.themeData.secondaryHeaderColor,
-            selectedColor: mode.themeData.splashColor,
+            textColor: mode.themeData.colorScheme.onSurface,
+            selectedColor: mode.themeData.colorScheme.primary,
             dense: true,
             contentPadding: const EdgeInsets.only(left: 8.0),
             onTap: () {

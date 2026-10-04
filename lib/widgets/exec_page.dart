@@ -370,8 +370,14 @@ class _ExecPageState extends State<ExecPage> {
               ),
             ),
             TabBar(
-              labelColor: mode.themeData.highlightColor, //darkColor,
-              unselectedLabelColor: mode.themeData.disabledColor,
+              labelColor: mode.themeData.colorScheme.primary,
+              unselectedLabelColor:
+                  mode.themeData.colorScheme.onSurface.withValues(alpha: 0.7),
+              indicatorColor: mode.themeData.colorScheme.primary,
+              indicatorWeight: 3.0,
+              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+              unselectedLabelStyle:
+                  const TextStyle(fontWeight: FontWeight.normal),
               tabs: const [
                 Tab(text: 'Raw Output', icon: Icon(Icons.wysiwyg)),
                 Tab(text: 'Tabular Output', icon: Icon(Icons.grid_on)),
@@ -853,22 +859,113 @@ class _ExecPageState extends State<ExecPage> {
                     color: mode.themeData.primaryColor,
                   ), // const Icon(Icons.info),
                 ),
+              ],
+            ),
+          ),
+          BarButton(
+            text: Text('Theme', style: TextStyle(color: textColor)),
+            submenu: SubMenu(
+              menuItems: [
                 MenuButton(
                   text: Text(
-                    'Toggle Dark Mode',
-                    // style: TextStyle(fontSize: kDefaultMenuFontSize),
+                    'Light Mode',
                     style: mode.themeData.textTheme.labelMedium,
                   ),
                   onTap: () {
-                    NMapDarkMode mode =
+                    NMapDarkMode themeModel =
                         Provider.of<NMapDarkMode>(context, listen: false);
-                    mode.toggleMode();
-                    Provider.of<FnMapConfig>(context, listen: false)
-                        .setMode(mode.mode);
+                    FnMapConfig cfg =
+                        Provider.of<FnMapConfig>(context, listen: false);
+                    themeModel.setThemeMode(ThemeMode.light);
+                    cfg.updateTheme(themeMode: ThemeMode.light);
                   },
-                  icon: Icon(FontAwesomeIcons.yinYang,
-                      color: mode.themeData.primaryColor,
-                      size: kDefaultIconSize), // const Icon(Icons.info),
+                  icon: Icon(
+                    mode.themeMode == ThemeMode.light
+                        ? Icons.check
+                        : Icons.light_mode_outlined,
+                    color: mode.themeData.primaryColor,
+                    size: kDefaultIconSize,
+                  ),
+                ),
+                MenuButton(
+                  text: Text(
+                    'Dark Mode',
+                    style: mode.themeData.textTheme.labelMedium,
+                  ),
+                  onTap: () {
+                    NMapDarkMode themeModel =
+                        Provider.of<NMapDarkMode>(context, listen: false);
+                    FnMapConfig cfg =
+                        Provider.of<FnMapConfig>(context, listen: false);
+                    themeModel.setThemeMode(ThemeMode.dark);
+                    cfg.updateTheme(themeMode: ThemeMode.dark);
+                  },
+                  icon: Icon(
+                    mode.themeMode == ThemeMode.dark
+                        ? Icons.check
+                        : Icons.dark_mode_outlined,
+                    color: mode.themeData.primaryColor,
+                    size: kDefaultIconSize,
+                  ),
+                ),
+                MenuButton(
+                  text: Text(
+                    'System Default',
+                    style: mode.themeData.textTheme.labelMedium,
+                  ),
+                  onTap: () {
+                    NMapDarkMode themeModel =
+                        Provider.of<NMapDarkMode>(context, listen: false);
+                    FnMapConfig cfg =
+                        Provider.of<FnMapConfig>(context, listen: false);
+                    themeModel.setThemeMode(ThemeMode.system);
+                    cfg.updateTheme(themeMode: ThemeMode.system);
+                  },
+                  icon: Icon(
+                    mode.themeMode == ThemeMode.system
+                        ? Icons.check
+                        : Icons.brightness_auto_outlined,
+                    color: mode.themeData.primaryColor,
+                    size: kDefaultIconSize,
+                  ),
+                ),
+                const MenuDivider(height: 2),
+                MenuButton(
+                  text: Text(
+                    'Color Schemes',
+                    style: mode.themeData.textTheme.labelMedium,
+                  ),
+                  icon: Icon(
+                    Icons.palette_outlined,
+                    color: mode.themeData.primaryColor,
+                    size: kDefaultIconSize,
+                  ),
+                  submenu: SubMenu(
+                    menuItems: [
+                      for (ThemeOption opt in NMapDarkMode.curatedSchemes)
+                        MenuButton(
+                          text: Text(
+                            opt.label,
+                            style: mode.themeData.textTheme.labelMedium,
+                          ),
+                          onTap: () {
+                            NMapDarkMode themeModel =
+                                Provider.of<NMapDarkMode>(context, listen: false);
+                            FnMapConfig cfg =
+                                Provider.of<FnMapConfig>(context, listen: false);
+                            themeModel.setScheme(opt.scheme);
+                            cfg.updateTheme(scheme: opt.scheme);
+                          },
+                          icon: Icon(
+                            mode.scheme == opt.scheme
+                                ? Icons.check_circle
+                                : Icons.circle,
+                            color: opt.primaryColor,
+                            size: kDefaultIconSize,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),

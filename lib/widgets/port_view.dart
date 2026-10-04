@@ -15,15 +15,42 @@ class NMapPortGrid extends StatelessWidget {
     NLog trace = NLog('NMapPortGrid:', flag: nLogTRACE, package: kPackageName);
     trace.debug('rebuild'); //, color: NLogColor.magenta);
     NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: true);
-    // Color backgroundColor = mode.themeData.scaffoldBackgroundColor;
-    Color backgroundColor = mode.themeData.canvasColor;
-    Color textColor = mode.themeData.primaryColorDark;
-    Color gridHeaderTextColor = mode.themeData.secondaryHeaderColor;
+    final bool isDark = mode.isDarkMode;
+    final ColorScheme colorScheme = mode.themeData.colorScheme;
+
+    final Color headerBgColor = isDark
+        ? colorScheme.surfaceContainerHigh
+        : colorScheme.surfaceContainer;
+    final Color headerTextColor = colorScheme.primary;
+    final Color cellTextColor = colorScheme.onSurface;
 
     Widget renderFunction(PlutoColumnRendererContext renderContext) {
       return Text(
         '${renderContext.cell.value}',
-        style: TextStyle(color: textColor),
+        style: TextStyle(color: cellTextColor, fontSize: 14),
+      );
+    }
+
+    Widget portStateRenderer(PlutoColumnRendererContext renderContext) {
+      String state = renderContext.cell.value.toString();
+      Color color;
+      switch (state) {
+        case 'filtered':
+          color = Colors.orange;
+          break;
+        case 'closed':
+          color = Colors.redAccent;
+          break;
+        case 'open':
+          color = isDark ? Colors.greenAccent : Colors.green.shade700;
+          break;
+        default:
+          color = cellTextColor;
+          break;
+      }
+      return Text(
+        state,
+        style: TextStyle(fontSize: 14.0, color: color, fontWeight: FontWeight.w600),
       );
     }
 
@@ -32,7 +59,7 @@ class NMapPortGrid extends StatelessWidget {
           title: 'Port',
           field: 'port',
           type: PlutoColumnType.number(defaultValue: 0, format: '####'),
-          backgroundColor: backgroundColor,
+          backgroundColor: headerBgColor,
           renderer: renderFunction,
           width: 80,
           minWidth: 60,
@@ -41,7 +68,7 @@ class NMapPortGrid extends StatelessWidget {
           title: 'Service',
           field: 'service',
           type: PlutoColumnType.text(),
-          backgroundColor: backgroundColor,
+          backgroundColor: headerBgColor,
           renderer: renderFunction,
           width: 100,
           minWidth: 60,
@@ -50,7 +77,7 @@ class NMapPortGrid extends StatelessWidget {
           title: 'Protocol',
           field: 'protocol',
           type: PlutoColumnType.text(),
-          backgroundColor: backgroundColor,
+          backgroundColor: headerBgColor,
           renderer: renderFunction,
           width: 90,
           minWidth: 60,
@@ -59,36 +86,70 @@ class NMapPortGrid extends StatelessWidget {
           title: 'State',
           field: 'state',
           type: PlutoColumnType.text(),
-          backgroundColor: backgroundColor,
+          backgroundColor: headerBgColor,
           width: 100,
           minWidth: 60,
           renderer: portStateRenderer,
           readOnly: true),
     ];
 
-    // List<PlutoRow> rows = _generateRows();
-    Color colorCallback(PlutoRowColorContext colorContext) {
-      return mode.themeData.primaryColorLight;
-    }
+    final PlutoGridStyleConfig styleConfig = isDark
+        ? PlutoGridStyleConfig.dark(
+            gridBackgroundColor: colorScheme.surface,
+            rowColor: colorScheme.surface,
+            evenRowColor: colorScheme.surfaceContainerLow,
+            oddRowColor: colorScheme.surface,
+            gridBorderColor: colorScheme.outlineVariant.withValues(alpha: 0.5),
+            borderColor: colorScheme.outlineVariant.withValues(alpha: 0.3),
+            iconColor: headerTextColor,
+            columnTextStyle: TextStyle(
+              color: headerTextColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+            cellTextStyle: TextStyle(
+              color: cellTextColor,
+              fontSize: 14,
+            ),
+            menuBackgroundColor: colorScheme.surfaceContainerHigh,
+            activatedColor: colorScheme.primary.withValues(alpha: 0.25),
+            activatedBorderColor: colorScheme.primary,
+            inactivatedBorderColor: colorScheme.outlineVariant,
+          )
+        : PlutoGridStyleConfig(
+            gridBackgroundColor: colorScheme.surface,
+            rowColor: colorScheme.surface,
+            evenRowColor: colorScheme.surfaceContainerLowest,
+            oddRowColor: colorScheme.surface,
+            gridBorderColor: colorScheme.outlineVariant.withValues(alpha: 0.5),
+            borderColor: colorScheme.outlineVariant.withValues(alpha: 0.3),
+            iconColor: headerTextColor,
+            columnTextStyle: TextStyle(
+              color: headerTextColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+            cellTextStyle: TextStyle(
+              color: cellTextColor,
+              fontSize: 14,
+            ),
+            menuBackgroundColor: colorScheme.surfaceContainerHigh,
+            activatedColor: colorScheme.primary.withValues(alpha: 0.2),
+            activatedBorderColor: colorScheme.primary,
+            inactivatedBorderColor: colorScheme.outlineVariant,
+          );
 
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: hostRecord.ports.isEmpty
             ? const Center(child: Text('No Ports Found'))
             : PlutoGrid(
-                // key: ValueKey('port_${hostRecord.firstHostname}_$mode'),
-                // key: ValueKey('port_view_$mode'),
-                // key: ValueKey('port_view_$keyValue'),
                 key: UniqueKey(),
                 columns: columns,
                 rows: _generateRows(),
-                rowColorCallback: colorCallback,
-                configuration: PlutoGridConfiguration(
-                    style: PlutoGridStyleConfig(
-                        gridBackgroundColor: backgroundColor,
-                        iconColor: gridHeaderTextColor,
-                        columnTextStyle:
-                            TextStyle(color: gridHeaderTextColor))),
+                configuration: isDark
+                    ? PlutoGridConfiguration.dark(style: styleConfig)
+                    : PlutoGridConfiguration(style: styleConfig),
               ));
   }
 
@@ -109,31 +170,5 @@ class NMapPortGrid extends StatelessWidget {
     }
     trace.debug('_generateRows returning ${list.length} rows');
     return list;
-  }
-
-  Widget portStateRenderer(PlutoColumnRendererContext context) {
-    NLog trace = NLog('NMapPortGrid:', flag: nLogTRACE, package: kPackageName);
-
-    String state = context.cell.value;
-    trace.debug('rendering state = $state');
-    Color color;
-    switch (state) {
-      case 'filtered':
-        color = Colors.orange;
-        break;
-      case 'closed':
-        color = Colors.red;
-        break;
-      case 'open':
-        color = Colors.green.shade700;
-        break;
-      default:
-        color = kDefaultTextColor;
-        break;
-    }
-    return Text(
-      state,
-      style: kDefaultTextStyle.copyWith(fontSize: 14.0, color: color),
-    );
   }
 }

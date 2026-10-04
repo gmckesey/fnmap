@@ -81,6 +81,8 @@ const List<String> kDefaultConfigs = [
   'build_type = release',
   '[window]',
   'theme = dark',
+  'theme_mode = dark',
+  'theme_scheme = indigo',
   '[closed_port_highlight]',
   'regex = \\d{1,5}/.{1,5}\\s+closed\\s+.*',
   'bold = 0',

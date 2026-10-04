@@ -85,7 +85,11 @@ void main() async {
         ChangeNotifierProvider.value(value: config),
         ChangeNotifierProvider.value(value: profileControllers),
         ChangeNotifierProvider(create: (_) => NMapXML()),
-        ChangeNotifierProvider(create: (_) => NMapDarkMode(isDark: config.isDark())),
+        ChangeNotifierProvider(
+            create: (_) => NMapDarkMode(
+                  themeMode: config.themeMode,
+                  scheme: config.themeScheme,
+                )),
         ChangeNotifierProvider(create: (_) => HelpText()),
         ChangeNotifierProvider(create: (_) => ValidityNotifier()),
       ], child: const MyApp()));
@@ -125,43 +129,44 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    NMapDarkMode mode = Provider.of<NMapDarkMode>(context, listen: false);
-
-    return MaterialApp(
-      title: 'fnmap',
-      theme: mode.light,
-      darkTheme: mode.dark,
-      // darkTheme: ThemeData.dark(useMaterial3: true),
-      // initialRoute: '/splashScreen',
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case "/":
-          case "root":
-          case "/splashScreen":
-            return MaterialPageRoute(
-              builder: (BuildContext context) {
-                return const SplashScreen();
-              },
-            );
-          case '/home':
-            return MaterialPageRoute(
-                builder: (context) => const DefaultTabController(
-                    length: 5, child: ExecPage()));
-          case '/newProfile':
-            return MaterialPageRoute(
-                builder: (context) =>
-                    const EditProfile(edit: false, delete: false));
-          case '/editProfile':
-            return MaterialPageRoute(
-                builder: (context) =>
-                    const EditProfile(edit: true, delete: false));
-          case '/deleteProfile':
-            return MaterialPageRoute(
-                builder: (context) =>
-                    const EditProfile(edit: false, delete: true));
-          default:
-            return null;
-        }
+    return Consumer<NMapDarkMode>(
+      builder: (context, mode, child) {
+        return MaterialApp(
+          title: 'fnmap',
+          theme: mode.light,
+          darkTheme: mode.dark,
+          themeMode: mode.themeMode,
+          onGenerateRoute: (settings) {
+            switch (settings.name) {
+              case "/":
+              case "root":
+              case "/splashScreen":
+                return MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return const SplashScreen();
+                  },
+                );
+              case '/home':
+                return MaterialPageRoute(
+                    builder: (context) => const DefaultTabController(
+                        length: 5, child: ExecPage()));
+              case '/newProfile':
+                return MaterialPageRoute(
+                    builder: (context) =>
+                        const EditProfile(edit: false, delete: false));
+              case '/editProfile':
+                return MaterialPageRoute(
+                    builder: (context) =>
+                        const EditProfile(edit: true, delete: false));
+              case '/deleteProfile':
+                return MaterialPageRoute(
+                    builder: (context) =>
+                        const EditProfile(edit: false, delete: true));
+              default:
+                return null;
+            }
+          },
+        );
       },
     );
   }
