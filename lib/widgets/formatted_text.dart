@@ -32,9 +32,11 @@ class FormattedText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final defaultTextStyle = DefaultTextStyle.of(context);
+    final theme = Theme.of(context);
 
     FnMapConfig nmapConfig = Provider.of<FnMapConfig>(context, listen: true);
-    List<MatchText> matches = generateMatches(nmapConfig);
+    List<MatchText> matches =
+        generateMatches(nmapConfig, theme.colorScheme.primary);
 
     return ParsedText(
       text: text,
@@ -49,9 +51,9 @@ class FormattedText extends StatelessWidget {
     );
   }
 
-  List<MatchText> generateMatches(FnMapConfig config) {
+  List<MatchText> generateMatches(FnMapConfig config, [Color? colorSchemeColor]) {
     List<MatchText> value = [];
-    for (HighLightConfig h in config.highlights()) {
+    for (HighLightConfig h in config.highlights(colorSchemeColor: colorSchemeColor)) {
       MatchText element = MatchText(
         pattern: h.regex,
         renderWidget: ({required pattern, required text}) => Text(

@@ -1,9 +1,10 @@
 [Desktop Entry]
 Icon=${SNAP}/meta/gui/fnmap.png
 Exec=fnmap
-Version=beta-0.1.17
+Version=1.4
 Type=Application
 Categories=Internet;Network
 Comment=GUI for nmap - the Network Mapper, a free network scanner
 Name=fnmap
 Terminal=false
+StartupWMClass=fnmap_fnmap

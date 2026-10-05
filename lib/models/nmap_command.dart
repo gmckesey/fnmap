@@ -20,6 +20,23 @@ enum CommandState {
   complete,
 }
 
+enum PackagingType {
+  snap,
+  flatpak,
+  native,
+}
+
+PackagingType detectPackagingType() {
+  if (Platform.environment.containsKey('SNAP')) {
+    return PackagingType.snap;
+  }
+  if (Platform.environment.containsKey('FLATPAK_ID') ||
+      File('/.flatpak-info').existsSync()) {
+    return PackagingType.flatpak;
+  }
+  return PackagingType.native;
+}
+
 class CmdBool with ChangeNotifier {
   late bool _isSet;
 
@@ -228,7 +245,9 @@ class NMapCommand with ChangeNotifier {
   void start(BuildContext context,
       {required Function(String msg) onError,
       bool runAsRoot = false,
+      bool? privileged,
       String? rootPassword}) async {
+    final bool isPrivileged = privileged ?? runAsRoot;
     _consoleOutput = '';
     state = CommandState.inProgress;
     // notifyListeners();
@@ -242,7 +261,8 @@ class NMapCommand with ChangeNotifier {
       }
       cmdLine.add(element);
     }
-    trace.debug('start: starting $_program with arguments $cmdLine (runAsRoot: $runAsRoot)');
+    trace.debug(
+        'start: starting $_program with arguments $cmdLine (privileged: $isPrivileged)');
     // Create a unique file path in the tmp directory (do not pre-create it, so nmap creates it)
     tmpFile = await genTempFile(prefix: 'nmap-gui', postfix: '.xml');
     File existingFile = File(tmpFile!);
@@ -251,21 +271,76 @@ class NMapCommand with ChangeNotifier {
     }
     cmdLine.add('-oX');
     cmdLine.add(tmpFile!);
+    String executable = _program;
+    if (Platform.isLinux && executable == 'nmap') {
+      // Prioritize host native nmap installations to avoid snap/packaging library mismatches (e.g. libpcre)
+      if (File('/usr/bin/nmap').existsSync()) {
+        executable = '/usr/bin/nmap';
+      } else if (File('/usr/local/bin/nmap').existsSync()) {
+        executable = '/usr/local/bin/nmap';
+      } else if (File('/bin/nmap').existsSync()) {
+        executable = '/bin/nmap';
+      }
+    }
+
     try {
-      if (runAsRoot && (Platform.isLinux || Platform.isMacOS)) {
-        List<String> sudoArgs;
-        if (rootPassword != null && rootPassword.isNotEmpty) {
-          sudoArgs = ['-S', '-p', '', _program, ...cmdLine];
+      if (isPrivileged && (Platform.isLinux || Platform.isMacOS)) {
+        final packaging = detectPackagingType();
+
+        if (packaging == PackagingType.flatpak) {
+          // Inside Flatpak, the sandbox cannot create raw sockets (PR_SET_NO_NEW_PRIVS).
+          // We spawn the host's nmap via flatpak-spawn using PolicyKit (pkexec).
+          try {
+            ProcessResult check =
+                await Process.run('flatpak-spawn', ['--host', 'which', 'nmap']);
+            if (check.exitCode != 0) {
+              String msg =
+                  "Privileged scans in Flatpak require 'nmap' installed on the host OS.\n"
+                  "Please install nmap on your host system (e.g. 'sudo apt install nmap').";
+              log.error(msg);
+              onError(msg);
+              processLine(msg);
+              state = CommandState.complete;
+              _process = null;
+              notifyListeners();
+              return;
+            }
+          } catch (_) {}
+
+          _process = await Process.start(
+            'flatpak-spawn',
+            ['--host', 'pkexec', 'nmap', ...cmdLine],
+          );
         } else {
-          sudoArgs = [_program, ...cmdLine];
-        }
-        _process = await Process.start('sudo', sudoArgs);
-        if (rootPassword != null && rootPassword.isNotEmpty) {
-          _process!.stdin.writeln(rootPassword);
-          await _process!.stdin.flush();
+          // Native Linux / macOS / Classic Snap
+          bool hasPkexec = false;
+          if (Platform.isLinux) {
+            try {
+              ProcessResult check = await Process.run('which', ['pkexec']);
+              hasPkexec = check.exitCode == 0;
+            } catch (_) {}
+          }
+
+          if (hasPkexec) {
+            // pkexec presents the desktop's native authentication modal
+            _process = await Process.start('pkexec', [executable, ...cmdLine]);
+          } else {
+            // Fallback to sudo with supplied password or cached sudo credentials
+            List<String> sudoArgs;
+            if (rootPassword != null && rootPassword.isNotEmpty) {
+              sudoArgs = ['-S', '-p', '', executable, ...cmdLine];
+            } else {
+              sudoArgs = [executable, ...cmdLine];
+            }
+            _process = await Process.start('sudo', sudoArgs);
+            if (rootPassword != null && rootPassword.isNotEmpty) {
+              _process!.stdin.writeln(rootPassword);
+              await _process!.stdin.flush();
+            }
+          }
         }
       } else {
-        _process = await Process.start(_program, cmdLine);
+        _process = await Process.start(executable, cmdLine);
       }
     } catch (e) {
       String msg =

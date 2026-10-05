@@ -25,6 +25,8 @@ class HighLightConfig {
   bool underline;
   List<int> highlightArray;
   List<int> textColorArray;
+  Color? overrideTextColor;
+  Color? overrideHighlightColor;
 
   HighLightConfig({
     required this.label,
@@ -34,6 +36,8 @@ class HighLightConfig {
     this.underline = false,
     this.highlightArray = const [0, 0, 0],
     this.textColorArray = const [0xffff, 0xffff, 0xffff],
+    this.overrideTextColor,
+    this.overrideHighlightColor,
   });
 
   @override
@@ -43,14 +47,18 @@ class HighLightConfig {
 
   TextStyle get textStyle {
     // Convert 16 bit color from config file to 8 bit flutter color
-    Color color = Color.fromRGBO(textColorArray[0] ~/ 256,
-        textColorArray[1] ~/ 256, textColorArray[2] ~/ 256, 1.0);
-    Color highlightColor = Color.fromRGBO(highlightArray[0] ~/ 256,
-        highlightArray[1] ~/ 256, highlightArray[2] ~/ 256, 1.0);
+    Color color = overrideTextColor ??
+        Color.fromRGBO(textColorArray[0] ~/ 256, textColorArray[1] ~/ 256,
+            textColorArray[2] ~/ 256, 1.0);
+    Color highlightColor = overrideHighlightColor ??
+        Color.fromRGBO(highlightArray[0] ~/ 256, highlightArray[1] ~/ 256,
+            highlightArray[2] ~/ 256, 1.0);
 
     return TextStyle(
       color: color,
-      background: Paint()..color = highlightColor,
+      background: highlightColor == Colors.transparent
+          ? null
+          : (Paint()..color = highlightColor),
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       fontStyle: italic ? FontStyle.italic : FontStyle.normal,
       decoration: underline ? TextDecoration.underline : TextDecoration.none,
@@ -119,6 +127,7 @@ class FnMapConfig with ChangeNotifier {
         }
       }
     }
+    _syncPortListHighlightConfig(themeScheme);
   }
 
   Future<void> defaultOverwrite() async {
@@ -248,9 +257,21 @@ class FnMapConfig with ChangeNotifier {
     if (scheme != null) {
       themeScheme = scheme;
       _config.set('window', 'theme_scheme', scheme.name);
+      _syncPortListHighlightConfig(scheme);
     }
     await saveConfig();
     notifyListeners();
+  }
+
+  void _syncPortListHighlightConfig(FlexScheme scheme) {
+    if (!_config.hasSection('port_list_highlight')) {
+      _config.addSection('port_list_highlight');
+    }
+    Color primary = scheme.data.light.primary;
+    int r16 = (primary.r * 65535.0).round().clamp(0, 65535);
+    int g16 = (primary.g * 65535.0).round().clamp(0, 65535);
+    int b16 = (primary.b * 65535.0).round().clamp(0, 65535);
+    _config.set('port_list_highlight', 'text', '[$r16, $g16, $b16]');
   }
 
   bool _strToBool(String? value) {
@@ -289,10 +310,12 @@ class FnMapConfig with ChangeNotifier {
     return list;
   }
 
-  List<HighLightConfig> highlights() {
+  List<HighLightConfig> highlights({Color? colorSchemeColor}) {
     List<HighLightConfig> values = [];
     RegExp reHighlight = RegExp(r'highlight$');
     NMapThemeMode themeMode = darkMode;
+    final Color activeSchemeColor = colorSchemeColor ??
+        (isDark() ? themeScheme.data.dark.primary : themeScheme.data.light.primary);
 
     for (String section in _config.sections()) {
       if (reHighlight.hasMatch(section)) {
@@ -333,9 +356,16 @@ class FnMapConfig with ChangeNotifier {
           log.warning('highlights: error $e parsing section $section, '
               'highlightOption = $highlightValue');
         }
-        // Use colors as is for light mode, but reverse the rgb background color
-        // if in dark mode
-        if (themeMode == NMapThemeMode.dark) {
+
+        Color? overrideTextColor;
+        Color? overrideHighlightColor;
+
+        if (section == 'port_list_highlight') {
+          overrideTextColor = activeSchemeColor;
+          overrideHighlightColor = Colors.transparent;
+        } else if (themeMode == NMapThemeMode.dark) {
+          // Use colors as is for light mode, but reverse the rgb background color
+          // if in dark mode
           FnColor foreground = FnColor.fromIntList(textColor);
           background = FnColor.fromIntList(highlightColor).reverse();
           highlightColor = background.toIntList();
@@ -366,6 +396,8 @@ class FnMapConfig with ChangeNotifier {
           underline: underline,
           textColorArray: textColor,
           highlightArray: highlightColor,
+          overrideTextColor: overrideTextColor,
+          overrideHighlightColor: overrideHighlightColor,
         );
         values.add(hc);
       }

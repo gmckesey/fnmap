@@ -9,7 +9,7 @@ const double kDefaultIconSize = 16;
 // const double kDefaultMenuFont =
 const double kDefaultMenuFontSize = 12;
 const String kProgramName = 'fnmap';
-const String kAppVersion = '1.3.4-1';
+const String kAppVersion = '1.4';
 const String kPackageName = 'com.krioltech.fnmap';
 const String kProfileFilename = 'scan_profile.usp';
 const String kConfigFilename = 'fnmap.conf';
@@ -140,7 +140,7 @@ const List<String> kDefaultConfigs = [
   '[port_list_highlight]',
   'regex = ^PORT\\s+STATE\\s+SERVICE(\\s+VERSION)?.*',
   'bold = 1',
-  'text = [0, 1272, 28362]',
+  'text = [12336, 16191, 40863]',
   'italic = 0',
   'highlight = [65535, 65535, 65535]'
   ];

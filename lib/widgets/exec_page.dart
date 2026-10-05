@@ -60,7 +60,7 @@ class _ExecPageState extends State<ExecPage> {
   late NMapViewController _hostViewController;
   late NMapServiceViewController _serviceViewController;
   String? saveFName;
-  bool _runAsRoot = false;
+  bool _privilegedScan = false;
   // late bool _darkMode;
 
   @override
@@ -255,17 +255,21 @@ class _ExecPageState extends State<ExecPage> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          'Run as Root:',
-                          style: mode.themeData.textTheme.bodyMedium,
+                        Tooltip(
+                          message:
+                              'Enable enhanced network privileges (raw sockets for SYN scan, OS detection, etc.)',
+                          child: Text(
+                            'Privileged Scan:',
+                            style: mode.themeData.textTheme.bodyMedium,
+                          ),
                         ),
                         Checkbox(
-                          value: _runAsRoot,
+                          value: _privilegedScan,
                           onChanged: inProgress
                               ? null
                               : (bool? value) {
                                   setState(() {
-                                    _runAsRoot = value ?? false;
+                                    _privilegedScan = value ?? false;
                                   });
                                 },
                         ),
@@ -493,11 +497,11 @@ class _ExecPageState extends State<ExecPage> {
                                           saveFName = null;
 
                                           String? rootPassword;
-                                          if (_runAsRoot &&
+                                          if (_privilegedScan &&
                                               (Platform.isLinux ||
                                                   Platform.isMacOS)) {
                                             bool needPassword =
-                                                await isSudoPasswordRequired();
+                                                await isPrivilegedPasswordRequired();
                                             if (needPassword) {
                                               if (!context.mounted) return;
                                               rootPassword =
@@ -515,7 +519,8 @@ class _ExecPageState extends State<ExecPage> {
                                           if (!context.mounted) return;
 
                                           nMapCommand.start(context,
-                                              runAsRoot: _runAsRoot,
+                                              privileged: _privilegedScan,
+                                              runAsRoot: _privilegedScan,
                                               rootPassword: rootPassword,
                                               onError: (msg) {
                                             reportError(context,
@@ -605,7 +610,7 @@ class _ExecPageState extends State<ExecPage> {
                           }
                           log.debug('onTap<SaveScan> selected $saveFName');
                         },
-                  icon: Icon(FontAwesomeIcons.solidFloppyDisk,
+                  icon: FaIcon(FontAwesomeIcons.solidFloppyDisk,
                       color: inProgress || !nMapXML.xmlDocumentExists
                           ? mode.themeData.disabledColor
                           : mode.themeData.primaryColor,
@@ -665,7 +670,7 @@ class _ExecPageState extends State<ExecPage> {
                             log.debug('onTap<SaveScanAs> cancelled.');
                           }
                         },
-                  icon: Icon(FontAwesomeIcons.floppyDisk,
+                  icon: FaIcon(FontAwesomeIcons.floppyDisk,
                       color: inProgress || !nMapXML.xmlDocumentExists
                           ? mode.themeData.disabledColor
                           : mode.themeData.primaryColor,
@@ -736,7 +741,7 @@ class _ExecPageState extends State<ExecPage> {
                             log.debug('onTap<LoadScan> cancelled.');
                           }
                         },
-                  icon: Icon(FontAwesomeIcons.solidFolderOpen,
+                  icon: FaIcon(FontAwesomeIcons.solidFolderOpen,
                       color: inProgress
                           ? mode.themeData.disabledColor
                           : mode.themeData.primaryColor,
@@ -763,7 +768,7 @@ class _ExecPageState extends State<ExecPage> {
                       exit(0);
                     }
                   },
-                  icon: Icon(FontAwesomeIcons.rightFromBracket,
+                  icon: FaIcon(FontAwesomeIcons.rightFromBracket,
                       color: mode.themeData.primaryColor,
                       size: kDefaultIconSize), //const Icon(Icons.exit_to_app),
                   shortcutText: 'Ctrl+Q',
@@ -803,7 +808,7 @@ class _ExecPageState extends State<ExecPage> {
                           });
                           // editProfile(context, edit: false, controller: optionsCtrl);
                         },
-                  icon: Icon(
+                  icon: FaIcon(
                     FontAwesomeIcons.arrowUpRightFromSquare,
                     size: kDefaultIconSize,
                     color: mode.themeData.primaryColor,
@@ -833,7 +838,7 @@ class _ExecPageState extends State<ExecPage> {
                             });
                             //editProfile(context, edit: true, controller: optionsCtrl);
                           },
-                    icon: Icon(FontAwesomeIcons.solidPenToSquare,
+                    icon: FaIcon(FontAwesomeIcons.solidPenToSquare,
                         size: kDefaultIconSize,
                         color: mode.themeData.primaryColor)),
                 MenuButton(
@@ -853,7 +858,7 @@ class _ExecPageState extends State<ExecPage> {
                           // editProfile(context,
                           //    edit: false, delete: true, controller: optionsCtrl);
                         },
-                  icon: Icon(
+                  icon: FaIcon(
                     FontAwesomeIcons.solidPenToSquare,
                     size: kDefaultIconSize,
                     color: mode.themeData.primaryColor,
@@ -986,7 +991,7 @@ class _ExecPageState extends State<ExecPage> {
                   onTap: () {
                     showAbout(context, packageInfo: _packageInfo);
                   },
-                  icon: Icon(FontAwesomeIcons.circleInfo,
+                  icon: FaIcon(FontAwesomeIcons.circleInfo,
                       color: mode.themeData.primaryColor,
                       size: kDefaultIconSize),
                   /*const FaIcon(

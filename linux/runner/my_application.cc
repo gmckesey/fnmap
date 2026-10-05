@@ -25,6 +25,22 @@ static void my_application_activate(GApplication* application) {
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
 
+  // Set the window icon if available.
+  const gchar* snap_path = g_getenv("SNAP");
+  g_autofree gchar* icon_path = nullptr;
+  if (snap_path != nullptr) {
+    icon_path = g_build_filename(snap_path, "meta", "gui", "fnmap.png", nullptr);
+  } else {
+    g_autofree gchar* exe_path = g_file_read_link("/proc/self/exe", nullptr);
+    if (exe_path != nullptr) {
+      g_autofree gchar* dir = g_path_get_dirname(exe_path);
+      icon_path = g_build_filename(dir, "data", "flutter_assets", "assets", "fnmap.png", nullptr);
+    }
+  }
+  if (icon_path != nullptr && g_file_test(icon_path, G_FILE_TEST_EXISTS)) {
+    gtk_window_set_icon_from_file(window, icon_path, nullptr);
+  }
+
   // Use a header bar when running in GNOME as this is the common style used
   // by applications and is the setup most users will be using (e.g. Ubuntu
   // desktop).
@@ -143,9 +159,18 @@ static void my_application_init(MyApplication* self) {}
 MyApplication* my_application_new() {
   // Set the program name to the application ID, which helps various systems
   // like GTK and desktop environments map this running application to its
-  // corresponding .desktop file. This ensures better integration by allowing
-  // the application to be recognized beyond its binary name.
-  g_set_prgname(APPLICATION_ID);
+  // corresponding .desktop file.
+  // In a Snap package, the desktop file installed by snapd is named
+  // <snap_name>_<app_name>.desktop (e.g. fnmap_fnmap.desktop). On Wayland
+  // (such as KDE Plasma 6 / KWin), KWin uses the Wayland app_id (derived
+  // from g_get_prgname()) to find the matching .desktop file for titlebar decorations.
+  const gchar* snap_name = g_getenv("SNAP_NAME");
+  if (snap_name != nullptr) {
+    g_autofree gchar* snap_app_id = g_strdup_printf("%s_%s", snap_name, snap_name);
+    g_set_prgname(snap_app_id);
+  } else {
+    g_set_prgname(APPLICATION_ID);
+  }
 
   return MY_APPLICATION(g_object_new(my_application_get_type(),
                                      "application-id", APPLICATION_ID, "flags",

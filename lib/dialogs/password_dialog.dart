@@ -1,6 +1,28 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
+/// Checks if an in-app password dialog is needed for a privileged scan.
+/// - Snap: No (network-control plug grants raw network capabilities without password).
+/// - Flatpak: No (flatpak-spawn --host pkexec triggers the native desktop Polkit prompt).
+/// - Native Linux with pkexec: No (pkexec triggers the native desktop Polkit prompt).
+/// - Fallback (macOS or Linux without pkexec): checks if sudo requires a password.
+Future<bool> isPrivilegedPasswordRequired() async {
+  if (Platform.isWindows) return false;
+  if (Platform.environment.containsKey('FLATPAK_ID') ||
+      File('/.flatpak-info').existsSync()) {
+    return false;
+  }
+  if (Platform.isLinux) {
+    try {
+      ProcessResult res = await Process.run('which', ['pkexec']);
+      if (res.exitCode == 0) {
+        return false;
+      }
+    } catch (_) {}
+  }
+  return isSudoPasswordRequired();
+}
+
 Future<bool> isSudoPasswordRequired() async {
   if (Platform.isWindows) return false;
   try {
@@ -37,9 +59,9 @@ Future<String?> showRootPasswordDialog(
       return Theme(
         data: themeData,
         child: _PasswordDialogContent(
-          title: title ?? 'Root Privileges Required',
+          title: title ?? 'Elevated Privileges Required',
           message: message ??
-              'Running nmap as root requires superuser privileges.\nPlease enter your password:',
+              'Performing a privileged scan requires elevated network privileges.\nPlease enter your password:',
           themeData: themeData,
         ),
       );
