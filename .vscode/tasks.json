@@ -1,0 +1,57 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Flutter: Pub Get",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["pub", "get"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Flutter: Analyze",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["analyze", "lib/"],
+      "problemMatcher": ["$dart-build_runner"],
+      "group": "test"
+    },
+    {
+      "label": "Flutter: Build Linux (Debug)",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["build", "linux", "--debug"],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Flutter: Build Linux (Release)",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["build", "linux", "--release"],
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "Flutter: Clean",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["clean"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Snap: Build Classic Snap (Docker)",
+      "type": "shell",
+      "command": "docker run --rm -v \"${workspaceFolder}:/project\" -v /run/snapd.socket:/run/snapd.socket -v /snap:/snap snapcraft-local:8_core22 pack --destructive-mode",
+      "problemMatcher": [],
+      "group": "build"
+    }
+  ]
+}

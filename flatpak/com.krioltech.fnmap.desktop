@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=fnmap
+Comment=GUI for nmap - the Network Mapper, a free network scanner
+Exec=fnmap
+Icon=com.krioltech.fnmap
+Terminal=false
+Type=Application
+Categories=Network;Security;
+StartupWMClass=com.krioltech.fnmap

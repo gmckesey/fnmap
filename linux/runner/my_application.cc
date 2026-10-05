@@ -41,6 +41,17 @@ static void my_application_activate(GApplication* application) {
     gtk_window_set_icon_from_file(window, icon_path, nullptr);
   }
 
+  // Set the window icon name for desktop environment and Wayland compositor lookup.
+  const gchar* snap_name_icon = g_getenv("SNAP_NAME");
+  if (snap_name_icon != nullptr) {
+    g_autofree gchar* snap_app_id = g_strdup_printf("%s_%s", snap_name_icon, snap_name_icon);
+    gtk_window_set_default_icon_name(snap_app_id);
+    gtk_window_set_icon_name(window, snap_app_id);
+  } else {
+    gtk_window_set_default_icon_name(APPLICATION_ID);
+    gtk_window_set_icon_name(window, APPLICATION_ID);
+  }
+
   // Use a header bar when running in GNOME as this is the common style used
   // by applications and is the setup most users will be using (e.g. Ubuntu
   // desktop).

@@ -1,0 +1,43 @@
+app-id: com.krioltech.fnmap
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Platform
+command: fnmap
+
+finish-args:
+  # Host execution portal for privileged scans (flatpak-spawn --host pkexec nmap ...)
+  - --talk-name=org.freedesktop.Flatpak
+  # Filesystem access for reports and temporary XML exchange
+  - --filesystem=home
+  - --filesystem=/tmp
+  # Network and IPC
+  - --share=network
+  - --share=ipc
+  # Display & GPU
+  - --socket=x11
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+
+modules:
+  - name: fnmap
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/fnmap
+      - cp -r bundle/* /app/fnmap/
+      - mkdir -p /app/bin
+      - ln -s /app/fnmap/fnmap /app/bin/fnmap
+      - install -Dm644 com.krioltech.fnmap.desktop /app/share/applications/com.krioltech.fnmap.desktop
+      - install -Dm644 com.krioltech.fnmap.metainfo.xml /app/share/metainfo/com.krioltech.fnmap.metainfo.xml
+      - for s in 16 24 32 48 64 128 256 512; do install -Dm644 icons/${s}x${s}.png /app/share/icons/hicolor/${s}x${s}/apps/com.krioltech.fnmap.png; done
+    sources:
+      - type: dir
+        path: build/linux/x64/release/bundle
+        dest: bundle
+      - type: file
+        path: flatpak/com.krioltech.fnmap.desktop
+      - type: file
+        path: flatpak/com.krioltech.fnmap.metainfo.xml
+      - type: dir
+        path: assets/icons
+        dest: icons

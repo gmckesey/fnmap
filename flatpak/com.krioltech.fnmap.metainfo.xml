@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.krioltech.fnmap</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0-only</project_license>
+  <name>fnmap</name>
+  <summary>A GUI for nmap</summary>
+  <description>
+    <p>
+      fnmap is a GUI for nmap that runs and parses the output of nmap and provides
+      different views of the data.
+    </p>
+  </description>
+  <launchable type="desktop-id">com.krioltech.fnmap.desktop</launchable>
+  <url type="homepage">https://krioltech.com</url>
+  <provides>
+    <binary>fnmap</binary>
+  </provides>
+  <releases>
+    <release version="1.4" date="2026-10-05"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

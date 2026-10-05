@@ -1,0 +1,28 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "fnmap (Linux Desktop)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "linux"
+        },
+        {
+            "name": "fnmap (Linux Desktop - Profile Mode)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "linux",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "fnmap (Linux Desktop - Release Mode)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "linux",
+            "flutterMode": "release"
+        }
+    ]
+}
