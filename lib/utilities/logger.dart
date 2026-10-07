@@ -134,14 +134,18 @@ class NLog {
 
   final Logger _prettyLog = Logger(
     printer: PrettyPrinter(
-      printTime: true,
+      dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
       methodCount: 0,
-      noBoxingByDefault: true, ),
+      noBoxingByDefault: true,
+    ),
     filter: LevelFilter(),
   );
 
   final Logger _prettierLog = Logger(
-    printer: PrettyPrinter(methodCount: 8, printTime: true),
+    printer: PrettyPrinter(
+      methodCount: 8,
+      dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
+    ),
     filter: LevelFilter(),
   );
 

@@ -15,14 +15,15 @@ class NMapDeviceDetails extends StatelessWidget {
     Map<String, dynamic> map = hostRecord.map;
     ThemeData mode = Provider.of<NMapDarkMode>(context, listen: true).themeData;
     // ThemeData mode = Theme.of(context);
-    Color backgroundColor = mode.dialogBackgroundColor; //mode.scaffoldBackgroundColor;
+    Color backgroundColor =
+        mode.dialogTheme.backgroundColor ?? mode.colorScheme.surface;
     TextStyle textStyle = kDetailsTextStyle.copyWith(
         //color: Theme.of(context).primaryColor
       color: mode.primaryColor,
     );
     TextStyle stringStyle = kDetailsTextStyle.copyWith(
         // color: Theme.of(context).focusColor
-      color: mode.secondaryHeaderColor.withOpacity(0.75),
+      color: mode.secondaryHeaderColor.withValues(alpha: 0.75),
     );
 
     TextStyle keyStyle = kDetailsTextStyle.copyWith(
