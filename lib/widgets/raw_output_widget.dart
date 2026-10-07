@@ -1,4 +1,5 @@
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/widgets/formatted_text.dart';
@@ -65,31 +66,78 @@ class _NMapRawOutputWidgetState extends State<NMapRawOutputWidget> {
     // WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToEnd());
     log.debug('build: initialPosition = ${widget.initialPosition}');
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      /*     child: Neumorphic(
-        style: const NeumorphicStyle(
-          border: NeumorphicBorder(width: 3, color: Colors.black12),
-          shape: NeumorphicShape.convex,
-          depth: -10,
-          lightSource: LightSource.topRight,
-          color: Colors.white38,
-        ),*/
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-            key: const Key('OutputScrollView'),
-            controller: widget.outputCtrl,
-            child: FormattedText(widget.result ?? '',
+    final bool isDark = mode.isDarkMode;
+    final Color selectionColor = isDark
+        ? mode.themeData.colorScheme.primary.withValues(alpha: 0.45)
+        : mode.themeData.colorScheme.primary.withValues(alpha: 0.35);
+
+    return TextSelectionTheme(
+      data: TextSelectionThemeData(
+        selectionColor: selectionColor,
+      ),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
+              key: const Key('OutputScrollView'),
+              controller: widget.outputCtrl,
+              child: FormattedText(
+                widget.result ?? '',
                 overflow: TextOverflow.visible,
                 style: TextStyle(
                   fontSize: 16,
                   decoration: TextDecoration.none,
                   color: mode.themeData.colorScheme.onSurface,
-                  backgroundColor: mode.themeData.scaffoldBackgroundColor,
-                ))),
+                ),
+              ),
+            ),
+          ),
+          if (widget.result != null && widget.result!.trim().isNotEmpty)
+            Positioned(
+              top: 8,
+              right: 16,
+              child: Material(
+                color: mode.themeData.colorScheme.surface.withValues(alpha: 0.85),
+                borderRadius: BorderRadius.circular(8),
+                elevation: 2,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () {
+                    Clipboard.setData(ClipboardData(text: widget.result!));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Raw output copied to clipboard'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.copy,
+                            size: 16,
+                            color: mode.themeData.colorScheme.primary),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Copy All',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: mode.themeData.colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
-//      ),
     );
   }
 

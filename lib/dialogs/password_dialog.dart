@@ -2,9 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 /// Checks if an in-app password dialog is needed for a privileged scan.
-/// - Snap: No (network-control plug grants raw network capabilities without password).
+/// - Snap: No (running via 'sudo fnmap' is already root with network-control).
 /// - Flatpak: No (flatpak-spawn --host pkexec triggers the native desktop Polkit prompt).
 /// - Native Linux with pkexec: No (pkexec triggers the native desktop Polkit prompt).
+/// - Running as root: No.
 /// - Fallback (macOS or Linux without pkexec): checks if sudo requires a password.
 Future<bool> isPrivilegedPasswordRequired() async {
   if (Platform.isWindows) return false;

@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Snap and Flatpak build directories and packages
+parts/
+stage/
+prime/
+*.snap
+*.assert
+*.flatpak

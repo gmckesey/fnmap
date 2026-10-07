@@ -1,5 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_parsed_text/flutter_parsed_text.dart';
+import 'package:flutter_parsed_text/flutter_parsed_text.dart' show MatchText;
 import 'package:provider/provider.dart';
 import 'package:fnmap/constants.dart';
 import 'package:fnmap/utilities/fnmap_config.dart';
@@ -14,10 +15,9 @@ class FormattedText extends StatelessWidget {
   final TextDirection? _textDirection;
   final TextOverflow? _overflow;
   final int? _maxLines;
+  final bool selectable;
   final NLog _log =
       NLog('FormattedText:', flag: nLogTRACE, package: kPackageName);
-
-
 
   FormattedText(
     this.text, {
@@ -27,7 +27,12 @@ class FormattedText extends StatelessWidget {
     TextDirection? textDirection,
     TextOverflow? overflow,
     int? maxLines,
-  }) : _maxLines = maxLines, _overflow = overflow, _textDirection = textDirection, _textAlign = textAlign, _style = style;
+    this.selectable = true,
+  })  : _maxLines = maxLines,
+        _overflow = overflow,
+        _textDirection = textDirection,
+        _textAlign = textAlign,
+        _style = style;
 
   @override
   Widget build(BuildContext context) {
@@ -38,16 +43,81 @@ class FormattedText extends StatelessWidget {
     List<MatchText> matches =
         generateMatches(nmapConfig, theme.colorScheme.primary);
 
-    return ParsedText(
-      text: text,
-      style: _style ?? defaultTextStyle.style,
-      alignment: _textAlign ?? defaultTextStyle.textAlign ?? TextAlign.start,
+    Map<String, MatchText> mapping = {};
+    for (var e in matches) {
+      if (e.pattern != null && e.pattern!.isNotEmpty) {
+        mapping[e.pattern!] = e;
+      }
+    }
+
+    List<InlineSpan> spans = [];
+    if (mapping.isEmpty || text.isEmpty) {
+      spans.add(TextSpan(text: text));
+    } else {
+      final combinedPattern = '(${mapping.keys.join('|')})';
+      try {
+        final regExp = RegExp(combinedPattern, multiLine: true);
+        text.splitMapJoin(
+          regExp,
+          onMatch: (Match match) {
+            final matchText = match[0] ?? '';
+            MatchText? matchConfig = mapping[matchText];
+            if (matchConfig == null) {
+              for (var key in mapping.keys) {
+                if (RegExp(key, multiLine: true).hasMatch(matchText)) {
+                  matchConfig = mapping[key];
+                  break;
+                }
+              }
+            }
+            if (valid.isURL(matchText)) {
+              spans.add(TextSpan(
+                text: matchText,
+                style: matchConfig?.style ?? _style,
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () async {
+                    try {
+                      await launchUrl(Uri.parse(matchText));
+                    } catch (e) {
+                      _log.error('Error launching URL $matchText: $e');
+                    }
+                  },
+              ));
+            } else {
+              spans.add(TextSpan(
+                text: matchText,
+                style: matchConfig?.style ?? _style,
+              ));
+            }
+            return '';
+          },
+          onNonMatch: (String nonMatch) {
+            spans.add(TextSpan(text: nonMatch));
+            return '';
+          },
+        );
+      } catch (e) {
+        _log.warning('Regex parse error: $e');
+        spans.add(TextSpan(text: text));
+      }
+    }
+
+    if (selectable) {
+      return SelectableText.rich(
+        TextSpan(children: spans, style: _style ?? defaultTextStyle.style),
+        textAlign: _textAlign ?? defaultTextStyle.textAlign ?? TextAlign.start,
+        textDirection: _textDirection ?? Directionality.of(context),
+        maxLines: _maxLines,
+        scrollPhysics: const NeverScrollableScrollPhysics(),
+      );
+    }
+
+    return Text.rich(
+      TextSpan(children: spans, style: _style ?? defaultTextStyle.style),
+      textAlign: _textAlign ?? defaultTextStyle.textAlign ?? TextAlign.start,
       textDirection: _textDirection ?? Directionality.of(context),
       overflow: _overflow ?? TextOverflow.clip,
       maxLines: _maxLines ?? defaultTextStyle.maxLines,
-      parse: matches, //parse, // matches,
-      selectable: false,
-      regexOptions: const RegexOptions(multiLine: true),
     );
   }
 
@@ -56,25 +126,7 @@ class FormattedText extends StatelessWidget {
     for (HighLightConfig h in config.highlights(colorSchemeColor: colorSchemeColor)) {
       MatchText element = MatchText(
         pattern: h.regex,
-        renderWidget: ({required pattern, required text}) => Text(
-          text,
-          textDirection: TextDirection.ltr,
-          style: h.textStyle,
-          selectionColor: Colors.grey,
-        ),
-        onTap: (String value) async {
-          if (valid.isURL(value, protocols: ['http', 'https'], requireProtocol: true)) {
-            Uri uri = Uri.parse(value);
-            try {
-              await launchUrl(uri);
-            } catch (e) {
-              _log.error('MatchText error $e launching $value');
-              return;
-            }
-          } else {
-            _log.debug('onTap: selected $value');
-          }
-        },
+        style: h.textStyle,
       );
       value.add(element);
     }

@@ -54,11 +54,24 @@ class HighLightConfig {
         Color.fromRGBO(highlightArray[0] ~/ 256, highlightArray[1] ~/ 256,
             highlightArray[2] ~/ 256, 1.0);
 
+    final bool isDefaultBackground = (highlightArray.length >= 3 &&
+            highlightArray[0] >= 65000 &&
+            highlightArray[1] >= 65000 &&
+            highlightArray[2] >= 65000) ||
+        (highlightArray.length >= 3 &&
+            highlightArray[0] == 0 &&
+            highlightArray[1] == 0 &&
+            highlightArray[2] == 0) ||
+        highlightColor == Colors.transparent;
+
+    final Paint? bgPaint = (overrideHighlightColor == Colors.transparent ||
+            isDefaultBackground)
+        ? null
+        : (Paint()..color = highlightColor);
+
     return TextStyle(
       color: color,
-      background: highlightColor == Colors.transparent
-          ? null
-          : (Paint()..color = highlightColor),
+      background: bgPaint,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       fontStyle: italic ? FontStyle.italic : FontStyle.normal,
       decoration: underline ? TextDecoration.underline : TextDecoration.none,
@@ -360,10 +373,19 @@ class FnMapConfig with ChangeNotifier {
         Color? overrideTextColor;
         Color? overrideHighlightColor;
 
+        bool isDefaultHighlight = (highlightColor.length >= 3 &&
+            highlightColor[0] >= 65000 &&
+            highlightColor[1] >= 65000 &&
+            highlightColor[2] >= 65000);
+
         if (section == 'port_list_highlight') {
           overrideTextColor = activeSchemeColor;
           overrideHighlightColor = Colors.transparent;
-        } else if (themeMode == NMapThemeMode.dark) {
+        } else if (isDefaultHighlight) {
+          overrideHighlightColor = Colors.transparent;
+        }
+
+        if (themeMode == NMapThemeMode.dark) {
           // Use colors as is for light mode, but reverse the rgb background color
           // if in dark mode
           FnColor foreground = FnColor.fromIntList(textColor);

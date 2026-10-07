@@ -52,20 +52,27 @@ else
 fi
 echo "=========================================="
 
-echo "==> [1/3] Cleaning Flutter local build folder..."
+echo "==> [1/2] Cleaning build and Snapcraft working directories..."
 flutter clean
+if ! rm -rf parts stage prime .snapcraft 2>/dev/null; then
+  if command -v docker >/dev/null 2>&1; then
+    docker run --rm -v "${PROJECT_ROOT}:/project" -w /project alpine rm -rf parts stage prime .snapcraft 2>/dev/null || true
+  fi
+fi
 
-echo "==> [2/3] Cleaning Snapcraft working directories..."
-rm -rf parts stage prime .snapcraft
-
-echo "==> [3/3] Rebuilding the snap..."
+echo "==> [2/2] Packaging the snap..."
 if [[ "${MODE}" == "test" ]]; then
-  snapcraft pack --destructive-mode
+  if command -v docker >/dev/null 2>&1 && docker image inspect snapcraft-local:8_core22 >/dev/null 2>&1; then
+    echo "Using Docker container snapcraft-local:8_core22..."
+    docker run --rm -v "${PROJECT_ROOT}:/project" -w /project snapcraft-local:8_core22 pack --destructive-mode
+  else
+    snapcraft pack --destructive-mode
+  fi
   echo ""
   echo "=========================================="
   echo "Test build complete!"
   echo "To install and test locally, run:"
-  echo "  sudo snap install --dangerous --classic fnmap_*.snap"
+  echo "  sudo snap install --classic --dangerous fnmap_*.snap"
   echo "=========================================="
 else
   snapcraft pack

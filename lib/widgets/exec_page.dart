@@ -403,13 +403,15 @@ class _ExecPageState extends State<ExecPage> {
                   return MouseRegion(
                     cursor: inProgress
                         ? SystemMouseCursors.wait
-                        : SystemMouseCursors.basic,
+                        : MouseCursor.defer,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Expanded(
                           flex: 10,
-                          child: TabBarView(children: [
+                          child: TabBarView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: [
                             NMapRawOutputWidget(
                               key: const Key('Output Widget'),
                               outputCtrl: _outputCtrl,

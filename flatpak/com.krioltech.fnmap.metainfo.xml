@@ -17,7 +17,7 @@
     <binary>fnmap</binary>
   </provides>
   <releases>
-    <release version="1.4" date="2026-10-05"/>
+    <release version="1.4.0" date="2026-10-05"/>
   </releases>
   <content_rating type="oars-1.1"/>
 </component>
