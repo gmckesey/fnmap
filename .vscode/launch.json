@@ -2,6 +2,38 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "fnmap (macOS Desktop)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "macos",
+            "env": {
+                "DEVELOPER_DIR": "/Applications/Xcode.app/Contents/Developer"
+            }
+        },
+        {
+            "name": "fnmap (macOS Desktop - Profile Mode)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "macos",
+            "flutterMode": "profile",
+            "env": {
+                "DEVELOPER_DIR": "/Applications/Xcode.app/Contents/Developer"
+            }
+        },
+        {
+            "name": "fnmap (macOS Desktop - Release Mode)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "macos",
+            "flutterMode": "release",
+            "env": {
+                "DEVELOPER_DIR": "/Applications/Xcode.app/Contents/Developer"
+            }
+        },
+        {
             "name": "fnmap (Linux Desktop)",
             "request": "launch",
             "type": "dart",

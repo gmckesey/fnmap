@@ -545,7 +545,7 @@ class _ExecPageState extends State<ExecPage> {
       ),
     );
     Widget w;
-    if (Platform.isLinux || Platform.isWindows) {
+    if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
       String reXMLFile = r'^.+\.xml$';
       DateFormat formatter = DateFormat('yyyy-MM-dd-HHmm');
       w = MenuBarWidget(

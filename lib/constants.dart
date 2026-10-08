@@ -44,7 +44,7 @@ const List<String> kDesktopGPLPaths = [
 const String kIconPath = 'assets/fnmap.png';
 
 const List<String> iconPaths = [
-  './meta/gui/fnmap.png'
+  './meta/gui/fnmap.png',
   '/tmp/fnmap.png',
   'assets/fnmap.png',
   '/usr/share/icons/fnmap.png',

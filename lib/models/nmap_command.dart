@@ -235,9 +235,11 @@ class NMapCommand with ChangeNotifier {
   Future<String> genTempFile({String? prefix, String? postfix}) async {
     String uniqueId = const Uuid().v4();
     String fName = prefix ?? '';
-    // String uniqueFn = '$fName-${uniqueId.substring(0, 16)}${postfix ?? ''}';
-    String uniqueFn = '$fName-$uniqueId-${postfix ?? ''}';
+    String uniqueFn = '$fName-$uniqueId${postfix ?? ''}';
     Directory dir = await getTemporaryDirectory();
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+    }
     String tempFn = path.join(dir.path, uniqueFn);
     return tempFn;
   }
@@ -266,6 +268,9 @@ class NMapCommand with ChangeNotifier {
     // Create a unique file path in the tmp directory (do not pre-create it, so nmap creates it)
     tmpFile = await genTempFile(prefix: 'nmap-gui', postfix: '.xml');
     File existingFile = File(tmpFile!);
+    if (!await existingFile.parent.exists()) {
+      await existingFile.parent.create(recursive: true);
+    }
     if (await existingFile.exists()) {
       await existingFile.delete();
     }
@@ -280,6 +285,15 @@ class NMapCommand with ChangeNotifier {
         executable = '/usr/local/bin/nmap';
       } else if (File('/bin/nmap').existsSync()) {
         executable = '/bin/nmap';
+      }
+    } else if (Platform.isMacOS && executable == 'nmap') {
+      // Check Homebrew (Apple Silicon / Intel) and standard Mac locations
+      if (File('/opt/homebrew/bin/nmap').existsSync()) {
+        executable = '/opt/homebrew/bin/nmap';
+      } else if (File('/usr/local/bin/nmap').existsSync()) {
+        executable = '/usr/local/bin/nmap';
+      } else if (File('/usr/bin/nmap').existsSync()) {
+        executable = '/usr/bin/nmap';
       }
     }
 
