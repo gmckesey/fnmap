@@ -239,6 +239,44 @@ class _ExecPageState extends State<ExecPage> {
 
     initCommand(notify: false);
 
+    Future<void> runScan() async {
+      initCommand();
+      _outputPosition.offset = 0.0;
+      nMapCommand.clear();
+      nMapXML.clear();
+      _hostViewController.clear();
+      _serviceViewController.clear();
+      saveFName = null;
+
+      String? rootPassword;
+      if (_privilegedScan && (Platform.isLinux || Platform.isMacOS)) {
+        bool needPassword = await isPrivilegedPasswordRequired();
+        if (needPassword) {
+          if (!context.mounted) return;
+          rootPassword = await showRootPasswordDialog(
+            context,
+            themeData: mode.themeData,
+          );
+          if (rootPassword == null) {
+            // User cancelled password prompt
+            return;
+          }
+        }
+      }
+
+      if (!context.mounted) return;
+
+      nMapCommand.start(context,
+          privileged: _privilegedScan,
+          runAsRoot: _privilegedScan,
+          rootPassword: rootPassword,
+          onError: (msg) {
+        reportError(context,
+            errorMsg: msg,
+            themeData: mode.themeData);
+      });
+    }
+
     Widget scaffold = Scaffold(
       backgroundColor: backgroundColor,
       body: DefaultTextStyle(
@@ -490,45 +528,7 @@ class _ExecPageState extends State<ExecPage> {
                                   onPressed: inProgress || !_ipIsValid
                                       ? null
                                       : () async {
-                                          initCommand();
-                                          _outputPosition.offset = 0.0;
-                                          nMapCommand.clear();
-                                          nMapXML.clear();
-                                          _hostViewController.clear();
-                                          _serviceViewController.clear();
-                                          saveFName = null;
-
-                                          String? rootPassword;
-                                          if (_privilegedScan &&
-                                              (Platform.isLinux ||
-                                                  Platform.isMacOS)) {
-                                            bool needPassword =
-                                                await isPrivilegedPasswordRequired();
-                                            if (needPassword) {
-                                              if (!context.mounted) return;
-                                              rootPassword =
-                                                  await showRootPasswordDialog(
-                                                context,
-                                                themeData: mode.themeData,
-                                              );
-                                              if (rootPassword == null) {
-                                                // User cancelled password prompt
-                                                return;
-                                              }
-                                            }
-                                          }
-
-                                          if (!context.mounted) return;
-
-                                          nMapCommand.start(context,
-                                              privileged: _privilegedScan,
-                                              runAsRoot: _privilegedScan,
-                                              rootPassword: rootPassword,
-                                              onError: (msg) {
-                                            reportError(context,
-                                                errorMsg: msg,
-                                                themeData: mode.themeData);
-                                          });
+                                          await runScan();
                                         },
                                   child: const Text('SCAN'))
                             ],
@@ -561,6 +561,26 @@ class _ExecPageState extends State<ExecPage> {
             text: Text('Scan', style: TextStyle(color: textColor)),
             submenu: SubMenu(
               menuItems: [
+                MenuButton(
+                  text: Text(
+                    'Run Scan',
+                    style: mode.themeData.textTheme.labelMedium,
+                  ),
+                  onTap: inProgress || !_ipIsValid
+                      ? null
+                      : () async {
+                          await runScan();
+                        },
+                  icon: FaIcon(FontAwesomeIcons.play,
+                      color: inProgress || !_ipIsValid
+                          ? mode.themeData.disabledColor
+                          : mode.themeData.primaryColor,
+                      size: kDefaultIconSize),
+                  shortcutText: 'Ctrl+R',
+                  shortcut: const SingleActivator(LogicalKeyboardKey.keyR,
+                      control: true),
+                ),
+                const MenuDivider(height: 2),
                 MenuButton(
                   text: Text(
                     'Save Scan',
