@@ -9,7 +9,7 @@ const double kDefaultIconSize = 16;
 // const double kDefaultMenuFont =
 const double kDefaultMenuFontSize = 12;
 const String kProgramName = 'fnmap';
-const String kAppVersion = '1.4.0';
+const String kAppVersion = '1.4.1';
 const String kPackageName = 'com.krioltech.fnmap';
 const String kProfileFilename = 'scan_profile.usp';
 const String kConfigFilename = 'fnmap.conf';
@@ -64,7 +64,7 @@ TextStyle kDetailsKeyStyle = kDefaultTextStyle.copyWith(color: kAccentColor);
 
 int kConfigVersionMajor = 1;
 int kConfigVersionMinor = 4;
-int kConfigVersionPatch = 0;
+int kConfigVersionPatch = 1;
 int kConfigVersionBuild = 1;
 int kConfigVersionBuildType = 1; // 0 = release, 1 = debug
 int kConfigVersion = (kConfigVersionMajor * 10000) +
@@ -76,7 +76,7 @@ const List<String> kDefaultConfigs = [
   '[version]',
   'major = 1',
   'minor = 4',
-  'patch = 0',
+  'patch = 1',
   'build = 1',
   'build_type = release'
   '[window]',

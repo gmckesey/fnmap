@@ -1,7 +1,7 @@
 name: fnmap # you probably want to 'snapcraft register <name>'
 title:  Flutter NMap GUI
 base: core22 # the base snap is the execution environment for this snap
-version: '1.4.0'
+version: '1.4.1'
 summary: A GUI for nmap
 license: GPL-2.0
 compression: xz

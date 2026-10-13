@@ -5,8 +5,6 @@ sdk: org.freedesktop.Platform
 command: fnmap
 
 finish-args:
-  # Host execution portal for privileged scans (flatpak-spawn --host pkexec nmap ...)
-  - --talk-name=org.freedesktop.Flatpak
   # Filesystem access for reports and temporary XML exchange
   - --filesystem=home
   - --filesystem=/tmp

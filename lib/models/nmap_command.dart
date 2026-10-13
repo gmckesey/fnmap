@@ -278,8 +278,10 @@ class NMapCommand with ChangeNotifier {
     cmdLine.add(tmpFile!);
     String executable = _program;
     if (Platform.isLinux && executable == 'nmap') {
-      // Prioritize host native nmap installations to avoid snap/packaging library mismatches (e.g. libpcre)
-      if (File('/usr/bin/nmap').existsSync()) {
+      // Check Flatpak prefix (/app/bin), followed by host native paths
+      if (File('/app/bin/nmap').existsSync()) {
+        executable = '/app/bin/nmap';
+      } else if (File('/usr/bin/nmap').existsSync()) {
         executable = '/usr/bin/nmap';
       } else if (File('/usr/local/bin/nmap').existsSync()) {
         executable = '/usr/local/bin/nmap';
@@ -304,6 +306,40 @@ class NMapCommand with ChangeNotifier {
         if (packaging == PackagingType.flatpak) {
           // Inside Flatpak, the sandbox cannot create raw sockets (PR_SET_NO_NEW_PRIVS).
           // We spawn the host's nmap via flatpak-spawn using PolicyKit (pkexec).
+
+          // 1. Check if Flatpak host execution permission (--talk-name=org.freedesktop.Flatpak) is granted
+          bool hasPermission = false;
+          try {
+            final infoFile = File('/.flatpak-info');
+            if (infoFile.existsSync()) {
+              final content = infoFile.readAsStringSync();
+              hasPermission = content.contains('org.freedesktop.Flatpak=talk');
+            }
+          } catch (_) {}
+
+          if (!hasPermission) {
+            try {
+              ProcessResult probe =
+                  await Process.run('flatpak-spawn', ['--host', 'true']);
+              hasPermission = probe.exitCode == 0;
+            } catch (_) {}
+          }
+
+          if (!hasPermission) {
+            String msg =
+                "Privileged scans in Flatpak require permission to communicate with the host system.\n\n"
+                "To enable this, run the following command in your terminal and restart fnmap:\n"
+                "flatpak override --user --talk-name=org.freedesktop.Flatpak com.krioltech.fnmap";
+            log.error(msg);
+            onError(msg);
+            processLine(msg);
+            state = CommandState.complete;
+            _process = null;
+            notifyListeners();
+            return;
+          }
+
+          // 2. Check if nmap is installed on the host OS
           try {
             ProcessResult check =
                 await Process.run('flatpak-spawn', ['--host', 'which', 'nmap']);

@@ -18,7 +18,25 @@ cd "${PROJECT_ROOT}"
 APP_ID="com.krioltech.fnmap"
 RUNTIME="org.freedesktop.Platform"
 RUNTIME_VERSION="25.08"
-BUNDLE_OUTPUT="fnmap_1.4_amd64.flatpak"
+
+# Detect app version from pubspec.yaml or lib/constants.dart
+APP_VERSION=""
+if [[ -f "${PROJECT_ROOT}/pubspec.yaml" ]]; then
+  APP_VERSION="$(grep '^version:' "${PROJECT_ROOT}/pubspec.yaml" | head -n 1 | awk '{print $2}' | cut -d'+' -f1)"
+fi
+if [[ -z "${APP_VERSION}" ]] && [[ -f "${PROJECT_ROOT}/lib/constants.dart" ]]; then
+  APP_VERSION="$(grep -o "kAppVersion = '[^']*'" "${PROJECT_ROOT}/lib/constants.dart" | cut -d"'" -f2)"
+fi
+APP_VERSION="${APP_VERSION:-1.4.1}"
+
+# Detect host architecture and map to standard platform string (x86_64 -> amd64, aarch64 -> arm64)
+ARCH="$(uname -m)"
+case "${ARCH}" in
+  x86_64)  PLATFORM="amd64" ;;
+  aarch64) PLATFORM="arm64" ;;
+  armv7l)  PLATFORM="armhf" ;;
+  *)       PLATFORM="${ARCH}" ;;
+esac
 
 DO_INSTALL=false
 DO_RUN=false
@@ -34,25 +52,37 @@ while [[ $# -gt 0 ]]; do
       DO_RUN=true
       shift
       ;;
+    -v|--version)
+      if [[ -z "${2:-}" ]]; then
+        echo "Error: --version requires a version argument" >&2
+        exit 1
+      fi
+      APP_VERSION="$2"
+      shift 2
+      ;;
     -h|--help)
-      echo "Usage: $0 [-i|--install] [-r|--run]"
+      echo "Usage: $0 [-i|--install] [-r|--run] [-v|--version <version>]"
       echo ""
       echo "Options:"
-      echo "  -i, --install  Install the flatpak locally for the current user after building"
-      echo "  -r, --run      Install and run fnmap via Flatpak immediately"
-      echo "  -h, --help     Show this help message"
+      echo "  -i, --install          Install the flatpak locally for the current user after building"
+      echo "  -r, --run              Install and run fnmap via Flatpak immediately"
+      echo "  -v, --version <ver>    Override app version (default: auto-detected from pubspec.yaml)"
+      echo "  -h, --help             Show this help message"
       exit 0
       ;;
     *)
       echo "Error: Unknown argument '$1'" >&2
-      echo "Usage: $0 [-i|--install] [-r|--run]" >&2
+      echo "Usage: $0 [-i|--install] [-r|--run] [-v|--version <version>]" >&2
       exit 1
       ;;
   esac
 done
 
+BUNDLE_OUTPUT="fnmap_${APP_VERSION}_${PLATFORM}.flatpak"
+
 echo "=========================================="
 echo "Building Flatpak: ${APP_ID}"
+echo "Package Output:   ${BUNDLE_OUTPUT}"
 echo "=========================================="
 
 echo "==> [1/6] Building Flutter Linux release bundle..."
@@ -76,6 +106,32 @@ cp -r build/linux/x64/release/bundle/* "${APP_DIR}/files/fnmap/"
 mkdir -p "${APP_DIR}/files/bin"
 ln -sf "../fnmap/fnmap" "${APP_DIR}/files/bin/fnmap"
 
+# Bundle nmap if available from cache or flatpak-builder build-dir
+NMAP_BIN=""
+NMAP_SHARE=""
+if [[ -f "${PROJECT_ROOT}/build/flatpak-cache/nmap/nmap" ]]; then
+  NMAP_BIN="${PROJECT_ROOT}/build/flatpak-cache/nmap/nmap"
+  NMAP_SHARE="${PROJECT_ROOT}/build/flatpak-cache/nmap/share/nmap"
+elif [[ -f "${PROJECT_ROOT}/../com.krioltech.fnmap/build-dir/files/bin/nmap" ]]; then
+  NMAP_BIN="${PROJECT_ROOT}/../com.krioltech.fnmap/build-dir/files/bin/nmap"
+  NMAP_SHARE="${PROJECT_ROOT}/../com.krioltech.fnmap/build-dir/files/share/nmap"
+fi
+
+if [[ -n "${NMAP_BIN}" ]] && [[ -f "${NMAP_BIN}" ]]; then
+  echo "==> Bundling nmap into Flatpak prefix (/app/bin/nmap)..."
+  cp -a "${NMAP_BIN}" "${APP_DIR}/files/bin/"
+  if [[ -f "${NMAP_BIN%/*}/ncat" ]]; then
+    cp -a "${NMAP_BIN%/*}/ncat" "${APP_DIR}/files/bin/" 2>/dev/null || true
+  fi
+  if [[ -f "${NMAP_BIN%/*}/nping" ]]; then
+    cp -a "${NMAP_BIN%/*}/nping" "${APP_DIR}/files/bin/" 2>/dev/null || true
+  fi
+  if [[ -d "${NMAP_SHARE}" ]]; then
+    mkdir -p "${APP_DIR}/files/share"
+    cp -a "${NMAP_SHARE}" "${APP_DIR}/files/share/"
+  fi
+fi
+
 # Desktop integration
 mkdir -p "${APP_DIR}/files/share/applications"
 install -m 644 flatpak/com.krioltech.fnmap.desktop "${APP_DIR}/files/share/applications/${APP_ID}.desktop"
@@ -95,7 +151,6 @@ done
 echo "==> [5/6] Finalizing Flatpak sandbox permissions..."
 flatpak build-finish "${APP_DIR}" \
   --command=fnmap \
-  --talk-name=org.freedesktop.Flatpak \
   --filesystem=home \
   --filesystem=/tmp \
   --share=network \

@@ -9,7 +9,6 @@ PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${PROJECT_ROOT}"
 
 APP_ID="com.krioltech.fnmap"
-BUNDLE_OUTPUT="fnmap_1.4_amd64.flatpak"
 
 echo "=========================================="
 echo "Cleaning Flatpak build artifacts"
@@ -18,9 +17,14 @@ echo "=========================================="
 echo "==> Removing Flatpak build directory..."
 rm -rf "${PROJECT_ROOT}/build/flatpak"
 
-if [[ -f "${PROJECT_ROOT}/${BUNDLE_OUTPUT}" ]]; then
-  echo "==> Removing generated Flatpak bundle (${BUNDLE_OUTPUT})..."
-  rm -f "${PROJECT_ROOT}/${BUNDLE_OUTPUT}"
+if compgen -G "${PROJECT_ROOT}/fnmap_*.flatpak" >/dev/null; then
+  echo "==> Removing generated Flatpak bundles (fnmap_*.flatpak)..."
+  rm -f "${PROJECT_ROOT}"/fnmap_*.flatpak
+fi
+
+if compgen -G "${PROJECT_ROOT}/fnmap-*.x64.tar.gz" >/dev/null; then
+  echo "==> Removing generated Flathub release archives (fnmap-*.x64.tar.gz)..."
+  rm -f "${PROJECT_ROOT}"/fnmap-*.x64.tar.gz
 fi
 
 # If installed in user remotes, optionally remove

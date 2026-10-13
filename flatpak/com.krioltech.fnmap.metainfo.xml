@@ -11,13 +11,32 @@
       different views of the data.
     </p>
   </description>
+  <developer id="com.krioltech">
+    <name>Kriol Technologies</name>
+  </developer>
   <launchable type="desktop-id">com.krioltech.fnmap.desktop</launchable>
   <url type="homepage">https://krioltech.com</url>
   <provides>
     <binary>fnmap</binary>
   </provides>
   <releases>
-    <release version="1.4.0" date="2026-10-05"/>
+    <release version="1.4.1" date="2026-10-13">
+      <description>
+        <p>
+          Version 1.4.1 adds Flatpak host execution permission validation with guidance for running privileged scans, and updates dependencies.
+        </p>
+      </description>
+    </release>
+    <release version="1.4.0" date="2026-10-13">
+      <description>
+        <p>
+          Version 1.4.0 introduces privileged scans via Polkit/pkexec host portal,
+          Flatpak and Snap classic confinement improvements, dark and light theme
+          enhancements, and raw scan output selection.
+        </p>
+      </description>
+    </release>
+    <release version="1.3.4-1" date="2025-05-21"/>
   </releases>
   <content_rating type="oars-1.1"/>
 </component>

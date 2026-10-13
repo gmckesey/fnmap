@@ -53,3 +53,4 @@ prime/
 *.snap
 *.assert
 *.flatpak
+*.tar.gz
