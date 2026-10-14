@@ -16,6 +16,20 @@
   </developer>
   <launchable type="desktop-id">com.krioltech.fnmap.desktop</launchable>
   <url type="homepage">https://krioltech.com</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://www.krioltech.com/fnmap/screenshots/fnmap-details-light.jpg</image>
+      <caption>Device details and port list in light mode</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.krioltech.com/fnmap/screenshots/fnmap-windows-service-dark.jpg</image>
+      <caption>Service details in dark mode</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.krioltech.com/fnmap/screenshots/fnmap-windows-tab-output-light.png</image>
+      <caption>Nmap raw scan output view</caption>
+    </screenshot>
+  </screenshots>
   <provides>
     <binary>fnmap</binary>
   </provides>
