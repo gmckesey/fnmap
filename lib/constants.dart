@@ -65,7 +65,7 @@ TextStyle kDetailsKeyStyle = kDefaultTextStyle.copyWith(color: kAccentColor);
 int kConfigVersionMajor = 1;
 int kConfigVersionMinor = 4;
 int kConfigVersionPatch = 1;
-int kConfigVersionBuild = 1;
+int kConfigVersionBuild = 2;
 int kConfigVersionBuildType = 1; // 0 = release, 1 = debug
 int kConfigVersion = (kConfigVersionMajor * 10000) +
     (kConfigVersionMinor * 1000) +
@@ -77,7 +77,7 @@ const List<String> kDefaultConfigs = [
   'major = 1',
   'minor = 4',
   'patch = 1',
-  'build = 1',
+  'build = 2',
   'build_type = release'
   '[window]',
   'theme = dark',
