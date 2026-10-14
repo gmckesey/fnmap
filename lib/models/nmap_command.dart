@@ -236,7 +236,15 @@ class NMapCommand with ChangeNotifier {
     String uniqueId = const Uuid().v4();
     String fName = prefix ?? '';
     String uniqueFn = '$fName-$uniqueId${postfix ?? ''}';
-    Directory dir = await getTemporaryDirectory();
+    Directory dir;
+    if (detectPackagingType() == PackagingType.flatpak) {
+      // In Flatpak, system /tmp is sandbox-isolated and invisible to host processes spawned via flatpak-spawn.
+      // We use the application's cache directory, which is mapped directly to ~/.var/app/<app_id>/cache on the host.
+      final cacheDir = await getApplicationCacheDirectory();
+      dir = Directory(path.join(cacheDir.path, 'tmp'));
+    } else {
+      dir = await getTemporaryDirectory();
+    }
     if (!await dir.exists()) {
       await dir.create(recursive: true);
     }
@@ -409,7 +417,7 @@ class NMapCommand with ChangeNotifier {
     _process!.stdout
         .transform(utf8.decoder)
         .transform(const LineSplitter())
-        .listen((line) => processLine(line), cancelOnError: true, onDone: () {
+        .listen((line) => processLine(line), cancelOnError: true, onDone: () async {
       log.debug('onDone<stdout> called.');
       state = CommandState.complete;
       _process = null;
@@ -418,6 +426,33 @@ class NMapCommand with ChangeNotifier {
       if (!context.mounted) return;
       try {
         File xmlFile = File(tmpFile!);
+
+        // If running inside Flatpak with host execution (privileged scan),
+        // and the output file is not in the sandbox or is empty,
+        // retrieve it directly from the host filesystem via flatpak-spawn.
+        if ((!xmlFile.existsSync() || xmlFile.lengthSync() == 0) &&
+            detectPackagingType() == PackagingType.flatpak &&
+            isPrivileged) {
+          try {
+            ProcessResult hostRead =
+                await Process.run('flatpak-spawn', ['--host', 'cat', tmpFile!]);
+            if (hostRead.exitCode == 0 &&
+                hostRead.stdout is String &&
+                (hostRead.stdout as String).isNotEmpty) {
+              if (!xmlFile.parent.existsSync()) {
+                xmlFile.parent.createSync(recursive: true);
+              }
+              xmlFile.writeAsStringSync(hostRead.stdout as String);
+              try {
+                await Process.run('flatpak-spawn', ['--host', 'rm', '-f', tmpFile!]);
+              } catch (_) {}
+            }
+          } catch (e) {
+            log.warning('start: flatpak host fallback read failed: $e');
+          }
+        }
+
+        if (!context.mounted) return;
         if (xmlFile.existsSync() && xmlFile.lengthSync() > 0) {
           NMapXML nMapXML = Provider.of<NMapXML>(context, listen: false);
           nMapXML.clear(notify: false);

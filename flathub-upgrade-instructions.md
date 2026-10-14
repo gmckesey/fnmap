@@ -11,7 +11,7 @@ Flathub builds applications inside strictly isolated sandbox containers without 
 ```mermaid
 flowchart LR
     A["fnmap Repo<br/>(Flutter Source)"] -->|flutter build linux| B["Release Bundle<br/>(build/linux/x64/release/bundle)"]
-    B -->|Packaged into tar.gz| C["fnmap-flatpak Repo<br/>(archives/fnmap-1.4.1-2.x64.tar.gz)"]
+    B -->|Packaged into tar.gz| C["fnmap-flatpak Repo<br/>(archives/fnmap-1.4.1-3.x64.tar.gz)"]
     C -->|Referenced via URL & SHA256| D["Flathub Repo<br/>(com.krioltech.fnmap.yml)"]
     D -->|Flathub Buildbot| E["Flathub Store<br/>(com.krioltech.fnmap)"]
 ```
@@ -29,7 +29,7 @@ flowchart LR
 ## 2. Release Context & Version Target
 
 * **Current Flathub Version:** `1.3.4-1` (Runtime: `org.freedesktop.Platform` `25.08`)
-* **New Target Version:** `1.4.1` (Tag / Build: `v1.4.1-2`)
+* **New Target Version:** `1.4.1` (Tag / Build: `v1.4.1-3`)
 * **Key Changes in v1.4.1:**
   * **Flatpak Host Permission Validation:** Probes host execution portal permissions and provides actionable guidance (`flatpak override`) if unpermitted when running privileged scans.
   * **Privileged Scans:** Supports Polkit/pkexec privileged scans (natively via Classic Snap, or locally via `flatpak override` in Flatpak).
@@ -45,14 +45,14 @@ Confirm that version `1.4.1` is synchronized across the project:
 
 1. **[pubspec.yaml](file:///home/gmckesey/Development/Local/StudioProjects/fnmap/pubspec.yaml)**:
    ```yaml
-   version: 1.4.1+2
+   version: 1.4.1+3
    ```
 2. **[lib/constants.dart](file:///home/gmckesey/Development/Local/StudioProjects/fnmap/lib/constants.dart)**:
    ```dart
    int kConfigVersionMajor = 1;
    int kConfigVersionMinor = 4;
    int kConfigVersionPatch = 1;
-   int kConfigVersionBuild = 2;
+   int kConfigVersionBuild = 3;
    ```
 
 ### 3.2 Update AppStream Metainfo
@@ -127,12 +127,12 @@ Run [package-flatpak-archive.sh](file:///home/gmckesey/Development/Local/StudioP
 ./package-flatpak-archive.sh
 ```
 
-*This automatically detects the version from [pubspec.yaml](file:///home/gmckesey/Development/Local/StudioProjects/fnmap/pubspec.yaml) (`1.4.1-2`), stages all files into `fnmap-archive/`, creates `fnmap-1.4.1-2.x64.tar.gz`, calculates the SHA-256 checksum, and prints the exact Flathub YAML manifest block ready to copy and paste.*
+*This automatically detects the version from [pubspec.yaml](file:///home/gmckesey/Development/Local/StudioProjects/fnmap/pubspec.yaml) (`1.4.1-3`), stages all files into `fnmap-archive/`, creates `fnmap-1.4.1-3.x64.tar.gz`, calculates the SHA-256 checksum, and prints the exact Flathub YAML manifest block ready to copy and paste.*
 
 **Available Flags:**
 * `-b, --build`: Rebuilds the Flutter Linux release bundle (`flutter build linux --release`) before packaging.
 * `-c, --clean`: Runs `flutter clean` and `flutter pub get` before building (implies `-b`).
-* `-v, --version <ver>`: Explicitly overrides the version string (e.g. `./package-flatpak-archive.sh -v 1.4.1-2`).
+* `-v, --version <ver>`: Explicitly overrides the version string (e.g. `./package-flatpak-archive.sh -v 1.4.1-3`).
 * `-o, --output <dir>`: Sets custom output destination directory for the generated tarball.
 
 ---
@@ -143,7 +143,7 @@ If you prefer to assemble the archive manually:
 
 ```bash
 # 1. Prepare temporary packaging directory
-rm -rf /tmp/fnmap-archive /tmp/fnmap-1.4.1-2.x64.tar.gz
+rm -rf /tmp/fnmap-archive /tmp/fnmap-1.4.1-3.x64.tar.gz
 mkdir -p /tmp/fnmap-archive/bin /tmp/fnmap-archive/icons
 
 # 2. Copy the Flutter release bundle
@@ -158,10 +158,10 @@ cp assets/fnmap.png /tmp/fnmap-archive/icons/
 cp flatpak/com.krioltech.fnmap.desktop /tmp/fnmap-archive/fnmap.desktop
 
 # 5. Compress into tar.gz
-tar -czvf fnmap-1.4.1-2.x64.tar.gz -C /tmp fnmap-archive
+tar -czvf fnmap-1.4.1-3.x64.tar.gz -C /tmp fnmap-archive
 
 # 6. Calculate SHA-256 checksum
-sha256sum fnmap-1.4.1-2.x64.tar.gz
+sha256sum fnmap-1.4.1-3.x64.tar.gz
 ```
 
 > [!IMPORTANT]
@@ -184,25 +184,25 @@ git pull origin main
 
 ### 6.1 Copy Archive & Commit
 ```bash
-cp /tmp/fnmap-1.4.1-2.x64.tar.gz archives/
-git add archives/fnmap-1.4.1-2.x64.tar.gz
-git commit -m "Add fnmap 1.4.1-2 release archive"
+cp /tmp/fnmap-1.4.1-3.x64.tar.gz archives/
+git add archives/fnmap-1.4.1-3.x64.tar.gz
+git commit -m "Add fnmap 1.4.1-3 release archive"
 git push origin main
 ```
 
 ### 6.2 Tag the Release
-Create and push the git tag `v1.4.1-2`:
+Create and push the git tag `v1.4.1-3`:
 
 ```bash
-git tag v1.4.1-2
-git push origin v1.4.1-2
+git tag v1.4.1-3
+git push origin v1.4.1-3
 ```
 
 ### 6.3 Verify URL Accessibility
 Test that the raw GitHub download link resolves properly:
 
 ```bash
-curl -I -s "https://github.com/gmckesey/fnmap-flatpak/raw/refs/tags/v1.4.1-2/archives/fnmap-1.4.1-2.x64.tar.gz" | head -n 5
+curl -I -s "https://github.com/gmckesey/fnmap-flatpak/raw/refs/tags/v1.4.1-3/archives/fnmap-1.4.1-3.x64.tar.gz" | head -n 5
 ```
 *(Verify HTTP 302 Found or HTTP 200 OK)*
 
@@ -222,7 +222,7 @@ git pull origin master
 
 ### 7.1 Create a Release Branch
 ```bash
-git checkout -b v1.4.1-2
+git checkout -b v1.4.1-3
 ```
 
 ### 7.2 Update `com.krioltech.fnmap.yml`
@@ -254,7 +254,7 @@ finish-args:
 > Alternatively, users needing privileged raw socket scans can install the **Classic Snap** (`sudo snap install fnmap --classic`) or native builds.
 
 #### 2. Update the `fnmap` Module Source
-Update the `url` to point to `v1.4.1-2` and paste the new `sha256` calculated in Step 3.2:
+Update the `url` to point to `v1.4.1-3` and paste the new `sha256` calculated in Step 3.2:
 
 ```diff
    - buildsystem: simple
@@ -271,7 +271,7 @@ Update the `url` to point to `v1.4.1-2` and paste the new `sha256` calculated in
        - type: archive
 -        url: https://github.com/gmckesey/fnmap-flatpak/raw/refs/tags/v1.3.4-1/archives/fnmap-1.3.4-1.x64.tar.gz
 -        sha256: 65d48ea108c2ce9ceb629c9b1b35469d0f40d3929d91aeb794279546f65c313e
-+        url: https://github.com/gmckesey/fnmap-flatpak/raw/refs/tags/v1.4.1-2/archives/fnmap-1.4.1-2.x64.tar.gz
++        url: https://github.com/gmckesey/fnmap-flatpak/raw/refs/tags/v1.4.1-3/archives/fnmap-1.4.1-3.x64.tar.gz
 +        sha256: <NEW_SHA256_HASH_FROM_STEP_3.2>
          dest: fnmap-archive
 ```
@@ -279,7 +279,7 @@ Update the `url` to point to `v1.4.1-2` and paste the new `sha256` calculated in
 ### 7.3 Commit the Changes
 ```bash
 git add com.krioltech.fnmap.yml
-git commit -m "Update fnmap to v1.4.1-2"
+git commit -m "Update fnmap to v1.4.1-3"
 ```
 
 ---
@@ -308,21 +308,21 @@ flatpak run com.krioltech.fnmap
 From the `com.krioltech.fnmap` repository:
 
 ```bash
-git push origin v1.4.1-2
+git push origin v1.4.1-3
 ```
 
 ### 9.2 Create the Pull Request
 1. Open your browser and navigate to:
    [https://github.com/flathub/com.krioltech.fnmap/pulls](https://github.com/flathub/com.krioltech.fnmap/pulls)
 2. Click **New Pull Request**.
-3. Set **base:** `master` and **compare:** `v1.4.1-2`.
+3. Set **base:** `master` and **compare:** `v1.4.1-3`.
 4. Title:
    ```
-   Update to v1.4.1-2
+   Update to v1.4.1-3
    ```
 5. Description:
    ```markdown
-   Updates fnmap to v1.4.1-2:
+   Updates fnmap to v1.4.1-3:
    - Added Flatpak host portal permission check with actionable guidance for privileged scans
    - Updated dark and light theme palettes
    - Added raw scan output selection
@@ -392,7 +392,7 @@ flatpak run com.krioltech.fnmap
 After publication is complete, remove local temporary packaging artifacts:
 
 ```bash
-rm -rf /tmp/fnmap-archive /tmp/fnmap-1.4.1-2.x64.tar.gz /tmp/fnmap-build-dir
+rm -rf /tmp/fnmap-archive /tmp/fnmap-1.4.1-3.x64.tar.gz /tmp/fnmap-build-dir
 ```
 
 To clean local Flatpak build files in your Flutter workspace, run:
